@@ -30,6 +30,9 @@ function EditPost() {
         excerpt: form.excerpt, body: form.body, cover_url: form.cover_url || null,
         streamer: form.streamer || null, rating: form.rating, tags: form.tags || [],
         published: form.published,
+        justwatch_slug: form.justwatch_slug || null,
+        justwatch_type: form.justwatch_type || "tv-show",
+        justwatch_country: form.justwatch_country || "us",
       } });
       navigate({ to: "/admin" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Failed"); }
@@ -64,6 +67,24 @@ function Editor({ form, setForm, save, saving, err }: any) {
             <input className="w-full border border-foreground bg-background p-3" value={(form.tags || []).join(", ")} onChange={(e) => setForm({ ...form, tags: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean) })} />
           </Field>
           <Field label="Body (Markdown)"><textarea className="w-full border border-foreground bg-background p-3 font-mono text-sm" rows={20} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} /></Field>
+          <div className="border-t border-foreground/30 pt-4">
+            <p className="eyebrow mb-2">Where to watch (JustWatch)</p>
+            <div className="grid grid-cols-3 gap-4">
+              <Field label="JustWatch slug">
+                <input placeholder="the-diplomat" className="w-full border border-foreground bg-background p-3" value={form.justwatch_slug || ""} onChange={(e) => setForm({ ...form, justwatch_slug: e.target.value })} />
+              </Field>
+              <Field label="Type">
+                <select className="w-full border border-foreground bg-background p-3" value={form.justwatch_type || "tv-show"} onChange={(e) => setForm({ ...form, justwatch_type: e.target.value })}>
+                  <option value="tv-show">TV show</option>
+                  <option value="movie">Movie</option>
+                </select>
+              </Field>
+              <Field label="Country">
+                <input placeholder="us" className="w-full border border-foreground bg-background p-3" value={form.justwatch_country || "us"} onChange={(e) => setForm({ ...form, justwatch_country: e.target.value.toLowerCase() })} />
+              </Field>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">From the JustWatch URL, e.g. justwatch.com/us/tv-show/<strong>the-diplomat</strong>.</p>
+          </div>
           <label className="flex items-center gap-2">
             <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} />
             <span className="eyebrow">Published</span>

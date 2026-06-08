@@ -2,6 +2,7 @@ import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostBody } from "@/components/PostBody";
+import { WhereToWatchLink } from "@/components/PostCard";
 import { getPostBySlug } from "@/lib/posts.functions";
 
 const postQuery = (slug: string) => queryOptions({
@@ -66,6 +67,7 @@ function Page() {
             <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>
           </>
         )}
+        <WhereToWatchLink post={post as any} className="mt-6 inline-block border border-foreground px-5 py-3 font-display uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors" />
         <div className="mt-8">
           <PostBody>{post.body}</PostBody>
         </div>

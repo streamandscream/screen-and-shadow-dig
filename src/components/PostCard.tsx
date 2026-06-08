@@ -1,4 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getJustWatchAffiliate } from "@/lib/settings.functions";
+import { buildJustWatchUrl } from "@/lib/justwatch";
 
 export type PostCardData = {
   slug: string;
@@ -9,9 +13,40 @@ export type PostCardData = {
   streamer: string | null;
   rating: number | null;
   tags: string[];
+  justwatch_slug?: string | null;
+  justwatch_type?: string | null;
+  justwatch_country?: string | null;
 };
 
 const label = (s: string) => (s === "tv" ? "TV Pick" : "True Crime");
+
+function useAffiliateTemplate() {
+  const getFn = useServerFn(getJustWatchAffiliate);
+  return useQuery({
+    queryKey: ["site-setting", "justwatch_affiliate"],
+    queryFn: () => getFn(),
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function WhereToWatchLink({ post, className }: { post: PostCardData; className?: string }) {
+  const { data: template } = useAffiliateTemplate();
+  const url = buildJustWatchUrl(post, template);
+  if (!url) return null;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer sponsored"
+      className={
+        className ??
+        "mt-3 inline-block border border-foreground px-3 py-2 font-display uppercase tracking-widest text-xs hover:bg-foreground hover:text-background transition-colors"
+      }
+    >
+      Where to watch →
+    </a>
+  );
+}
 
 export function FeatureCard({ post }: { post: PostCardData }) {
   return (
@@ -34,6 +69,7 @@ export function FeatureCard({ post }: { post: PostCardData }) {
           {post.streamer && <span>{post.streamer}</span>}
           {post.rating != null && <span>· {"★".repeat(post.rating)}{"☆".repeat(5 - post.rating)}</span>}
         </div>
+        <WhereToWatchLink post={post} />
       </div>
     </article>
   );
@@ -58,6 +94,7 @@ export function PostCard({ post }: { post: PostCardData }) {
       <div className="mt-2 text-[11px] uppercase tracking-widest text-muted-foreground">
         {post.streamer}{post.rating != null && ` · ${"★".repeat(post.rating)}`}
       </div>
+      <WhereToWatchLink post={post} />
     </article>
   );
 }

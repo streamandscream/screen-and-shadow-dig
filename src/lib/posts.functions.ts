@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at";
+const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country";
 
 export const listPublishedPosts = createServerFn({ method: "GET" })
   .inputValidator((d: { section?: "tv" | "true_crime"; limit?: number } | undefined) => d ?? {})
@@ -37,6 +37,9 @@ const PostInput = z.object({
   rating: z.number().int().min(1).max(5).nullable().optional(),
   tags: z.array(z.string().min(1).max(50)).max(10).default([]),
   published: z.boolean().default(false),
+  justwatch_slug: z.string().max(200).regex(/^[a-z0-9-]+$/).nullable().optional(),
+  justwatch_type: z.enum(["tv-show", "movie"]).default("tv-show"),
+  justwatch_country: z.string().min(2).max(5).regex(/^[a-z-]+$/).default("us"),
 });
 
 export const listMyPosts = createServerFn({ method: "GET" })

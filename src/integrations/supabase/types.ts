@@ -22,6 +22,9 @@ export type Database = {
           created_at: string
           excerpt: string
           id: string
+          justwatch_country: string
+          justwatch_slug: string | null
+          justwatch_type: string
           published: boolean
           rating: number | null
           section: Database["public"]["Enums"]["post_section"]
@@ -38,6 +41,9 @@ export type Database = {
           created_at?: string
           excerpt: string
           id?: string
+          justwatch_country?: string
+          justwatch_slug?: string | null
+          justwatch_type?: string
           published?: boolean
           rating?: number | null
           section: Database["public"]["Enums"]["post_section"]
@@ -54,6 +60,9 @@ export type Database = {
           created_at?: string
           excerpt?: string
           id?: string
+          justwatch_country?: string
+          justwatch_slug?: string | null
+          justwatch_type?: string
           published?: boolean
           rating?: number | null
           section?: Database["public"]["Enums"]["post_section"]
@@ -86,6 +95,24 @@ export type Database = {
           display_name?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string | null
         }
         Relationships: []
       }
