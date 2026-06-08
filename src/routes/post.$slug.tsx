@@ -61,7 +61,10 @@ function Page() {
           {post.tags?.length > 0 && <span>· {post.tags.join(", ")}</span>}
         </div>
         {post.cover_url && (
-          <img src={post.cover_url} alt={post.title} className="mt-6 w-full h-[420px] object-cover bg-paper" />
+          <>
+            <img src={post.cover_url} alt={post.title} className="mt-6 w-full h-[420px] object-cover bg-paper" />
+            <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>
+          </>
         )}
         <div className="mt-8">
           <PostBody>{post.body}</PostBody>
