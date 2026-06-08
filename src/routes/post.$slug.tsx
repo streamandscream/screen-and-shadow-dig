@@ -67,6 +67,7 @@ function Page() {
             <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>
           </>
         )}
+        <WhereToWatchLink post={post as any} className="mt-6 inline-block border border-foreground px-5 py-3 font-display uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors" />
         <div className="mt-8">
           <PostBody>{post.body}</PostBody>
         </div>
