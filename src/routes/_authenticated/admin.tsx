@@ -39,6 +39,9 @@ function Admin() {
             <Link to="/admin/new" className="bg-foreground text-background px-4 py-2 font-display uppercase tracking-widest text-sm">
               New post
             </Link>
+            <Link to="/admin/settings" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
+              Settings
+            </Link>
             <button onClick={signOut} className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Sign out
             </button>
