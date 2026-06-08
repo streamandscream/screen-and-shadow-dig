@@ -2,6 +2,7 @@ import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostBody } from "@/components/PostBody";
+import { WhereToWatchLink } from "@/components/PostCard";
 import { getPostBySlug } from "@/lib/posts.functions";
 
 const postQuery = (slug: string) => queryOptions({
