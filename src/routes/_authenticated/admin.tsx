@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { listMyPosts, deletePost } from "@/lib/posts.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +9,15 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
+
+type IngestResult = {
+  success: boolean;
+  inserted: number;
+  skipped: number;
+  classified: number;
+  errors: string[];
+  error?: string;
+};
 
 function Admin() {
   const router = useRouter();
@@ -17,6 +27,8 @@ function Admin() {
     queryKey: ["my-posts"],
     queryFn: () => listFn(),
   });
+  const [ingesting, setIngesting] = useState(false);
+  const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -27,6 +39,20 @@ function Admin() {
     if (!confirm("Delete this post?")) return;
     await delFn({ data: { id } });
     refetch();
+  }
+
+  async function forceIngest() {
+    setIngesting(true);
+    setIngestResult(null);
+    try {
+      const res = await fetch("/api/public/hooks/ingest-tv-news", { method: "POST" });
+      const json = (await res.json()) as IngestResult;
+      setIngestResult(json);
+    } catch (e) {
+      setIngestResult({ success: false, inserted: 0, skipped: 0, classified: 0, errors: [(e as Error).message], error: (e as Error).message });
+    } finally {
+      setIngesting(false);
+    }
   }
 
   return (
@@ -72,6 +98,47 @@ function Admin() {
             </tbody>
           </table>
         )}
+
+        <section className="mt-16 border-t-2 border-foreground pt-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-display text-2xl">TV News Ingestion</h2>
+              <p className="text-muted-foreground text-sm mt-1">Manually pull the latest cancelled / renewed updates from Deadline TV.</p>
+            </div>
+            <button
+              onClick={forceIngest}
+              disabled={ingesting}
+              className="bg-foreground text-background px-4 py-2 font-display uppercase tracking-widest text-sm disabled:opacity-50"
+            >
+              {ingesting ? "Refreshing…" : "Force refresh now"}
+            </button>
+          </div>
+
+          {ingestResult && (
+            <div className="mt-6 text-sm">
+              {ingestResult.success ? (
+                <div className="space-y-1">
+                  <p className="font-medium">Done.</p>
+                  <p>Inserted: <span className="font-semibold">{ingestResult.inserted}</span></p>
+                  <p>Skipped (already known): <span className="font-semibold">{ingestResult.skipped}</span></p>
+                  <p>Classified: <span className="font-semibold">{ingestResult.classified}</span></p>
+                  {ingestResult.errors.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-destructive font-medium">Errors ({ingestResult.errors.length}):</p>
+                      <ul className="list-disc pl-5 text-destructive/90">
+                        {ingestResult.errors.map((err, i) => (
+                          <li key={i}>{err}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-destructive">Failed: {ingestResult.error ?? ingestResult.errors[0] ?? "Unknown error"}</p>
+              )}
+            </div>
+          )}
+        </section>
       </main>
       <SiteFooter />
     </div>
