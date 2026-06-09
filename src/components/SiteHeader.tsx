@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export function SiteHeader() {
