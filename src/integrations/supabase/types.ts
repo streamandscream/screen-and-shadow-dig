@@ -116,6 +116,48 @@ export type Database = {
         }
         Relationships: []
       }
+      tv_news: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          network: string | null
+          published_at: string
+          show_title: string | null
+          source_name: string
+          source_url: string
+          status: Database["public"]["Enums"]["tv_news_status"]
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          network?: string | null
+          published_at?: string
+          show_title?: string | null
+          source_name: string
+          source_url: string
+          status?: Database["public"]["Enums"]["tv_news_status"]
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          network?: string | null
+          published_at?: string
+          show_title?: string | null
+          source_name?: string
+          source_url?: string
+          status?: Database["public"]["Enums"]["tv_news_status"]
+          summary?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -153,6 +195,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "author"
       post_section: "tv" | "true_crime"
+      tv_news_status: "renewed" | "cancelled" | "ended" | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -282,6 +325,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "author"],
       post_section: ["tv", "true_crime"],
+      tv_news_status: ["renewed", "cancelled", "ended", "other"],
     },
   },
 } as const

@@ -31,6 +31,7 @@ export function SiteHeader() {
           <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "underline underline-offset-4" }}>Home</Link>
           <Link to="/tv" activeProps={{ className: "underline underline-offset-4" }}>TV Recs</Link>
           <Link to="/true-crime" activeProps={{ className: "underline underline-offset-4" }}>True Crime</Link>
+          <Link to="/tv-news" activeProps={{ className: "underline underline-offset-4" }}>TV News</Link>
           <Link to="/about" activeProps={{ className: "underline underline-offset-4" }}>About</Link>
           {signedIn ? (
             <Link to="/admin" activeProps={{ className: "underline underline-offset-4" }}>Admin</Link>

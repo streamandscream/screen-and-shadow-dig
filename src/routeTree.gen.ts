@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TvNewsRouteImport } from './routes/tv-news'
 import { Route as TvRouteImport } from './routes/tv'
 import { Route as TrueCrimeRouteImport } from './routes/true-crime'
 import { Route as SearchRouteImport } from './routes/search'
@@ -20,8 +21,14 @@ import { Route as PostSlugRouteImport } from './routes/post.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminNewRouteImport } from './routes/_authenticated/admin.new'
+import { Route as ApiPublicHooksIngestTvNewsRouteImport } from './routes/api/public/hooks/ingest-tv-news'
 import { Route as AuthenticatedAdminIdEditRouteImport } from './routes/_authenticated/admin.$id.edit'
 
+const TvNewsRoute = TvNewsRouteImport.update({
+  id: '/tv-news',
+  path: '/tv-news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TvRoute = TvRouteImport.update({
   id: '/tv',
   path: '/tv',
@@ -77,6 +84,12 @@ const AuthenticatedAdminNewRoute = AuthenticatedAdminNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const ApiPublicHooksIngestTvNewsRoute =
+  ApiPublicHooksIngestTvNewsRouteImport.update({
+    id: '/api/public/hooks/ingest-tv-news',
+    path: '/api/public/hooks/ingest-tv-news',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminIdEditRoute =
   AuthenticatedAdminIdEditRouteImport.update({
     id: '/$id/edit',
@@ -91,11 +104,13 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
+  '/tv-news': typeof TvNewsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
+  '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -104,11 +119,13 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
+  '/tv-news': typeof TvNewsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
+  '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -119,11 +136,13 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
+  '/tv-news': typeof TvNewsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
   '/_authenticated/admin/new': typeof AuthenticatedAdminNewRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
+  '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -134,11 +153,13 @@ export interface FileRouteTypes {
     | '/search'
     | '/true-crime'
     | '/tv'
+    | '/tv-news'
     | '/admin'
     | '/post/$slug'
     | '/admin/new'
     | '/admin/settings'
     | '/admin/$id/edit'
+    | '/api/public/hooks/ingest-tv-news'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -147,11 +168,13 @@ export interface FileRouteTypes {
     | '/search'
     | '/true-crime'
     | '/tv'
+    | '/tv-news'
     | '/admin'
     | '/post/$slug'
     | '/admin/new'
     | '/admin/settings'
     | '/admin/$id/edit'
+    | '/api/public/hooks/ingest-tv-news'
   id:
     | '__root__'
     | '/'
@@ -161,11 +184,13 @@ export interface FileRouteTypes {
     | '/search'
     | '/true-crime'
     | '/tv'
+    | '/tv-news'
     | '/_authenticated/admin'
     | '/post/$slug'
     | '/_authenticated/admin/new'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/$id/edit'
+    | '/api/public/hooks/ingest-tv-news'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -176,11 +201,20 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   TrueCrimeRoute: typeof TrueCrimeRoute
   TvRoute: typeof TvRoute
+  TvNewsRoute: typeof TvNewsRoute
   PostSlugRoute: typeof PostSlugRoute
+  ApiPublicHooksIngestTvNewsRoute: typeof ApiPublicHooksIngestTvNewsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tv-news': {
+      id: '/tv-news'
+      path: '/tv-news'
+      fullPath: '/tv-news'
+      preLoaderRoute: typeof TvNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tv': {
       id: '/tv'
       path: '/tv'
@@ -258,6 +292,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/api/public/hooks/ingest-tv-news': {
+      id: '/api/public/hooks/ingest-tv-news'
+      path: '/api/public/hooks/ingest-tv-news'
+      fullPath: '/api/public/hooks/ingest-tv-news'
+      preLoaderRoute: typeof ApiPublicHooksIngestTvNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/$id/edit': {
       id: '/_authenticated/admin/$id/edit'
       path: '/$id/edit'
@@ -302,18 +343,10 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   TrueCrimeRoute: TrueCrimeRoute,
   TvRoute: TvRoute,
+  TvNewsRoute: TvNewsRoute,
   PostSlugRoute: PostSlugRoute,
+  ApiPublicHooksIngestTvNewsRoute: ApiPublicHooksIngestTvNewsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
