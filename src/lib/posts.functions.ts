@@ -2,6 +2,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+function matchPost(post: { title: string; excerpt: string; body: string; streamer: string | null; tags: string[] }, q: string) {
+  const term = q.toLowerCase();
+  return (
+    post.title.toLowerCase().includes(term) ||
+    post.excerpt.toLowerCase().includes(term) ||
+    post.body.toLowerCase().includes(term) ||
+    (post.streamer && post.streamer.toLowerCase().includes(term)) ||
+    post.tags.some((t) => t.toLowerCase().includes(term))
+  );
+}
+
 const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country";
 
 export const listPublishedPosts = createServerFn({ method: "GET" })
@@ -14,6 +25,15 @@ export const listPublishedPosts = createServerFn({ method: "GET" })
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
     return rows ?? [];
+  });
+
+export const searchPosts = createServerFn({ method: "GET" })
+  .inputValidator((d: { q: string }) => z.object({ q: z.string().min(1).max(100) }).parse(d))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin.from("posts").select(POST_COLS).eq("published", true).order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (rows ?? []).filter((p) => matchPost(p, data.q));
   });
 
 export const getPostBySlug = createServerFn({ method: "GET" })

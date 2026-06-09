@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TvRouteImport } from './routes/tv'
 import { Route as TrueCrimeRouteImport } from './routes/true-crime'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -29,6 +30,11 @@ const TvRoute = TvRouteImport.update({
 const TrueCrimeRoute = TrueCrimeRouteImport.update({
   id: '/true-crime',
   path: '/true-crime',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/search': typeof SearchRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/search': typeof SearchRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/search': typeof SearchRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/search'
     | '/true-crime'
     | '/tv'
     | '/admin'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/search'
     | '/true-crime'
     | '/tv'
     | '/admin'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
+    | '/search'
     | '/true-crime'
     | '/tv'
     | '/_authenticated/admin'
@@ -161,6 +173,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  SearchRoute: typeof SearchRoute
   TrueCrimeRoute: typeof TrueCrimeRoute
   TvRoute: typeof TvRoute
   PostSlugRoute: typeof PostSlugRoute
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/true-crime'
       fullPath: '/true-crime'
       preLoaderRoute: typeof TrueCrimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -279,6 +299,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  SearchRoute: SearchRoute,
   TrueCrimeRoute: TrueCrimeRoute,
   TvRoute: TvRoute,
   PostSlugRoute: PostSlugRoute,
