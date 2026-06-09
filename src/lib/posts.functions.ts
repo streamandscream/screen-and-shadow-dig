@@ -27,6 +27,15 @@ export const listPublishedPosts = createServerFn({ method: "GET" })
     return rows ?? [];
   });
 
+export const searchPosts = createServerFn({ method: "GET" })
+  .inputValidator((d: { q: string }) => z.object({ q: z.string().min(1).max(100) }).parse(d))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin.from("posts").select(POST_COLS).eq("published", true).order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (rows ?? []).filter((p) => matchPost(p, data.q));
+  });
+
 export const getPostBySlug = createServerFn({ method: "GET" })
   .inputValidator((d: { slug: string }) => z.object({ slug: z.string().min(1).max(200) }).parse(d))
   .handler(async ({ data }) => {
