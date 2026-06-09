@@ -2,6 +2,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+function matchPost(post: { title: string; excerpt: string; body: string; streamer: string | null; tags: string[] }, q: string) {
+  const term = q.toLowerCase();
+  return (
+    post.title.toLowerCase().includes(term) ||
+    post.excerpt.toLowerCase().includes(term) ||
+    post.body.toLowerCase().includes(term) ||
+    (post.streamer && post.streamer.toLowerCase().includes(term)) ||
+    post.tags.some((t) => t.toLowerCase().includes(term))
+  );
+}
+
 const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country";
 
 export const listPublishedPosts = createServerFn({ method: "GET" })
