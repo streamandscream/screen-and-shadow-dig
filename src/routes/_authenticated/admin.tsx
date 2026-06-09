@@ -10,6 +10,15 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: Admin,
 });
 
+type IngestResult = {
+  success: boolean;
+  inserted: number;
+  skipped: number;
+  classified: number;
+  errors: string[];
+  error?: string;
+};
+
 function Admin() {
   const router = useRouter();
   const listFn = useServerFn(listMyPosts);
@@ -18,6 +27,8 @@ function Admin() {
     queryKey: ["my-posts"],
     queryFn: () => listFn(),
   });
+  const [ingesting, setIngesting] = useState(false);
+  const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -28,6 +39,20 @@ function Admin() {
     if (!confirm("Delete this post?")) return;
     await delFn({ data: { id } });
     refetch();
+  }
+
+  async function forceIngest() {
+    setIngesting(true);
+    setIngestResult(null);
+    try {
+      const res = await fetch("/api/public/hooks/ingest-tv-news", { method: "POST" });
+      const json = (await res.json()) as IngestResult;
+      setIngestResult(json);
+    } catch (e) {
+      setIngestResult({ success: false, inserted: 0, skipped: 0, classified: 0, errors: [(e as Error).message], error: (e as Error).message });
+    } finally {
+      setIngesting(false);
+    }
   }
 
   return (
