@@ -72,7 +72,13 @@ function SearchPage() {
   };
 
   const updateFilter = (key: "tag" | "streamer", value: string) => {
-    navigate({ search: (prev) => ({ ...prev, [key]: value }) });
+    navigate({
+      search: {
+        q,
+        tag: key === "tag" ? value : tag,
+        streamer: key === "streamer" ? value : streamer,
+      },
+    });
   };
 
   const clearAll = () => {
