@@ -98,6 +98,47 @@ function Admin() {
             </tbody>
           </table>
         )}
+
+        <section className="mt-16 border-t-2 border-foreground pt-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-display text-2xl">TV News Ingestion</h2>
+              <p className="text-muted-foreground text-sm mt-1">Manually pull the latest cancelled / renewed updates from Deadline TV.</p>
+            </div>
+            <button
+              onClick={forceIngest}
+              disabled={ingesting}
+              className="bg-foreground text-background px-4 py-2 font-display uppercase tracking-widest text-sm disabled:opacity-50"
+            >
+              {ingesting ? "Refreshing…" : "Force refresh now"}
+            </button>
+          </div>
+
+          {ingestResult && (
+            <div className="mt-6 text-sm">
+              {ingestResult.success ? (
+                <div className="space-y-1">
+                  <p className="font-medium">Done.</p>
+                  <p>Inserted: <span className="font-semibold">{ingestResult.inserted}</span></p>
+                  <p>Skipped (already known): <span className="font-semibold">{ingestResult.skipped}</span></p>
+                  <p>Classified: <span className="font-semibold">{ingestResult.classified}</span></p>
+                  {ingestResult.errors.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-destructive font-medium">Errors ({ingestResult.errors.length}):</p>
+                      <ul className="list-disc pl-5 text-destructive/90">
+                        {ingestResult.errors.map((err, i) => (
+                          <li key={i}>{err}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-destructive">Failed: {ingestResult.error ?? ingestResult.errors[0] ?? "Unknown error"}</p>
+              )}
+            </div>
+          )}
+        </section>
       </main>
       <SiteFooter />
     </div>
