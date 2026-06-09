@@ -68,7 +68,7 @@ function SearchPage() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const newQ = String(formData.get("q") ?? "").trim();
-    navigate({ search: (prev) => ({ ...prev, q: newQ }) });
+    navigate({ search: { q: newQ, tag, streamer } });
   };
 
   const updateFilter = (key: "tag" | "streamer", value: string) => {
