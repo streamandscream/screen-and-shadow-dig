@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 function matchPost(post: { title: string; excerpt: string; body: string; streamer: string | null; tags: string[] }, q: string) {
+  if (!q.trim()) return true;
   const term = q.toLowerCase();
   return (
     post.title.toLowerCase().includes(term) ||
@@ -12,6 +13,23 @@ function matchPost(post: { title: string; excerpt: string; body: string; streame
     post.tags.some((t) => t.toLowerCase().includes(term))
   );
 }
+
+export const getSearchFilters = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin.from("posts").select("tags, streamer").eq("published", true);
+    if (error) throw new Error(error.message);
+    const tags = new Set<string>();
+    const streamers = new Set<string>();
+    for (const row of rows ?? []) {
+      for (const t of row.tags) tags.add(t);
+      if (row.streamer) streamers.add(row.streamer);
+    }
+    return {
+      tags: Array.from(tags).sort(),
+      streamers: Array.from(streamers).sort(),
+    };
+  });
 
 const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country";
 
