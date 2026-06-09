@@ -37,6 +37,10 @@ export function SiteHeader() {
           ) : (
             <Link to="/auth" activeProps={{ className: "underline underline-offset-4" }}>Sign in</Link>
           )}
+          <Link to="/search" activeProps={{ className: "underline underline-offset-4" }} className="flex items-center gap-1">
+            <Search size={14} strokeWidth={2.5} />
+            <span className="sr-only">Search</span>
+          </Link>
         </nav>
       </div>
     </header>
