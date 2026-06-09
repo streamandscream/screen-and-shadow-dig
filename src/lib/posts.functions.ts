@@ -46,12 +46,23 @@ export const listPublishedPosts = createServerFn({ method: "GET" })
   });
 
 export const searchPosts = createServerFn({ method: "GET" })
-  .inputValidator((d: { q: string }) => z.object({ q: z.string().min(1).max(100) }).parse(d))
+  .inputValidator((d: { q?: string; tag?: string; streamer?: string }) =>
+    z.object({
+      q: z.string().max(100).optional(),
+      tag: z.string().max(50).optional(),
+      streamer: z.string().max(100).optional(),
+    }).parse(d)
+  )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin.from("posts").select(POST_COLS).eq("published", true).order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
-    return (rows ?? []).filter((p) => matchPost(p, data.q));
+    return (rows ?? []).filter((p) => {
+      const textMatch = matchPost(p, data.q ?? "");
+      const tagMatch = !data.tag || p.tags.includes(data.tag);
+      const streamerMatch = !data.streamer || p.streamer === data.streamer;
+      return textMatch && tagMatch && streamerMatch;
+    });
   });
 
 export const getPostBySlug = createServerFn({ method: "GET" })
