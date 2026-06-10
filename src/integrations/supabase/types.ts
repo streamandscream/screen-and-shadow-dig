@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      ingestion_runs: {
+        Row: {
+          classify_errors: number
+          error: string | null
+          http_status: number | null
+          id: string
+          items_fetched: number
+          items_inserted: number
+          items_skipped: number
+          latency_ms: number
+          ok: boolean
+          parse_errors: number
+          ran_at: string
+          source_name: string
+          source_url: string
+        }
+        Insert: {
+          classify_errors?: number
+          error?: string | null
+          http_status?: number | null
+          id?: string
+          items_fetched?: number
+          items_inserted?: number
+          items_skipped?: number
+          latency_ms?: number
+          ok: boolean
+          parse_errors?: number
+          ran_at?: string
+          source_name: string
+          source_url: string
+        }
+        Update: {
+          classify_errors?: number
+          error?: string | null
+          http_status?: number | null
+          id?: string
+          items_fetched?: number
+          items_inserted?: number
+          items_skipped?: number
+          latency_ms?: number
+          ok?: boolean
+          parse_errors?: number
+          ran_at?: string
+          source_name?: string
+          source_url?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_id: string | null
