@@ -105,13 +105,22 @@ function Admin() {
               <h2 className="font-display text-2xl">TV News Ingestion</h2>
               <p className="text-muted-foreground text-sm mt-1">Manually pull the latest cancelled / renewed updates from Deadline TV.</p>
             </div>
-            <button
-              onClick={forceIngest}
-              disabled={ingesting}
-              className="bg-foreground text-background px-4 py-2 font-display uppercase tracking-widest text-sm disabled:opacity-50"
-            >
-              {ingesting ? "Refreshing…" : "Force refresh now"}
-            </button>
+            <div className="flex gap-3">
+              <Link
+                to="/admin/ingestion-health"
+                className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm"
+              >
+                Health
+              </Link>
+              <button
+                onClick={forceIngest}
+                disabled={ingesting}
+                className="bg-foreground text-background px-4 py-2 font-display uppercase tracking-widest text-sm disabled:opacity-50"
+              >
+                {ingesting ? "Refreshing…" : "Force refresh now"}
+              </button>
+            </div>
+
           </div>
 
           {ingestResult && (
