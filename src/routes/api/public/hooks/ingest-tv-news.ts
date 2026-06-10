@@ -106,16 +106,35 @@ async function runIngest() {
   const errors: string[] = [];
 
   for (const source of SOURCES) {
+    const startedAt = Date.now();
+    let httpStatus: number | null = null;
+    let itemsFetched = 0;
+    let sourceInserted = 0;
+    let sourceSkipped = 0;
+    let parseErrors = 0;
+    let classifyErrors = 0;
+    let sourceError: string | null = null;
+
     try {
       const res = await fetch(source.url, { headers: { "User-Agent": "Mozilla/5.0 BoldNewsBot" } });
+      httpStatus = res.status;
       if (!res.ok) {
+        sourceError = `HTTP ${res.status}`;
         errors.push(`${source.name}: HTTP ${res.status}`);
         continue;
       }
       const xml = await res.text();
-      const items = parseRss(xml).slice(0, 30);
+      let items: RssItem[] = [];
+      try {
+        items = parseRss(xml).slice(0, 30);
+      } catch (e) {
+        parseErrors += 1;
+        sourceError = `parse: ${(e as Error).message}`;
+        errors.push(`${source.name}: ${sourceError}`);
+        continue;
+      }
+      itemsFetched = items.length;
 
-      // Filter out items already in DB
       const urls = items.map((i) => i.link);
       const { data: existing } = await supabaseAdmin
         .from("tv_news")
@@ -123,10 +142,10 @@ async function runIngest() {
         .in("source_url", urls);
       const have = new Set((existing ?? []).map((r) => r.source_url));
       const fresh = items.filter((i) => !have.has(i.link));
-      skipped += items.length - fresh.length;
+      sourceSkipped = items.length - fresh.length;
+      skipped += sourceSkipped;
       if (fresh.length === 0) continue;
 
-      // Classify in batches of 10
       const classifications: Classification[] = [];
       for (let i = 0; i < fresh.length; i += 10) {
         const batch = fresh.slice(i, i + 10);
@@ -134,8 +153,8 @@ async function runIngest() {
           const c = await classify(batch);
           classifications.push(...c);
         } catch (e) {
+          classifyErrors += 1;
           errors.push(`classify: ${(e as Error).message}`);
-          // Fill with "other" so we can still insert raw items
           for (const _ of batch) {
             classifications.push({ status: "other", show_title: null, network: null, summary: "" });
           }
@@ -143,7 +162,6 @@ async function runIngest() {
       }
       classified += fresh.length;
 
-      // Only insert items that are renewed/cancelled/ended
       const rows = fresh
         .map((item, idx) => {
           const c = classifications[idx] ?? { status: "other" as const, show_title: null, network: null, summary: "" };
@@ -165,18 +183,37 @@ async function runIngest() {
       if (rows.length > 0) {
         const { error } = await supabaseAdmin.from("tv_news").insert(rows);
         if (error) {
-          errors.push(`insert: ${error.message}`);
+          sourceError = `insert: ${error.message}`;
+          errors.push(sourceError);
         } else {
+          sourceInserted = rows.length;
           inserted += rows.length;
         }
       }
     } catch (e) {
-      errors.push(`${source.name}: ${(e as Error).message}`);
+      sourceError = (e as Error).message;
+      errors.push(`${source.name}: ${sourceError}`);
+    } finally {
+      const latency = Date.now() - startedAt;
+      await supabaseAdmin.from("ingestion_runs").insert({
+        source_name: source.name,
+        source_url: source.url,
+        ok: sourceError === null,
+        http_status: httpStatus,
+        items_fetched: itemsFetched,
+        items_inserted: sourceInserted,
+        items_skipped: sourceSkipped,
+        parse_errors: parseErrors,
+        classify_errors: classifyErrors,
+        latency_ms: latency,
+        error: sourceError,
+      });
     }
   }
 
   return { inserted, skipped, classified, errors };
 }
+
 
 export const Route = createFileRoute("/api/public/hooks/ingest-tv-news")({
   server: {
