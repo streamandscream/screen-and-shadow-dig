@@ -61,7 +61,7 @@ function TvNewsPage() {
         <h1 className="font-display text-6xl mt-2 border-b-2 border-foreground pb-4">
           TV News: Cancelled & Renewed
         </h1>
-        <br />
+        <p className="mt-4 max-w-2xl text-muted-foreground">{"\n"}</p>
 
         <div className="mt-8 flex flex-wrap gap-2">
           {STATUSES.map((s) => (
