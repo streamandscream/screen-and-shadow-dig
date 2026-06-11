@@ -44,7 +44,7 @@ function Page() {
   const { slug } = Route.useParams();
   const { data: post } = useSuspenseQuery(postQuery(slug));
   if (!post) return null;
-  const sectionLabel = post.section === "tv" ? "TV Pick" : "True Crime";
+  const sectionLabel = post.section === "tv" ? "The Stream" : "The Scream";
   const sectionTo = post.section === "tv" ? "/tv" : "/true-crime";
   const date = new Date(post.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 

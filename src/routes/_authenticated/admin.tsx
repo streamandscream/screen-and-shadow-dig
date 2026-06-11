@@ -87,7 +87,7 @@ function Admin() {
               {posts.map((p) => (
                 <tr key={p.id} className="border-b border-foreground/30">
                   <td className="py-3">{p.title}</td>
-                  <td>{p.section === "tv" ? "TV" : "True Crime"}</td>
+                  <td>{p.section === "tv" ? "The Stream" : "The Scream"}</td>
                   <td>{p.published ? "Published" : "Draft"}</td>
                   <td className="text-right">
                     <Link to="/admin/$id/edit" params={{ id: p.id }} className="underline mr-4">Edit</Link>
