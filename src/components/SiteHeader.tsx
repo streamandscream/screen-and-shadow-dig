@@ -24,13 +24,13 @@ export function SiteHeader() {
         <div className="py-6 text-center">
           <Link to="/" className="inline-block">
             <h1 className="font-display text-5xl md:text-7xl tracking-tight">BOLD NEWS</h1>
-            <p className="eyebrow mt-2 text-muted-foreground">TV Recommendations · True Crime Documentaries</p>
+            <p className="eyebrow mt-2 text-muted-foreground">The Stream · The Scream</p>
           </Link>
         </div>
         <nav className="flex flex-wrap justify-center gap-6 border-t border-b border-foreground/80 py-3 text-sm uppercase tracking-widest font-display">
           <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "underline underline-offset-4" }}>Home</Link>
-          <Link to="/tv" activeProps={{ className: "underline underline-offset-4" }}>TV Recs</Link>
-          <Link to="/true-crime" activeProps={{ className: "underline underline-offset-4" }}>True Crime</Link>
+          <Link to="/tv" activeProps={{ className: "underline underline-offset-4" }}>The Stream</Link>
+          <Link to="/true-crime" activeProps={{ className: "underline underline-offset-4" }}>The Scream</Link>
           <Link to="/tv-news" activeProps={{ className: "underline underline-offset-4" }}>TV News</Link>
           <Link to="/about" activeProps={{ className: "underline underline-offset-4" }}>About</Link>
           {signedIn ? (
@@ -53,7 +53,7 @@ export function SiteFooter() {
     <footer className="mt-24 border-t-2 border-foreground bg-paper">
       <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row justify-between gap-4 text-sm">
         <p className="font-display text-lg">BOLD NEWS</p>
-        <p className="text-muted-foreground">© {new Date().getFullYear()} Bold News. Reviews on prestige TV and true crime documentaries.</p>
+        <p className="text-muted-foreground">© {new Date().getFullYear()} Bold News. Reviews on The Stream and The Scream.</p>
       </div>
     </footer>
   );
