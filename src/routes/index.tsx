@@ -45,7 +45,7 @@ function Home() {
         <div className="mt-20 grid md:grid-cols-2 gap-12">
           <section>
             <div className="flex items-end justify-between border-b-2 border-foreground pb-2 mb-6">
-              <h2 className="font-display text-3xl">Latest TV Recs</h2>
+              <h2 className="font-display text-3xl">The Stream</h2>
               <a href="/tv" className="eyebrow underline">See all</a>
             </div>
             <div className="grid gap-8">
@@ -54,7 +54,7 @@ function Home() {
           </section>
           <section>
             <div className="flex items-end justify-between border-b-2 border-foreground pb-2 mb-6">
-              <h2 className="font-display text-3xl">Latest True Crime</h2>
+              <h2 className="font-display text-3xl">The Scream</h2>
               <a href="/true-crime" className="eyebrow underline">See all</a>
             </div>
             <div className="grid gap-8">

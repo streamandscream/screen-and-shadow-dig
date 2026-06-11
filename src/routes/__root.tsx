@@ -78,7 +78,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Bold News — TV Recommendations & True Crime Documentaries" },
-      { name: "description", content: "Sharp picks on prestige TV and deep-dive true crime documentaries — reviews, ratings, and where to stream." },
+      { name: "description", content: "Sharp picks on prestige TV and deep-dive true crime documentaries — reviews, verdicts, and where to stream." },
       { property: "og:title", content: "Bold News — TV Recs & True Crime" },
       { property: "og:description", content: "Sharp picks on prestige TV and deep-dive true crime documentaries." },
       { property: "og:type", content: "website" },

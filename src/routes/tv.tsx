@@ -11,9 +11,9 @@ const q = queryOptions({
 
 export const Route = createFileRoute("/tv")({
   head: () => ({ meta: [
-    { title: "TV Recommendations — Bold News" },
+    { title: "The Stream — Bold News" },
     { name: "description", content: "Reviews and recommendations on prestige TV: The Diplomat, Lioness, Vladimir, The Beast in Me, and more." },
-    { property: "og:title", content: "TV Recommendations — Bold News" },
+    { property: "og:title", content: "The Stream — Bold News" },
     { property: "og:description", content: "Reviews and recommendations on prestige TV." },
   ] }),
   loader: ({ context }) => context.queryClient.ensureQueryData(q),
@@ -29,7 +29,7 @@ function Page() {
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-6 py-12 w-full flex-1">
         <p className="eyebrow text-accent-red">Section</p>
-        <h1 className="font-display text-6xl mt-2 border-b-2 border-foreground pb-4">TV Recommendations</h1>
+        <h1 className="font-display text-6xl mt-2 border-b-2 border-foreground pb-4">The Stream</h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">Prestige drama, sharp thrillers, and slow burns worth your evening. Honest takes on what's actually worth watching.</p>
         <section className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {data.map((p) => <PostCard key={p.id} post={p} />)}
