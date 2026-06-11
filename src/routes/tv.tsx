@@ -11,9 +11,9 @@ const q = queryOptions({
 
 export const Route = createFileRoute("/tv")({
   head: () => ({ meta: [
-    { title: "TV Recommendations — Bold News" },
+    { title: "The Stream — Bold News" },
     { name: "description", content: "Reviews and recommendations on prestige TV: The Diplomat, Lioness, Vladimir, The Beast in Me, and more." },
-    { property: "og:title", content: "TV Recommendations — Bold News" },
+    { property: "og:title", content: "The Stream — Bold News" },
     { property: "og:description", content: "Reviews and recommendations on prestige TV." },
   ] }),
   loader: ({ context }) => context.queryClient.ensureQueryData(q),
