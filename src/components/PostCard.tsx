@@ -18,7 +18,7 @@ export type PostCardData = {
   justwatch_country?: string | null;
 };
 
-const label = (s: string) => (s === "tv" ? "TV Pick" : "True Crime");
+const label = (s: string) => (s === "tv" ? "The Stream" : "The Scream");
 
 function useAffiliateTemplate() {
   const getFn = useServerFn(getJustWatchAffiliate);
