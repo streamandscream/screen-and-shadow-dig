@@ -34,12 +34,21 @@ export const getSearchFilters = createServerFn({ method: "GET" })
 const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country";
 
 export const listPublishedPosts = createServerFn({ method: "GET" })
-  .inputValidator((d: { section?: "tv" | "true_crime"; limit?: number } | undefined) => d ?? {})
+  .inputValidator((d: unknown) =>
+    z.object({
+      section: z.enum(["tv", "true_crime"]).optional(),
+      limit: z.number().int().positive().optional(),
+      minRating: z.number().int().min(1).max(10).optional(),
+      maxRating: z.number().int().min(1).max(10).optional(),
+    }).parse(d ?? {})
+  )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let q = supabaseAdmin.from("posts").select(POST_COLS).eq("published", true).order("created_at", { ascending: false });
     if (data.section) q = q.eq("section", data.section);
     if (data.limit) q = q.limit(data.limit);
+    if (data.minRating != null) q = q.gte("rating", data.minRating);
+    if (data.maxRating != null) q = q.lte("rating", data.maxRating);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
     return rows ?? [];
