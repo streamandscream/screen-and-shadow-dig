@@ -67,7 +67,7 @@ export function FeatureCard({ post }: { post: PostCardData }) {
         <p className="mt-4 text-lg text-muted-foreground">{post.excerpt}</p>
         <div className="mt-4 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
           {post.streamer && <span>{post.streamer}</span>}
-          {post.rating != null && <span>· The Verdict: {"★".repeat(post.rating)}{"☆".repeat(5 - post.rating)}</span>}
+          {post.rating != null && <span>· The Verdict: {post.rating}/10</span>}
         </div>
         <WhereToWatchLink post={post} />
       </div>
