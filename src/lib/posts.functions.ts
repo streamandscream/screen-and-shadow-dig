@@ -145,3 +145,24 @@ export const deletePost = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const updateRecommendations = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({
+      id: z.string().uuid(),
+      favourite_episode: z.string().max(300).nullable(),
+      next_binge: z.array(z.string().min(1).max(120)).max(3),
+    }).parse(d)
+  )
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("posts")
+      .update({
+        favourite_episode: data.favourite_episode,
+        next_binge: data.next_binge,
+      })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
