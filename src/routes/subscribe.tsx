@@ -1,20 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import { subscribeEmail } from "@/lib/subscribers.functions";
 
 export const Route = createFileRoute("/subscribe")({
   component: SubscribePage,
 });
 
 function SubscribePage() {
+  const subscribe = useServerFn(subscribeEmail);
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "success">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) {
+    const value = email.trim();
+    if (!value) return;
+    setStatus("submitting");
+    setErrorMsg(null);
+    try {
+      await subscribe({ data: { email: value, source: "subscribe-page" } });
       setStatus("success");
       setEmail("");
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
     }
   };
 
