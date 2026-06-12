@@ -39,10 +39,10 @@ function Page() {
   const updateFilter = (key: "minRating" | "maxRating", value: string) => {
     const num = value ? Number(value) : undefined;
     navigate({
-      search: (prev) => ({
-        ...prev,
-        [key]: num,
-      }),
+      search: {
+        minRating: key === "minRating" ? num : minRating,
+        maxRating: key === "maxRating" ? num : maxRating,
+      },
     });
   };
 
