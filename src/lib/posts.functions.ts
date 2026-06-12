@@ -106,6 +106,8 @@ const PostInput = z.object({
   justwatch_slug: z.string().max(200).regex(/^[a-z0-9-]+$/).nullable().optional(),
   justwatch_type: z.enum(["tv-show", "movie"]).default("tv-show"),
   justwatch_country: z.string().min(2).max(5).regex(/^[a-z-]+$/).default("us"),
+  favourite_episode: z.string().max(300).nullable().optional(),
+  next_binge: z.array(z.string().min(1).max(120)).max(3).default([]),
 });
 
 export const listMyPosts = createServerFn({ method: "GET" })
