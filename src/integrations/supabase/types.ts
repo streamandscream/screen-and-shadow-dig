@@ -69,10 +69,12 @@ export type Database = {
           cover_url: string | null
           created_at: string
           excerpt: string
+          favourite_episode: string | null
           id: string
           justwatch_country: string
           justwatch_slug: string | null
           justwatch_type: string
+          next_binge: string[]
           published: boolean
           rating: number | null
           section: Database["public"]["Enums"]["post_section"]
@@ -88,10 +90,12 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           excerpt: string
+          favourite_episode?: string | null
           id?: string
           justwatch_country?: string
           justwatch_slug?: string | null
           justwatch_type?: string
+          next_binge?: string[]
           published?: boolean
           rating?: number | null
           section: Database["public"]["Enums"]["post_section"]
@@ -107,10 +111,12 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           excerpt?: string
+          favourite_episode?: string | null
           id?: string
           justwatch_country?: string
           justwatch_slug?: string | null
           justwatch_type?: string
+          next_binge?: string[]
           published?: boolean
           rating?: number | null
           section?: Database["public"]["Enums"]["post_section"]

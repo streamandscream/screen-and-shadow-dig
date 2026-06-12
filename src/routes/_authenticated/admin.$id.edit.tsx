@@ -33,6 +33,8 @@ function EditPost() {
         justwatch_slug: form.justwatch_slug || null,
         justwatch_type: form.justwatch_type || "tv-show",
         justwatch_country: form.justwatch_country || "us",
+        favourite_episode: form.favourite_episode || null,
+        next_binge: form.next_binge || [],
       } });
       navigate({ to: "/admin" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Failed"); }
@@ -67,6 +69,14 @@ function Editor({ form, setForm, save, saving, err }: any) {
             <input className="w-full border border-foreground bg-background p-3" value={(form.tags || []).join(", ")} onChange={(e) => setForm({ ...form, tags: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean) })} />
           </Field>
           <Field label="Body (Markdown)"><textarea className="w-full border border-foreground bg-background p-3 font-mono text-sm" rows={20} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} /></Field>
+          {form.section === "tv" && (
+            <Field label="Our favourite episode">
+              <input placeholder="S2E5 — “The One With…”" className="w-full border border-foreground bg-background p-3" value={form.favourite_episode || ""} onChange={(e) => setForm({ ...form, favourite_episode: e.target.value })} />
+            </Field>
+          )}
+          <Field label="Your next binge (2–3 titles, comma separated)">
+            <input className="w-full border border-foreground bg-background p-3" value={(form.next_binge || []).join(", ")} onChange={(e) => setForm({ ...form, next_binge: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean).slice(0, 3) })} />
+          </Field>
           <div className="border-t border-foreground/30 pt-4">
             <p className="eyebrow mb-2">Where to watch (JustWatch)</p>
             <div className="grid grid-cols-3 gap-4">
