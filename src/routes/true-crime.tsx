@@ -4,16 +4,17 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostCard } from "@/components/PostCard";
 import { listPublishedPosts } from "@/lib/posts.functions";
 
-const postsQuery = (minRating?: number, maxRating?: number) =>
+const postsQuery = (minRating?: number, maxRating?: number, sort?: string) =>
   queryOptions({
-    queryKey: ["posts", "true_crime", minRating, maxRating],
-    queryFn: () => listPublishedPosts({ data: { section: "true_crime", minRating, maxRating } }),
+    queryKey: ["posts", "true_crime", minRating, maxRating, sort],
+    queryFn: () => listPublishedPosts({ data: { section: "true_crime", minRating, maxRating, sort } }),
   });
 
 export const Route = createFileRoute("/true-crime")({
   validateSearch: (search: Record<string, unknown>) => ({
     minRating: typeof search.minRating === "string" ? Number(search.minRating) || undefined : undefined,
     maxRating: typeof search.maxRating === "string" ? Number(search.maxRating) || undefined : undefined,
+    sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
   }),
   head: () => ({ meta: [
     { title: "The Scream — Bold News" },
@@ -24,17 +25,18 @@ export const Route = createFileRoute("/true-crime")({
   loaderDeps: ({ search }) => ({
     minRating: search.minRating,
     maxRating: search.maxRating,
+    sort: search.sort,
   }),
-  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.minRating, deps.maxRating)),
+  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.minRating, deps.maxRating, deps.sort)),
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Page,
 });
 
 function Page() {
-  const { minRating, maxRating } = useSearch({ from: "/true-crime" });
+  const { minRating, maxRating, sort } = useSearch({ from: "/true-crime" });
   const navigate = useNavigate({ from: "/true-crime" });
-  const { data } = useSuspenseQuery(postsQuery(minRating, maxRating));
+  const { data } = useSuspenseQuery(postsQuery(minRating, maxRating, sort));
 
   const updateFilter = (key: "minRating" | "maxRating", value: string) => {
     const num = value ? Number(value) : undefined;
@@ -42,12 +44,23 @@ function Page() {
       search: {
         minRating: key === "minRating" ? num : minRating,
         maxRating: key === "maxRating" ? num : maxRating,
+        sort,
+      },
+    });
+  };
+
+  const updateSort = (value: string) => {
+    navigate({
+      search: {
+        minRating,
+        maxRating,
+        sort: value || undefined,
       },
     });
   };
 
   const clearFilters = () => {
-    navigate({ search: { minRating: undefined, maxRating: undefined } });
+    navigate({ search: { minRating: undefined, maxRating: undefined, sort } });
   };
 
   const active = minRating != null || maxRating != null;
@@ -61,6 +74,19 @@ function Page() {
         <p className="mt-4 max-w-2xl text-muted-foreground">Anatomy of the cases that gripped a nation. Long reads on the documentaries worth watching with the lights on.</p>
 
         <div className="mt-6 flex flex-wrap gap-4 items-center">
+          <div className="flex items-center gap-2">
+            <label htmlFor="sort" className="eyebrow text-muted-foreground">Sort</label>
+            <select
+              id="sort"
+              value={sort ?? "newest"}
+              onChange={(e) => updateSort(e.target.value)}
+              className="bg-background border-2 border-foreground px-3 py-2 text-sm text-foreground outline-none cursor-pointer"
+            >
+              <option value="newest">Newest</option>
+              <option value="highest_score">Highest score</option>
+              <option value="lowest_score">Lowest score</option>
+            </select>
+          </div>
           <div className="flex items-center gap-2">
             <label htmlFor="min-rating" className="eyebrow text-muted-foreground">Min Verdict</label>
             <select
