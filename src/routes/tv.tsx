@@ -4,16 +4,17 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostCard } from "@/components/PostCard";
 import { listPublishedPosts } from "@/lib/posts.functions";
 
-const postsQuery = (minRating?: number, maxRating?: number) =>
+const postsQuery = (minRating?: number, maxRating?: number, sort?: string) =>
   queryOptions({
-    queryKey: ["posts", "tv", minRating, maxRating],
-    queryFn: () => listPublishedPosts({ data: { section: "tv", minRating, maxRating } }),
+    queryKey: ["posts", "tv", minRating, maxRating, sort],
+    queryFn: () => listPublishedPosts({ data: { section: "tv", minRating, maxRating, sort } }),
   });
 
 export const Route = createFileRoute("/tv")({
   validateSearch: (search: Record<string, unknown>) => ({
     minRating: typeof search.minRating === "string" ? Number(search.minRating) || undefined : undefined,
     maxRating: typeof search.maxRating === "string" ? Number(search.maxRating) || undefined : undefined,
+    sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
   }),
   head: () => ({ meta: [
     { title: "The Stream — Bold News" },
@@ -24,8 +25,9 @@ export const Route = createFileRoute("/tv")({
   loaderDeps: ({ search }) => ({
     minRating: search.minRating,
     maxRating: search.maxRating,
+    sort: search.sort,
   }),
-  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.minRating, deps.maxRating)),
+  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.minRating, deps.maxRating, deps.sort)),
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Page,
