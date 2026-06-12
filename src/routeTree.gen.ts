@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TvNewsRouteImport } from './routes/tv-news'
 import { Route as TvRouteImport } from './routes/tv'
 import { Route as TrueCrimeRouteImport } from './routes/true-crime'
+import { Route as SubscribeRouteImport } from './routes/subscribe'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
@@ -38,6 +39,11 @@ const TvRoute = TvRouteImport.update({
 const TrueCrimeRoute = TrueCrimeRouteImport.update({
   id: '/true-crime',
   path: '/true-crime',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscribeRoute = SubscribeRouteImport.update({
+  id: '/subscribe',
+  path: '/subscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
+  '/subscribe': typeof SubscribeRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
+  '/subscribe': typeof SubscribeRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
+  '/subscribe': typeof SubscribeRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/search'
+    | '/subscribe'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/search'
+    | '/subscribe'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/search'
+    | '/subscribe'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
@@ -212,6 +224,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   SearchRoute: typeof SearchRoute
+  SubscribeRoute: typeof SubscribeRoute
   TrueCrimeRoute: typeof TrueCrimeRoute
   TvRoute: typeof TvRoute
   TvNewsRoute: typeof TvNewsRoute
@@ -240,6 +253,13 @@ declare module '@tanstack/react-router' {
       path: '/true-crime'
       fullPath: '/true-crime'
       preLoaderRoute: typeof TrueCrimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscribe': {
+      id: '/subscribe'
+      path: '/subscribe'
+      fullPath: '/subscribe'
+      preLoaderRoute: typeof SubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -364,6 +384,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   SearchRoute: SearchRoute,
+  SubscribeRoute: SubscribeRoute,
   TrueCrimeRoute: TrueCrimeRoute,
   TvRoute: TvRoute,
   TvNewsRoute: TvNewsRoute,
@@ -373,13 +394,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
