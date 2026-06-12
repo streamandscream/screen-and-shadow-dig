@@ -92,7 +92,7 @@ export function PostCard({ post }: { post: PostCardData }) {
       </Link>
       <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{post.excerpt}</p>
       <div className="mt-2 text-[11px] uppercase tracking-widest text-muted-foreground">
-        {post.streamer}{post.rating != null && ` · The Verdict: ${"★".repeat(post.rating)}`}
+        {post.streamer}{post.rating != null && ` · The Verdict: ${post.rating}/10`}
       </div>
       <WhereToWatchLink post={post} />
     </article>
