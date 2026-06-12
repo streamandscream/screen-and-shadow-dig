@@ -66,11 +66,15 @@ function SubscribePage() {
               />
               <button
                 type="submit"
-                className="border-2 border-foreground bg-foreground px-6 py-3 text-sm font-medium uppercase tracking-widest text-background transition-colors hover:bg-background hover:text-foreground"
+                disabled={status === "submitting"}
+                className="border-2 border-foreground bg-foreground px-6 py-3 text-sm font-medium uppercase tracking-widest text-background transition-colors hover:bg-background hover:text-foreground disabled:opacity-60"
               >
-                Subscribe
+                {status === "submitting" ? "Subscribing…" : "Subscribe"}
               </button>
             </form>
+          )}
+          {status === "error" && errorMsg && (
+            <p className="mt-4 text-sm text-destructive">{errorMsg}</p>
           )}
         </div>
       </main>
