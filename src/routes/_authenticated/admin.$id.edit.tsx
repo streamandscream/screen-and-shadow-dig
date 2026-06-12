@@ -61,7 +61,7 @@ function Editor({ form, setForm, save, saving, err }: any) {
           <Field label="Cover image URL"><input className="w-full border border-foreground bg-background p-3" value={form.cover_url || ""} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} /></Field>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Streamer"><input className="w-full border border-foreground bg-background p-3" value={form.streamer || ""} onChange={(e) => setForm({ ...form, streamer: e.target.value })} /></Field>
-            <Field label="The Verdict (1–10)"><input type="number" min={1} max={10} className="w-full border border-foreground bg-background p-3" value={form.rating ?? ""} onChange={(e) => setForm({ ...form, rating: e.target.value ? Number(e.target.value) : null })} /></Field>
+            <Field label="The Verdict (1–5)"><input type="number" min={1} max={5} className="w-full border border-foreground bg-background p-3" value={form.rating ?? ""} onChange={(e) => setForm({ ...form, rating: e.target.value ? Number(e.target.value) : null })} /></Field>
           </div>
           <Field label="Tags (comma separated)">
             <input className="w-full border border-foreground bg-background p-3" value={(form.tags || []).join(", ")} onChange={(e) => setForm({ ...form, tags: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean) })} />
