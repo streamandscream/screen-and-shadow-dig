@@ -34,9 +34,9 @@ export const Route = createFileRoute("/tv")({
 });
 
 function Page() {
-  const { minRating, maxRating } = useSearch({ from: "/tv" });
+  const { minRating, maxRating, sort } = useSearch({ from: "/tv" });
   const navigate = useNavigate({ from: "/tv" });
-  const { data } = useSuspenseQuery(postsQuery(minRating, maxRating));
+  const { data } = useSuspenseQuery(postsQuery(minRating, maxRating, sort));
 
   const updateFilter = (key: "minRating" | "maxRating", value: string) => {
     const num = value ? Number(value) : undefined;
@@ -44,12 +44,23 @@ function Page() {
       search: {
         minRating: key === "minRating" ? num : minRating,
         maxRating: key === "maxRating" ? num : maxRating,
+        sort,
+      },
+    });
+  };
+
+  const updateSort = (value: string) => {
+    navigate({
+      search: {
+        minRating,
+        maxRating,
+        sort: value || undefined,
       },
     });
   };
 
   const clearFilters = () => {
-    navigate({ search: { minRating: undefined, maxRating: undefined } });
+    navigate({ search: { minRating: undefined, maxRating: undefined, sort } });
   };
 
   const active = minRating != null || maxRating != null;
@@ -63,6 +74,19 @@ function Page() {
         <p className="mt-4 max-w-2xl text-muted-foreground">Prestige drama, sharp thrillers, and slow burns worth your evening. Honest takes on what's actually worth watching.</p>
 
         <div className="mt-6 flex flex-wrap gap-4 items-center">
+          <div className="flex items-center gap-2">
+            <label htmlFor="sort" className="eyebrow text-muted-foreground">Sort</label>
+            <select
+              id="sort"
+              value={sort ?? "newest"}
+              onChange={(e) => updateSort(e.target.value)}
+              className="bg-background border-2 border-foreground px-3 py-2 text-sm text-foreground outline-none cursor-pointer"
+            >
+              <option value="newest">Newest</option>
+              <option value="highest_score">Highest score</option>
+              <option value="lowest_score">Lowest score</option>
+            </select>
+          </div>
           <div className="flex items-center gap-2">
             <label htmlFor="min-rating" className="eyebrow text-muted-foreground">Min Verdict</label>
             <select
