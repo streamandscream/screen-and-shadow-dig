@@ -40,11 +40,19 @@ export const listPublishedPosts = createServerFn({ method: "GET" })
       limit: z.number().int().positive().optional(),
       minRating: z.number().int().min(1).max(10).optional(),
       maxRating: z.number().int().min(1).max(10).optional(),
+      sort: z.enum(["newest", "highest_score", "lowest_score"]).optional().default("newest"),
     }).parse(d ?? {})
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    let q = supabaseAdmin.from("posts").select(POST_COLS).eq("published", true).order("created_at", { ascending: false });
+    let q = supabaseAdmin.from("posts").select(POST_COLS).eq("published", true);
+    if (data.sort === "highest_score") {
+      q = q.order("rating", { ascending: false }).order("created_at", { ascending: false });
+    } else if (data.sort === "lowest_score") {
+      q = q.order("rating", { ascending: true }).order("created_at", { ascending: false });
+    } else {
+      q = q.order("created_at", { ascending: false });
+    }
     if (data.section) q = q.eq("section", data.section);
     if (data.limit) q = q.limit(data.limit);
     if (data.minRating != null) q = q.gte("rating", data.minRating);
