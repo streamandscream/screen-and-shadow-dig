@@ -23,7 +23,6 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminNewRouteImport } from './routes/_authenticated/admin.new'
 import { Route as AuthenticatedAdminIngestionHealthRouteImport } from './routes/_authenticated/admin.ingestion-health'
-import { Route as AuthenticatedAdminCoversRouteImport } from './routes/_authenticated/admin.covers'
 import { Route as ApiPublicHooksIngestTvNewsRouteImport } from './routes/api/public/hooks/ingest-tv-news'
 import { Route as AuthenticatedAdminIdEditRouteImport } from './routes/_authenticated/admin.$id.edit'
 
@@ -98,12 +97,6 @@ const AuthenticatedAdminIngestionHealthRoute =
     path: '/ingestion-health',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminCoversRoute =
-  AuthenticatedAdminCoversRouteImport.update({
-    id: '/covers',
-    path: '/covers',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const ApiPublicHooksIngestTvNewsRoute =
   ApiPublicHooksIngestTvNewsRouteImport.update({
     id: '/api/public/hooks/ingest-tv-news',
@@ -128,7 +121,6 @@ export interface FileRoutesByFullPath {
   '/tv-news': typeof TvNewsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
-  '/admin/covers': typeof AuthenticatedAdminCoversRoute
   '/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -146,7 +138,6 @@ export interface FileRoutesByTo {
   '/tv-news': typeof TvNewsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
-  '/admin/covers': typeof AuthenticatedAdminCoversRoute
   '/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -166,7 +157,6 @@ export interface FileRoutesById {
   '/tv-news': typeof TvNewsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
-  '/_authenticated/admin/covers': typeof AuthenticatedAdminCoversRoute
   '/_authenticated/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/_authenticated/admin/new': typeof AuthenticatedAdminNewRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -186,7 +176,6 @@ export interface FileRouteTypes {
     | '/tv-news'
     | '/admin'
     | '/post/$slug'
-    | '/admin/covers'
     | '/admin/ingestion-health'
     | '/admin/new'
     | '/admin/settings'
@@ -204,7 +193,6 @@ export interface FileRouteTypes {
     | '/tv-news'
     | '/admin'
     | '/post/$slug'
-    | '/admin/covers'
     | '/admin/ingestion-health'
     | '/admin/new'
     | '/admin/settings'
@@ -223,7 +211,6 @@ export interface FileRouteTypes {
     | '/tv-news'
     | '/_authenticated/admin'
     | '/post/$slug'
-    | '/_authenticated/admin/covers'
     | '/_authenticated/admin/ingestion-health'
     | '/_authenticated/admin/new'
     | '/_authenticated/admin/settings'
@@ -345,13 +332,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIngestionHealthRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/covers': {
-      id: '/_authenticated/admin/covers'
-      path: '/covers'
-      fullPath: '/admin/covers'
-      preLoaderRoute: typeof AuthenticatedAdminCoversRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/api/public/hooks/ingest-tv-news': {
       id: '/api/public/hooks/ingest-tv-news'
       path: '/api/public/hooks/ingest-tv-news'
@@ -370,7 +350,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminCoversRoute: typeof AuthenticatedAdminCoversRoute
   AuthenticatedAdminIngestionHealthRoute: typeof AuthenticatedAdminIngestionHealthRoute
   AuthenticatedAdminNewRoute: typeof AuthenticatedAdminNewRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
@@ -378,7 +357,6 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminCoversRoute: AuthenticatedAdminCoversRoute,
   AuthenticatedAdminIngestionHealthRoute:
     AuthenticatedAdminIngestionHealthRoute,
   AuthenticatedAdminNewRoute: AuthenticatedAdminNewRoute,
@@ -416,3 +394,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
