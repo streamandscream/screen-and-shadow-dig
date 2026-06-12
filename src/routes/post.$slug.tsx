@@ -58,7 +58,7 @@ function Page() {
         <div className="mt-4 flex flex-wrap gap-3 items-center text-xs uppercase tracking-widest text-muted-foreground border-y border-foreground/50 py-3">
           <span>{date}</span>
           {post.streamer && <span>· {post.streamer}</span>}
-          {post.rating != null && <span>· The Verdict: {"★".repeat(post.rating)}{"☆".repeat(5 - post.rating)}</span>}
+          {post.rating != null && <span>· The Verdict: {post.rating}/10</span>}
           {post.tags?.length > 0 && <span>· {post.tags.join(", ")}</span>}
         </div>
         {post.cover_url && (
