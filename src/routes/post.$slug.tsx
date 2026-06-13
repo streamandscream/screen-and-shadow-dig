@@ -1,13 +1,20 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostBody } from "@/components/PostBody";
 import { WhereToWatchLink } from "@/components/PostCard";
-import { getPostBySlug } from "@/lib/posts.functions";
+import { getPostBySlug, getPostsByTitles } from "@/lib/posts.functions";
 
 const postQuery = (slug: string) => queryOptions({
   queryKey: ["post", slug],
   queryFn: () => getPostBySlug({ data: { slug } }),
+});
+
+const bingeLinksQuery = (titles: string[]) => queryOptions({
+  queryKey: ["binge-links", [...titles].sort()],
+  queryFn: () => getPostsByTitles({ data: { titles } }),
+  enabled: titles.length > 0,
+  staleTime: 5 * 60 * 1000,
 });
 
 export const Route = createFileRoute("/post/$slug")({
