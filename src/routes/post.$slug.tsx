@@ -50,6 +50,9 @@ export const Route = createFileRoute("/post/$slug")({
 function Page() {
   const { slug } = Route.useParams();
   const { data: post } = useSuspenseQuery(postQuery(slug));
+  const bingeTitles: string[] = post?.next_binge ?? [];
+  const { data: bingeLinks } = useQuery(bingeLinksQuery(bingeTitles));
+  const linkMap = new Map((bingeLinks ?? []).map((b) => [b.title.toLowerCase().trim(), b.slug]));
   if (!post) return null;
   const sectionLabel = post.section === "tv" ? "The Stream" : "The Scream";
   const sectionTo = post.section === "tv" ? "/tv" : "/true-crime";
