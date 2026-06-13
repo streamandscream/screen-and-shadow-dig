@@ -11,6 +11,9 @@ type RssItem = {
 
 const SOURCES = [
   { name: "Deadline TV", url: "https://deadline.com/v/tv/feed/" },
+  { name: "Variety TV", url: "https://variety.com/v/tv/feed/" },
+  { name: "THR TV", url: "https://www.hollywoodreporter.com/c/tv/tv-news/feed/" },
+  { name: "TVLine", url: "https://tvline.com/feed/" },
 ];
 
 function decode(text: string): string {
@@ -167,7 +170,6 @@ async function runIngest() {
           const c = classifications[idx] ?? { status: "other" as const, show_title: null, network: null, summary: "" };
           return { item, c };
         })
-        .filter(({ c }) => c.status !== "other")
         .map(({ item, c }) => ({
           title: item.title,
           summary: c.summary || item.description.slice(0, 280),
