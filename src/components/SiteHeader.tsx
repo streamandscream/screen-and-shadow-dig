@@ -24,7 +24,7 @@ export function SiteHeader() {
         <div className="py-6 text-center">
           <Link to="/" className="inline-block">
             <h1 className="font-display text-5xl md:text-7xl tracking-tight lowercase">stream & scream</h1>
-            <p className="eyebrow mt-2 text-muted-foreground">The Stream · The Scream</p>
+            
           </Link>
         </div>
         <nav className="flex flex-wrap justify-center gap-6 border-t border-b border-foreground/80 py-3 text-sm uppercase tracking-widest font-display">
