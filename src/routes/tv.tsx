@@ -87,42 +87,6 @@ function Page() {
               <option value="lowest_score">Lowest score</option>
             </select>
           </div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="min-rating" className="eyebrow text-muted-foreground">Min Verdict</label>
-            <select
-              id="min-rating"
-              value={minRating ?? ""}
-              onChange={(e) => updateFilter("minRating", e.target.value)}
-              className="bg-background border-2 border-foreground px-3 py-2 text-sm text-foreground outline-none cursor-pointer"
-            >
-              <option value="">Any</option>
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="max-rating" className="eyebrow text-muted-foreground">Max Verdict</label>
-            <select
-              id="max-rating"
-              value={maxRating ?? ""}
-              onChange={(e) => updateFilter("maxRating", e.target.value)}
-              className="bg-background border-2 border-foreground px-3 py-2 text-sm text-foreground outline-none cursor-pointer"
-            >
-              <option value="">Any</option>
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-          {active && (
-            <button
-              onClick={clearFilters}
-              className="eyebrow text-accent-red underline hover:no-underline"
-            >
-              Clear
-            </button>
-          )}
         </div>
 
         <section className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
