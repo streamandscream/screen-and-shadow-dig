@@ -38,17 +38,6 @@ function Page() {
   const navigate = useNavigate({ from: "/tv" });
   const { data } = useSuspenseQuery(postsQuery(minRating, maxRating, sort));
 
-  const updateFilter = (key: "minRating" | "maxRating", value: string) => {
-    const num = value ? Number(value) : undefined;
-    navigate({
-      search: {
-        minRating: key === "minRating" ? num : minRating,
-        maxRating: key === "maxRating" ? num : maxRating,
-        sort,
-      },
-    });
-  };
-
   const updateSort = (value: string) => {
     navigate({
       search: {
@@ -58,12 +47,6 @@ function Page() {
       },
     });
   };
-
-  const clearFilters = () => {
-    navigate({ search: { minRating: undefined, maxRating: undefined, sort } });
-  };
-
-  const active = minRating != null || maxRating != null;
 
   return (
     <div className="min-h-screen flex flex-col">
