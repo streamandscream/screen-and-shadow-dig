@@ -23,7 +23,7 @@ export function SiteHeader() {
         <div className="rule" />
         <div className="py-6 text-center">
           <Link to="/" className="inline-block">
-            <h1 className="font-display text-5xl md:text-7xl tracking-tight">BOLD NEWS</h1>
+            <h1 className="font-display text-5xl md:text-7xl tracking-tight lowercase">stream & scream</h1>
             <p className="eyebrow mt-2 text-muted-foreground">The Stream · The Scream</p>
           </Link>
         </div>
@@ -49,7 +49,7 @@ export function SiteFooter() {
   return (
     <footer className="mt-24 border-t-2 border-foreground bg-paper">
       <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row justify-between gap-4 text-sm items-center">
-        <p className="font-display text-lg">BOLD NEWS</p>
+        <p className="font-display text-lg lowercase">stream & scream</p>
         <nav className="flex flex-wrap justify-center gap-6 uppercase tracking-widest font-display text-xs">
           <Link to="/">Home</Link>
           <Link to="/tv">The Stream</Link>
@@ -57,7 +57,7 @@ export function SiteFooter() {
           <Link to="/tv-news">TV News</Link>
           <Link to="/subscribe">Subscribe</Link>
         </nav>
-        <p className="text-muted-foreground">© {new Date().getFullYear()} Bold News. Reviews on The Stream and The Scream.</p>
+        <p className="text-muted-foreground lowercase">© {new Date().getFullYear()} stream & scream. Reviews on The Stream and The Scream.</p>
       </div>
     </footer>
   );
