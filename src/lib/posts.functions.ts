@@ -62,6 +62,34 @@ export const listPublishedPosts = createServerFn({ method: "GET" })
     return rows ?? [];
   });
 
+export const getPostsByTitles = createServerFn({ method: "GET" })
+  .inputValidator((d: { titles: string[] }) =>
+    z.object({ titles: z.array(z.string().min(1).max(200)).max(10) }).parse(d)
+  )
+  .handler(async ({ data }) => {
+    if (data.titles.length === 0) return [] as { title: string; slug: string }[];
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("posts")
+      .select("title, slug")
+      .eq("published", true)
+      .in("title", data.titles);
+    if (error) throw new Error(error.message);
+    const lookup = new Map<string, string>();
+    for (const r of rows ?? []) lookup.set(r.title.toLowerCase().trim(), r.slug);
+    const extras: { title: string; slug: string }[] = [];
+    // case-insensitive fallback
+    if ((rows ?? []).length < data.titles.length) {
+      const { data: all } = await supabaseAdmin.from("posts").select("title, slug").eq("published", true);
+      for (const r of all ?? []) lookup.set(r.title.toLowerCase().trim(), r.slug);
+    }
+    for (const t of data.titles) {
+      const slug = lookup.get(t.toLowerCase().trim());
+      if (slug) extras.push({ title: t, slug });
+    }
+    return extras;
+  });
+
 export const searchPosts = createServerFn({ method: "GET" })
   .inputValidator((d: { q?: string; tag?: string; streamer?: string }) =>
     z.object({

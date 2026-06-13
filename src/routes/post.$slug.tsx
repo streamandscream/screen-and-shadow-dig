@@ -1,13 +1,20 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostBody } from "@/components/PostBody";
 import { WhereToWatchLink } from "@/components/PostCard";
-import { getPostBySlug } from "@/lib/posts.functions";
+import { getPostBySlug, getPostsByTitles } from "@/lib/posts.functions";
 
 const postQuery = (slug: string) => queryOptions({
   queryKey: ["post", slug],
   queryFn: () => getPostBySlug({ data: { slug } }),
+});
+
+const bingeLinksQuery = (titles: string[]) => queryOptions({
+  queryKey: ["binge-links", [...titles].sort()],
+  queryFn: () => getPostsByTitles({ data: { titles } }),
+  enabled: titles.length > 0,
+  staleTime: 5 * 60 * 1000,
 });
 
 export const Route = createFileRoute("/post/$slug")({
@@ -43,6 +50,9 @@ export const Route = createFileRoute("/post/$slug")({
 function Page() {
   const { slug } = Route.useParams();
   const { data: post } = useSuspenseQuery(postQuery(slug));
+  const bingeTitles: string[] = post?.next_binge ?? [];
+  const { data: bingeLinks } = useQuery(bingeLinksQuery(bingeTitles));
+  const linkMap = new Map((bingeLinks ?? []).map((b) => [b.title.toLowerCase().trim(), b.slug]));
   if (!post) return null;
   const sectionLabel = post.section === "tv" ? "The Stream" : "The Scream";
   const sectionTo = post.section === "tv" ? "/tv" : "/true-crime";
@@ -83,9 +93,21 @@ function Page() {
               <div>
                 <p className="eyebrow text-accent-red">Your next binge if you loved {post.title}</p>
                 <ul className="mt-2 space-y-1">
-                  {post.next_binge.map((title: string) => (
-                    <li key={title} className="font-display text-xl">→ {title}</li>
-                  ))}
+                  {post.next_binge.map((title: string) => {
+                    const matchSlug = linkMap.get(title.toLowerCase().trim());
+                    return (
+                      <li key={title} className="font-display text-xl">
+                        →{" "}
+                        {matchSlug ? (
+                          <Link to="/post/$slug" params={{ slug: matchSlug }} className="underline hover:text-accent-red">
+                            {title}
+                          </Link>
+                        ) : (
+                          title
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
