@@ -57,7 +57,7 @@ export function SiteFooter() {
           <Link to="/tv-news">TV News</Link>
           <Link to="/subscribe">Subscribe</Link>
         </nav>
-        <p className="text-muted-foreground lowercase">© {new Date().getFullYear()} stream & scream. Reviews on The Stream and The Scream.</p>
+        <p className="text-muted-foreground lowercase">© {new Date().getFullYear()} stream & scream</p>
       </div>
     </footer>
   );
