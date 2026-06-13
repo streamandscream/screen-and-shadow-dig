@@ -11,6 +11,9 @@ type RssItem = {
 
 const SOURCES = [
   { name: "Deadline TV", url: "https://deadline.com/v/tv/feed/" },
+  { name: "Variety TV", url: "https://variety.com/v/tv/feed/" },
+  { name: "THR TV", url: "https://www.hollywoodreporter.com/c/tv/tv-news/feed/" },
+  { name: "TVLine", url: "https://tvline.com/feed/" },
 ];
 
 function decode(text: string): string {
