@@ -170,7 +170,6 @@ async function runIngest() {
           const c = classifications[idx] ?? { status: "other" as const, show_title: null, network: null, summary: "" };
           return { item, c };
         })
-        .filter(({ c }) => c.status !== "other")
         .map(({ item, c }) => ({
           title: item.title,
           summary: c.summary || item.description.slice(0, 280),
