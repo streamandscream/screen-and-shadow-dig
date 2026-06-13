@@ -18,7 +18,7 @@ export function SiteHeader() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex items-center justify-between py-2 text-[11px] uppercase tracking-widest text-muted-foreground">
           <span>{today}</span>
-          <span>Vol. 1 · The Editorial</span>
+          <span>{"\n"}</span>
         </div>
         <div className="rule" />
         <div className="py-6 text-center">
