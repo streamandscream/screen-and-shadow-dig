@@ -75,7 +75,7 @@ export function FeatureCard({ post }: { post: PostCardData }) {
   );
 }
 
-export function PostCard({ post }: { post: PostCardData }) {
+export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData; showWhereToWatch?: boolean }) {
   return (
     <article className="flex flex-col">
       <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper">
@@ -94,7 +94,7 @@ export function PostCard({ post }: { post: PostCardData }) {
       <div className="mt-2 text-[11px] uppercase tracking-widest text-muted-foreground">
         {post.streamer}{post.rating != null && ` · The Verdict: ${post.rating}/10`}
       </div>
-      <WhereToWatchLink post={post} />
+      {showWhereToWatch && <WhereToWatchLink post={post} />}
     </article>
   );
 }
