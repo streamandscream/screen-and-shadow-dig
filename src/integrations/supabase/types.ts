@@ -83,6 +83,7 @@ export type Database = {
           tags: string[]
           title: string
           updated_at: string
+          vibe: string | null
         }
         Insert: {
           author_id?: string | null
@@ -104,6 +105,7 @@ export type Database = {
           tags?: string[]
           title: string
           updated_at?: string
+          vibe?: string | null
         }
         Update: {
           author_id?: string | null
@@ -125,6 +127,7 @@ export type Database = {
           tags?: string[]
           title?: string
           updated_at?: string
+          vibe?: string | null
         }
         Relationships: []
       }
