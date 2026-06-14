@@ -1,8 +1,8 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-// Flatten any headings to plain paragraphs — post page enforces a no-subheading layout.
-const flattenHeading = ({ children }: { children?: React.ReactNode }) => <p>{children}</p>;
+// Flatten any headings to bold plain paragraphs — post page enforces a no-subheading layout.
+const flattenHeading = ({ children }: { children?: React.ReactNode }) => <p><strong>{children}</strong></p>;
 
 export function PostBody({ children }: { children: string }) {
   return (
