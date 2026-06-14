@@ -23,7 +23,7 @@ function NewPost() {
   async function save() {
     setSaving(true); setErr(null);
     try {
-      const payload: any = { ...form, cover_url: form.cover_url || null, streamer: form.streamer || null, justwatch_slug: form.justwatch_slug || null, favourite_episode: form.favourite_episode || null };
+      const payload: any = { ...form, cover_url: form.cover_url || null, streamer: form.streamer || null, justwatch_slug: form.justwatch_slug || null, favourite_episode: form.favourite_episode || null, vibe: form.vibe || null };
       delete payload.id;
       await saveFn({ data: payload });
       navigate({ to: "/admin" });
