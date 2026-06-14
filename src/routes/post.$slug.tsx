@@ -78,6 +78,12 @@ function Page() {
           </>
         )}
         <WhereToWatchLink post={post as any} className="mt-6 inline-block border border-foreground px-5 py-3 font-display uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors" />
+        {(post as any).vibe && (
+          <div className="mt-8 border-l-4 border-accent-red pl-4">
+            <p className="eyebrow text-accent-red">The Vibe</p>
+            <p className="font-display text-2xl mt-1">{(post as any).vibe}</p>
+          </div>
+        )}
         <div className="mt-8">
           <PostBody>{post.body}</PostBody>
         </div>
