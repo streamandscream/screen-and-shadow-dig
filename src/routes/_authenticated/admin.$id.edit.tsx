@@ -35,6 +35,7 @@ function EditPost() {
         justwatch_country: form.justwatch_country || "us",
         favourite_episode: form.favourite_episode || null,
         next_binge: form.next_binge || [],
+        vibe: form.vibe || null,
       } });
       navigate({ to: "/admin" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Failed"); }
