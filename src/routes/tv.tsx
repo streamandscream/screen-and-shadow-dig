@@ -73,7 +73,7 @@ function Page() {
         </div>
 
         <section className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {data.map((p) => <PostCard key={p.id} post={p} />)}
+          {data.map((p) => <PostCard key={p.id} post={p} showWhereToWatch={false} />)}
         </section>
       </main>
       <SiteFooter />
