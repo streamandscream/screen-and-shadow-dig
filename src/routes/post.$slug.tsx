@@ -64,26 +64,18 @@ function Page() {
       <main className="mx-auto max-w-3xl px-6 py-12 w-full flex-1">
         <Link to={sectionTo} className="eyebrow text-accent-red">{sectionLabel}</Link>
         <h1 className="font-display text-5xl md:text-6xl mt-3">{post.title}</h1>
-        <p className="mt-4 text-xl text-muted-foreground">{post.excerpt}</p>
-        <div className="mt-4 flex flex-wrap gap-3 items-center text-xs uppercase tracking-widest text-muted-foreground border-y border-foreground/50 py-3">
-          <span>{date}</span>
-          {post.streamer && <span>· {post.streamer}</span>}
-          {post.rating != null && <span>· The Verdict: {post.rating}/10</span>}
-          {post.tags?.length > 0 && <span>· {post.tags.join(", ")}</span>}
-        </div>
         {post.cover_url && (
           <>
             <img src={post.cover_url} alt={post.title} className="mt-6 w-full h-[420px] object-cover bg-paper" />
             <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>
           </>
         )}
-        <WhereToWatchLink post={post as any} className="mt-6 inline-block border border-foreground px-5 py-3 font-display uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors" />
         {(post as any).vibe && (
-          <div className="mt-8 border-l-4 border-accent-red pl-4">
-            <p className="eyebrow text-accent-red">The Vibe</p>
-            <p className="font-display text-2xl mt-1">{(post as any).vibe}</p>
-          </div>
+          <blockquote className="mt-8 border-l-4 border-accent-red pl-5">
+            <p className="font-display text-3xl md:text-4xl italic leading-tight">“{(post as any).vibe}”</p>
+          </blockquote>
         )}
+        <WhereToWatchLink post={post as any} className="mt-8 inline-block border border-foreground px-5 py-3 font-display uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors" />
         <div className="mt-8">
           <PostBody>{post.body}</PostBody>
         </div>
@@ -124,3 +116,4 @@ function Page() {
     </div>
   );
 }
+
