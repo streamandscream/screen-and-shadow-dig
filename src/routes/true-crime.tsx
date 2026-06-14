@@ -4,16 +4,14 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostCard } from "@/components/PostCard";
 import { listPublishedPosts } from "@/lib/posts.functions";
 
-const postsQuery = (minRating?: number, maxRating?: number, sort?: string) =>
+const postsQuery = (sort?: string) =>
   queryOptions({
-    queryKey: ["posts", "true_crime", minRating, maxRating, sort],
-    queryFn: () => listPublishedPosts({ data: { section: "true_crime", minRating, maxRating, sort } }),
+    queryKey: ["posts", "true_crime", sort],
+    queryFn: () => listPublishedPosts({ data: { section: "true_crime", sort } }),
   });
 
 export const Route = createFileRoute("/true-crime")({
   validateSearch: (search: Record<string, unknown>) => ({
-    minRating: typeof search.minRating === "string" ? Number(search.minRating) || undefined : undefined,
-    maxRating: typeof search.maxRating === "string" ? Number(search.maxRating) || undefined : undefined,
     sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
   }),
   head: () => ({ meta: [
@@ -23,47 +21,26 @@ export const Route = createFileRoute("/true-crime")({
     { property: "og:description", content: "Deep dives into true crime documentaries." },
   ] }),
   loaderDeps: ({ search }) => ({
-    minRating: search.minRating,
-    maxRating: search.maxRating,
     sort: search.sort,
   }),
-  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.minRating, deps.maxRating, deps.sort)),
+  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.sort)),
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Page,
 });
 
 function Page() {
-  const { minRating, maxRating, sort } = useSearch({ from: "/true-crime" });
+  const { sort } = useSearch({ from: "/true-crime" });
   const navigate = useNavigate({ from: "/true-crime" });
-  const { data } = useSuspenseQuery(postsQuery(minRating, maxRating, sort));
-
-  const updateFilter = (key: "minRating" | "maxRating", value: string) => {
-    const num = value ? Number(value) : undefined;
-    navigate({
-      search: {
-        minRating: key === "minRating" ? num : minRating,
-        maxRating: key === "maxRating" ? num : maxRating,
-        sort,
-      },
-    });
-  };
+  const { data } = useSuspenseQuery(postsQuery(sort));
 
   const updateSort = (value: string) => {
     navigate({
       search: {
-        minRating,
-        maxRating,
         sort: value || undefined,
       },
     });
   };
-
-  const clearFilters = () => {
-    navigate({ search: { minRating: undefined, maxRating: undefined, sort } });
-  };
-
-  const active = minRating != null || maxRating != null;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -87,42 +64,6 @@ function Page() {
               <option value="lowest_score">Lowest score</option>
             </select>
           </div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="min-rating" className="eyebrow text-muted-foreground">Min Verdict</label>
-            <select
-              id="min-rating"
-              value={minRating ?? ""}
-              onChange={(e) => updateFilter("minRating", e.target.value)}
-              className="bg-background border-2 border-foreground px-3 py-2 text-sm text-foreground outline-none cursor-pointer"
-            >
-              <option value="">Any</option>
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="max-rating" className="eyebrow text-muted-foreground">Max Verdict</label>
-            <select
-              id="max-rating"
-              value={maxRating ?? ""}
-              onChange={(e) => updateFilter("maxRating", e.target.value)}
-              className="bg-background border-2 border-foreground px-3 py-2 text-sm text-foreground outline-none cursor-pointer"
-            >
-              <option value="">Any</option>
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-          {active && (
-            <button
-              onClick={clearFilters}
-              className="eyebrow text-accent-red underline hover:no-underline"
-            >
-              Clear
-            </button>
-          )}
         </div>
 
         <section className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
