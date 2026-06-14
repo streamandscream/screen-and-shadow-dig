@@ -79,6 +79,14 @@ function Page() {
         <div className="mt-8">
           <PostBody>{post.body}</PostBody>
         </div>
+        {post.rating != null && (
+          <div className="mt-10 border-t-2 border-foreground pt-6">
+            <p className="eyebrow text-accent-red">The verdict</p>
+            <p className="font-display text-4xl mt-2">
+              {post.rating}<span className="text-2xl text-muted-foreground">/10</span>
+            </p>
+          </div>
+        )}
         {(post.section === "tv" && post.favourite_episode) || (post.next_binge && post.next_binge.length > 0) ? (
           <aside className="mt-12 border-t-2 border-foreground pt-6 space-y-6">
             {post.section === "tv" && post.favourite_episode && (
