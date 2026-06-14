@@ -136,6 +136,7 @@ const PostInput = z.object({
   justwatch_country: z.string().min(2).max(5).regex(/^[a-z-]+$/).default("us"),
   favourite_episode: z.string().max(300).nullable().optional(),
   next_binge: z.array(z.string().min(1).max(120)).max(3).default([]),
+  vibe: z.string().max(160).nullable().optional(),
 });
 
 export const listMyPosts = createServerFn({ method: "GET" })
