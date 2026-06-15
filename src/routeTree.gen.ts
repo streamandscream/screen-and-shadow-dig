@@ -20,6 +20,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostSlugRouteImport } from './routes/post.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminStreamRouteImport } from './routes/_authenticated/admin.stream'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminRecommendationsRouteImport } from './routes/_authenticated/admin.recommendations'
 import { Route as AuthenticatedAdminNewRouteImport } from './routes/_authenticated/admin.new'
@@ -81,6 +82,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminStreamRoute =
+  AuthenticatedAdminStreamRouteImport.update({
+    id: '/stream',
+    path: '/stream',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -132,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
 }
@@ -150,6 +158,7 @@ export interface FileRoutesByTo {
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
 }
@@ -170,6 +179,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/new': typeof AuthenticatedAdminNewRoute
   '/_authenticated/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/_authenticated/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
 }
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/admin/new'
     | '/admin/recommendations'
     | '/admin/settings'
+    | '/admin/stream'
     | '/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
   fileRoutesByTo: FileRoutesByTo
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/admin/new'
     | '/admin/recommendations'
     | '/admin/settings'
+    | '/admin/stream'
     | '/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
   id:
@@ -227,6 +239,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/new'
     | '/_authenticated/admin/recommendations'
     | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/stream'
     | '/_authenticated/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
   fileRoutesById: FileRoutesById
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/stream': {
+      id: '/_authenticated/admin/stream'
+      path: '/stream'
+      fullPath: '/admin/stream'
+      preLoaderRoute: typeof AuthenticatedAdminStreamRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -374,6 +394,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminNewRoute: typeof AuthenticatedAdminNewRoute
   AuthenticatedAdminRecommendationsRoute: typeof AuthenticatedAdminRecommendationsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminStreamRoute: typeof AuthenticatedAdminStreamRoute
   AuthenticatedAdminIdEditRoute: typeof AuthenticatedAdminIdEditRoute
 }
 
@@ -384,6 +405,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminRecommendationsRoute:
     AuthenticatedAdminRecommendationsRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminStreamRoute: AuthenticatedAdminStreamRoute,
   AuthenticatedAdminIdEditRoute: AuthenticatedAdminIdEditRoute,
 }
 

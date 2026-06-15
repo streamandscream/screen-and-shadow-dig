@@ -65,6 +65,9 @@ function Admin() {
             <Link to="/admin/new" className="bg-foreground text-background px-4 py-2 font-display uppercase tracking-widest text-sm">
               New post
             </Link>
+            <Link to="/admin/stream" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
+              Manage Stream
+            </Link>
             <Link to="/admin/recommendations" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Recommendations
             </Link>
