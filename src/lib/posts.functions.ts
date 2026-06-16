@@ -37,6 +37,7 @@ export const listPublishedPosts = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) =>
     z.object({
       section: z.enum(["tv", "true_crime"]).optional(),
+      sections: z.array(z.enum(["tv", "true_crime"])).optional(),
       limit: z.number().int().positive().optional(),
       minRating: z.number().int().min(1).max(10).optional(),
       maxRating: z.number().int().min(1).max(10).optional(),
@@ -53,7 +54,11 @@ export const listPublishedPosts = createServerFn({ method: "GET" })
     } else {
       q = q.order("created_at", { ascending: false });
     }
-    if (data.section) q = q.eq("section", data.section);
+    if (data.sections && data.sections.length > 0) {
+      q = q.in("section", data.sections);
+    } else if (data.section) {
+      q = q.eq("section", data.section);
+    }
     if (data.limit) q = q.limit(data.limit);
     if (data.minRating != null) q = q.gte("rating", data.minRating);
     if (data.maxRating != null) q = q.lte("rating", data.maxRating);
