@@ -36,7 +36,7 @@ function Home() {
             </div>
           </section>
           <section>
-            <div className="flex items-end justify-between border-b-2 border-foreground pb-2 mb-4 mb-6">
+            <div className="flex items-end justify-between border-b-2 border-foreground pb-2 mb-6">
               <h2 className="font-display text-3xl">The Scream</h2>
               <a href="/true-crime" className="eyebrow underline">See all</a>
             </div>
