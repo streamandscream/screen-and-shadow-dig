@@ -4,9 +4,9 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { FeatureCard, PostCard } from "@/components/PostCard";
 import { listPublishedPosts } from "@/lib/posts.functions";
 
-const allPostsQuery = queryOptions({
-  queryKey: ["posts", "all"],
-  queryFn: () => listPublishedPosts({ data: {} }),
+const homePostsQuery = queryOptions({
+  queryKey: ["posts", "home"],
+  queryFn: () => listPublishedPosts({ data: { sections: ["tv", "true_crime"], limit: 6 } }),
 });
 
 export const Route = createFileRoute("/")({
