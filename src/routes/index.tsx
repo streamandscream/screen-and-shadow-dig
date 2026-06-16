@@ -10,7 +10,7 @@ const homePostsQuery = queryOptions({
 });
 
 export const Route = createFileRoute("/")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(allPostsQuery),
+  loader: ({ context }) => context.queryClient.ensureQueryData(homePostsQuery),
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Home,
