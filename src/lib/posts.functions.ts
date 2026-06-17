@@ -161,11 +161,32 @@ export const getMyPost = createServerFn({ method: "GET" })
     return row;
   });
 
+async function tmdbPoster(title: string, type: "tv-show" | "movie"): Promise<string | null> {
+  const key = process.env.TMDB_API_KEY;
+  if (!key || !title.trim()) return null;
+  const endpoint = type === "movie" ? "movie" : "tv";
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/search/${endpoint}?query=${encodeURIComponent(title.trim())}&include_adult=false&language=en-US&page=1`,
+      { headers: { Authorization: `Bearer ${key}`, accept: "application/json" } },
+    );
+    if (!res.ok) return null;
+    const json: any = await res.json();
+    const top = json?.results?.[0];
+    return top?.poster_path ? `https://image.tmdb.org/t/p/original${top.poster_path}` : null;
+  } catch { return null; }
+}
+
 export const upsertPost = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => PostInput.parse(d))
   .handler(async ({ data, context }) => {
-    const payload = { ...data, author_id: context.userId };
+    let cover_url = data.cover_url ?? null;
+    if (data.published && !cover_url) {
+      const type = data.section === "tv" ? data.justwatch_type : "movie";
+      cover_url = await tmdbPoster(data.title, type);
+    }
+    const payload = { ...data, cover_url, author_id: context.userId };
     const { data: row, error } = await context.supabase.from("posts").upsert(payload, { onConflict: "id" }).select(POST_COLS).single();
     if (error) throw new Error(error.message);
     return row;
