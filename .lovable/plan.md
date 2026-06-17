@@ -1,34 +1,21 @@
-# Restructure post page + shorten sample reviews
+## Goal
+Add a "Fetch TMDB" button next to the title field in the admin post editor that looks up the title on TMDB and auto-fills the cover image (and offers a sensible excerpt fallback).
 
-## New post page layout (src/routes/post.$slug.tsx)
+## Changes
 
-Reorder and simplify the article page so every post follows this exact flow:
+1. **New server function** `src/lib/tmdb.functions.ts`
+   - `fetchTmdbMeta` (auth-required, uses `requireSupabaseAuth` middleware).
+   - Input: `{ title: string; type: "tv-show" | "movie" }`.
+   - Calls TMDB `search/tv` or `search/movie` with `process.env.TMDB_API_KEY` as a Bearer token.
+   - Returns top match: `{ cover_url, overview, tmdb_id, name }` where `cover_url` = `https://image.tmdb.org/t/p/original{poster_path}` or `null` if no match.
 
-1. **Section eyebrow** (The Stream / The Scream) + **Title** (H1)
-2. **Cover image**
-3. **Quote / one-liner** — the existing `vibe` field, styled as a pull quote (large, italic, accent-red rule)
-4. **Where to watch** — JustWatch button
-5. **Short review body** — plain paragraphs only, no H2 subheadings
-6. **Our favourite episode** (Stream only, if present)
-7. **Your next binge if you loved [title]** — 2–3 linked picks
+2. **Editor UI** `src/routes/_authenticated/admin.$id.edit.tsx`
+   - Add a small "Fetch TMDB" button next to the Title field.
+   - On click: call `fetchTmdbMeta` with the current title and (for TV) `tv-show` else `movie` based on `form.section`/`form.justwatch_type`.
+   - Populate `cover_url` (always overwrite if found) and set `excerpt` only if currently empty.
+   - Show inline status: "Searching…", "No match found", or error.
 
-Remove from the page:
-- The excerpt paragraph under the title (the vibe replaces it as the hook)
-- The date / streamer / rating / tags metadata strip
-- Any H2 rendering inside `PostBody` — switch the markdown renderer to strip/flatten headings so older bodies with `##` sections render as plain paragraphs (keeps existing data safe while enforcing the new look)
+3. No DB/migration changes. `TMDB_API_KEY` already exists in secrets.
 
-## Shorten Dahmer and Lioness as examples
-
-Rewrite both review bodies to ~3 short paragraphs, no subheadings, no bullet lists. Tight critic voice, ending on a verdict line. Update via a data change to `posts.body` for slugs `dahmer` and `special-ops-lioness`. Leave all other posts untouched for now — these two are the template the rest will follow later.
-
-## Out of scope (this step)
-
-- Bulk-regenerating the other 60+ Stream bodies (next step, once you approve the Dahmer/Lioness shape)
-- Editing the admin editor
-- Any True Crime (`/the-scream`) layout changes beyond the shared post page (it already uses the same route, so it inherits the new layout automatically)
-
-## Technical notes
-
-- `PostBody` currently renders markdown as-is. Add a `remark` step (or simple component override) so `h1`–`h6` render as `<p class="font-display ...">` or are demoted to plain paragraphs, ensuring no subheadings appear even if old markdown contains `##`.
-- Vibe block moves above "Where to watch" and grows in visual weight (larger display type, accent rule).
-- Two `supabase--insert` UPDATE statements for the Dahmer + Lioness bodies.
+## Out of scope
+- Bulk import, episode lookup, multiple-match picker (single top result only).

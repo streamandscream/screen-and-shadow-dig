@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { upsertPost, getMyPost } from "@/lib/posts.functions";
+import { fetchTmdbMeta } from "@/lib/tmdb.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/$id/edit")({
   component: EditPost,
@@ -47,13 +48,41 @@ function EditPost() {
 }
 
 function Editor({ form, setForm, save, saving, err }: any) {
+  const tmdbFn = useServerFn(fetchTmdbMeta);
+  const [tmdbStatus, setTmdbStatus] = useState<string | null>(null);
+  const [tmdbLoading, setTmdbLoading] = useState(false);
+  async function runTmdb() {
+    if (!form.title?.trim()) { setTmdbStatus("Enter a title first"); return; }
+    setTmdbLoading(true); setTmdbStatus(null);
+    try {
+      const type = form.section === "tv" ? "tv-show" : (form.justwatch_type === "movie" ? "movie" : "tv-show");
+      const res: any = await tmdbFn({ data: { title: form.title.trim(), type } });
+      if (!res.found) { setTmdbStatus("No match found"); return; }
+      setForm({
+        ...form,
+        cover_url: res.cover_url || form.cover_url,
+        excerpt: form.excerpt?.trim() ? form.excerpt : (res.overview || ""),
+      });
+      setTmdbStatus(`Matched: ${res.name}`);
+    } catch (e) {
+      setTmdbStatus(e instanceof Error ? e.message : "TMDB lookup failed");
+    } finally { setTmdbLoading(false); }
+  }
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-6 py-12 w-full flex-1">
         <h1 className="font-display text-4xl border-b-2 border-foreground pb-4">Edit post</h1>
         <div className="mt-6 space-y-4">
-          <Field label="Title"><input className="w-full border border-foreground bg-background p-3" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></Field>
+          <Field label="Title">
+            <div className="flex gap-2">
+              <input className="w-full border border-foreground bg-background p-3" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+              <button type="button" onClick={runTmdb} disabled={tmdbLoading} className="border border-foreground px-4 font-display uppercase text-xs tracking-widest disabled:opacity-50 whitespace-nowrap">
+                {tmdbLoading ? "Fetching…" : "Fetch TMDB"}
+              </button>
+            </div>
+            {tmdbStatus && <p className="mt-1 text-xs text-muted-foreground">{tmdbStatus}</p>}
+          </Field>
           <Field label="Slug"><input className="w-full border border-foreground bg-background p-3" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></Field>
           <Field label="Section">
             <select className="w-full border border-foreground bg-background p-3" value={form.section} onChange={(e) => setForm({ ...form, section: e.target.value })}>
