@@ -82,48 +82,50 @@ function TvNewsPage() {
           {items.length === 0 ? (
             <p className="text-muted-foreground">No news yet. The ingestion job will populate this feed shortly.</p>
           ) : (
-            <ul className="divide-y-2 divide-foreground border-y-2 border-foreground">
-              {items.map((item) => (
-                <li key={item.id} className="py-6 grid md:grid-cols-[140px_1fr_auto] gap-6 items-start">
-                  <span
-                    className={
-                      "inline-block w-fit px-3 py-1 text-[10px] uppercase tracking-widest font-display " +
-                      statusStyles[item.status]
-                    }
-                  >
-                    {item.status}
-                  </span>
-                  <div>
+            <ul className="divide-y divide-border border-y border-border">
+              {items.map((item) => {
+                const rest = item.show_title && item.title.includes(":")
+                  ? item.title.slice(item.title.indexOf(":") + 1).trim()
+                  : item.title;
+                return (
+                  <li key={item.id} className="py-5">
                     <a
                       href={item.source_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-display text-2xl hover:underline underline-offset-4"
+                      className="grid grid-cols-[120px_1fr] gap-4 items-start group"
                     >
-                      {item.show_title ?? item.title}
+                      <div className="aspect-video bg-paper overflow-hidden border border-border">
+                        {item.image_url ? (
+                          <img src={item.image_url} alt="" loading="lazy" className="w-full h-full object-cover" />
+                        ) : null}
+                      </div>
+                      <div>
+                        {item.status !== "other" && (
+                          <span
+                            className={
+                              "inline-block mb-1 px-2 py-0.5 text-[10px] uppercase tracking-widest font-display " +
+                              statusStyles[item.status]
+                            }
+                          >
+                            {item.status}
+                          </span>
+                        )}
+                        <h2 className="font-display text-lg leading-snug group-hover:underline underline-offset-4">
+                          {item.show_title ? (
+                            <>
+                              <em>{item.show_title}:</em> {rest}
+                            </>
+                          ) : (
+                            item.title
+                          )}
+                        </h2>
+                        <p className="mt-1 text-xs text-muted-foreground">{formatDate(item.published_at)}</p>
+                      </div>
                     </a>
-                    {item.show_title && (
-                      <p className="mt-1 text-sm text-foreground">{item.title}</p>
-                    )}
-                    {item.summary && (
-                      <p className="mt-2 text-muted-foreground">{item.summary}</p>
-                    )}
-                    <div className="mt-2 flex flex-wrap gap-3 text-[11px] uppercase tracking-widest text-muted-foreground">
-                      {item.network && <span>{item.network}</span>}
-                      <span>· {item.source_name}</span>
-                      <span>· {formatDate(item.published_at)}</span>
-                    </div>
-                  </div>
-                  <a
-                    href={item.source_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hidden md:inline-block border border-foreground px-3 py-2 font-display uppercase tracking-widest text-xs hover:bg-foreground hover:text-background transition-colors"
-                  >
-                    Read →
-                  </a>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>
