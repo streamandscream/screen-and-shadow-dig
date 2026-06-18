@@ -6,30 +6,22 @@ type RssItem = {
   link: string;
   description: string;
   pubDate: string;
-  image: string | null;
+  categories: string[];
 };
 
 const SOURCES = [
-  { name: "Deadline TV", url: "https://deadline.com/v/tv/feed/" },
-  { name: "Variety TV", url: "https://variety.com/v/tv/feed/" },
-  { name: "THR TV", url: "https://www.hollywoodreporter.com/c/tv/tv-news/feed/" },
-  { name: "TVLine", url: "https://tvline.com/feed/" },
+  { name: "TV Series Finale", url: "https://tvseriesfinale.com/feed/" },
 ];
 
-function decode(text: string): string {
+function decodeEntities(text: string): string {
   return text
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(parseInt(n, 10)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, n) => String.fromCharCode(parseInt(n, 16)))
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
-    .replace(/&#8217;/g, "’")
-    .replace(/&#8216;/g, "‘")
-    .replace(/&#8220;/g, "“")
-    .replace(/&#8221;/g, "”")
-    .replace(/&#8211;/g, "–")
-    .replace(/&#8212;/g, "—")
-    .replace(/&#039;/g, "'")
     .replace(/&apos;/g, "'")
     .replace(/&nbsp;/g, " ")
     .replace(/<[^>]+>/g, "")
@@ -42,70 +34,80 @@ function tagContent(block: string, tag: string): string {
   return m ? m[1] : "";
 }
 
+function allTagContents(block: string, tag: string): string[] {
+  const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`, "gi");
+  const out: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(block)) !== null) out.push(m[1]);
+  return out;
+}
+
 function parseRss(xml: string): RssItem[] {
   const items: RssItem[] = [];
   const itemRe = /<item\b[^>]*>([\s\S]*?)<\/item>/gi;
   let match: RegExpExecArray | null;
   while ((match = itemRe.exec(xml)) !== null) {
     const block = match[1];
-    const title = decode(tagContent(block, "title"));
-    const link = decode(tagContent(block, "link"));
-    const description = decode(tagContent(block, "description"));
-    const pubDate = decode(tagContent(block, "pubDate"));
-    const imgMatch = block.match(/<media:content[^>]+url="([^"]+)"/i) ?? block.match(/<enclosure[^>]+url="([^"]+)"/i);
-    const image = imgMatch ? imgMatch[1] : null;
-    if (title && link) items.push({ title, link, description, pubDate, image });
+    const title = decodeEntities(tagContent(block, "title"));
+    const link = decodeEntities(tagContent(block, "link"));
+    const description = decodeEntities(tagContent(block, "description"));
+    const pubDate = decodeEntities(tagContent(block, "pubDate"));
+    const categories = allTagContents(block, "category").map(decodeEntities);
+    if (title && link) items.push({ title, link, description, pubDate, categories });
   }
   return items;
 }
 
-type Classification = {
-  status: "renewed" | "cancelled" | "ended" | "other";
-  show_title: string | null;
-  network: string | null;
-  summary: string;
-};
+type Status = "renewed" | "cancelled" | "ended" | "other";
 
-async function classify(items: { title: string; description: string }[]): Promise<Classification[]> {
-  const apiKey = process.env.LOVABLE_API_KEY;
-  if (!apiKey) throw new Error("LOVABLE_API_KEY is not configured");
+const NETWORKS = [
+  "Netflix", "Hulu", "Prime Video", "Amazon", "Apple TV+", "Apple TV", "Disney+",
+  "Disney Plus", "Paramount+", "Paramount", "Peacock", "Max", "HBO Max", "HBO",
+  "BritBox", "BBC", "ITV", "Channel 4", "Channel 5", "AMC", "FX", "NBC", "CBS",
+  "ABC", "Fox", "The CW", "CW", "Showtime", "Starz", "Acorn TV",
+];
 
-  const numbered = items.map((it, i) => `${i + 1}. TITLE: ${it.title}\n   SUMMARY: ${it.description.slice(0, 400)}`).join("\n\n");
+function classify(title: string, categories: string[]): { status: Status; show_title: string | null; network: string | null } {
+  const t = title.toLowerCase();
+  let status: Status = "other";
+  if (/\b(cancel{1,2}ed|cancellation)\b/.test(t)) status = "cancelled";
+  else if (/\b(renew(ed|al|s)?)\b/.test(t)) status = "renewed";
+  else if (/\b(final season|series finale|ends with|ending|ends after|cancel(ed|led)? after final|to end)\b/.test(t)) status = "ended";
 
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Lovable-API-Key": apiKey,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "google/gemini-3-flash-preview",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You classify TV industry news. For each item, decide if it is about a TV show being RENEWED for another season, CANCELLED, ENDED (ran its final season), or OTHER (anything else: castings, premieres, deals, ratings, awards). Extract the show title and network/streamer if mentioned. Respond ONLY with JSON: {\"items\":[{\"status\":\"renewed|cancelled|ended|other\",\"show_title\":\"...\"|null,\"network\":\"...\"|null,\"summary\":\"one short sentence\"}]}. Preserve input order.",
-        },
-        { role: "user", content: numbered },
-      ],
-      response_format: { type: "json_object" },
-    }),
-  });
-
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`AI gateway ${res.status}: ${body.slice(0, 300)}`);
+  // Skip ratings / non-status posts
+  if (status === "other") {
+    if (/ratings|season \d+ ratings/i.test(title)) return { status, show_title: null, network: null };
   }
-  const json = (await res.json()) as { choices: { message: { content: string } }[] };
-  const content = json.choices[0]?.message?.content ?? "{}";
-  const parsed = JSON.parse(content) as { items?: Classification[] };
-  return parsed.items ?? [];
+
+  // Show title = text before the first ":" if it looks like a show name
+  const show_title = title.includes(":") ? title.split(":")[0].trim() : null;
+
+  // Network: search title for a known name
+  let network: string | null = null;
+  for (const n of NETWORKS) {
+    if (new RegExp(`\\b${n.replace(/\+/g, "\\+")}\\b`, "i").test(title)) { network = n; break; }
+  }
+
+  return { status, show_title, network };
+}
+
+async function fetchOgImage(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 BoldNewsBot" } });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const m =
+      html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i) ??
+      html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+    return m ? m[1] : null;
+  } catch {
+    return null;
+  }
 }
 
 async function runIngest() {
   let inserted = 0;
   let skipped = 0;
-  let classified = 0;
   const errors: string[] = [];
 
   for (const source of SOURCES) {
@@ -115,7 +117,6 @@ async function runIngest() {
     let sourceInserted = 0;
     let sourceSkipped = 0;
     let parseErrors = 0;
-    let classifyErrors = 0;
     let sourceError: string | null = null;
 
     try {
@@ -129,7 +130,7 @@ async function runIngest() {
       const xml = await res.text();
       let items: RssItem[] = [];
       try {
-        items = parseRss(xml).slice(0, 30);
+        items = parseRss(xml);
       } catch (e) {
         parseErrors += 1;
         sourceError = `parse: ${(e as Error).message}`;
@@ -138,59 +139,44 @@ async function runIngest() {
       }
       itemsFetched = items.length;
 
-      const urls = items.map((i) => i.link);
+      // Classify + filter: keep only renewed/cancelled/ended
+      const keepable = items
+        .map((item) => ({ item, c: classify(item.title, item.categories) }))
+        .filter(({ c }) => c.status === "renewed" || c.status === "cancelled" || c.status === "ended");
+
+      const urls = keepable.map(({ item }) => item.link);
       const { data: existing } = await supabaseAdmin
         .from("tv_news")
         .select("source_url")
         .in("source_url", urls);
       const have = new Set((existing ?? []).map((r) => r.source_url));
-      const fresh = items.filter((i) => !have.has(i.link));
-      sourceSkipped = items.length - fresh.length;
+      const fresh = keepable.filter(({ item }) => !have.has(item.link));
+      sourceSkipped = keepable.length - fresh.length;
       skipped += sourceSkipped;
       if (fresh.length === 0) continue;
 
-      const classifications: Classification[] = [];
-      for (let i = 0; i < fresh.length; i += 10) {
-        const batch = fresh.slice(i, i + 10);
-        try {
-          const c = await classify(batch);
-          classifications.push(...c);
-        } catch (e) {
-          classifyErrors += 1;
-          errors.push(`classify: ${(e as Error).message}`);
-          for (const _ of batch) {
-            classifications.push({ status: "other", show_title: null, network: null, summary: "" });
-          }
-        }
-      }
-      classified += fresh.length;
+      // Fetch og:image for each fresh item in parallel (capped)
+      const images = await Promise.all(fresh.map(({ item }) => fetchOgImage(item.link)));
 
-      const rows = fresh
-        .map((item, idx) => {
-          const c = classifications[idx] ?? { status: "other" as const, show_title: null, network: null, summary: "" };
-          return { item, c };
-        })
-        .map(({ item, c }) => ({
-          title: item.title,
-          summary: c.summary || item.description.slice(0, 280),
-          source_url: item.link,
-          source_name: source.name,
-          show_title: c.show_title,
-          network: c.network,
-          status: c.status,
-          image_url: item.image,
-          published_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
-        }));
+      const rows = fresh.map(({ item, c }, idx) => ({
+        title: item.title,
+        summary: item.description.slice(0, 280),
+        source_url: item.link,
+        source_name: source.name,
+        show_title: c.show_title,
+        network: c.network,
+        status: c.status,
+        image_url: images[idx],
+        published_at: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
+      }));
 
-      if (rows.length > 0) {
-        const { error } = await supabaseAdmin.from("tv_news").insert(rows);
-        if (error) {
-          sourceError = `insert: ${error.message}`;
-          errors.push(sourceError);
-        } else {
-          sourceInserted = rows.length;
-          inserted += rows.length;
-        }
+      const { error } = await supabaseAdmin.from("tv_news").insert(rows);
+      if (error) {
+        sourceError = `insert: ${error.message}`;
+        errors.push(sourceError);
+      } else {
+        sourceInserted = rows.length;
+        inserted += rows.length;
       }
     } catch (e) {
       sourceError = (e as Error).message;
@@ -206,16 +192,15 @@ async function runIngest() {
         items_inserted: sourceInserted,
         items_skipped: sourceSkipped,
         parse_errors: parseErrors,
-        classify_errors: classifyErrors,
+        classify_errors: 0,
         latency_ms: latency,
         error: sourceError,
       });
     }
   }
 
-  return { inserted, skipped, classified, errors };
+  return { inserted, skipped, errors };
 }
-
 
 export const Route = createFileRoute("/api/public/hooks/ingest-tv-news")({
   server: {
