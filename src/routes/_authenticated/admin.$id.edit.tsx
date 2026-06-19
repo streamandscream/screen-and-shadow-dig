@@ -57,7 +57,7 @@ function Editor({ form, setForm, save, saving, err }: any) {
     try {
       const type = form.section === "tv" ? "tv-show" : (form.justwatch_type === "movie" ? "movie" : "tv-show");
       const res: any = await tmdbFn({ data: { title: form.title.trim(), type } });
-      if (!res.found) { setTmdbStatus("No match found"); return; }
+      if (!res.found) { setTmdbStatus("No TMDB match — paste a manual cover URL below"); return; }
       setForm({
         ...form,
         cover_url: res.cover_url || form.cover_url,
@@ -68,6 +68,7 @@ function Editor({ form, setForm, save, saving, err }: any) {
       setTmdbStatus(e instanceof Error ? e.message : "TMDB lookup failed");
     } finally { setTmdbLoading(false); }
   }
+  const coverPreview = form.cover_url?.trim() ? form.cover_url.trim() : null;
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
