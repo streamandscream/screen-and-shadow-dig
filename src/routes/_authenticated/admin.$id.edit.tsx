@@ -92,7 +92,26 @@ function Editor({ form, setForm, save, saving, err }: any) {
           </Field>
           <Field label="Excerpt"><textarea className="w-full border border-foreground bg-background p-3" rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} /></Field>
           <Field label="The Vibe (one-line tagline)"><input placeholder="Cozy whodunit with bite." maxLength={160} className="w-full border border-foreground bg-background p-3" value={form.vibe || ""} onChange={(e) => setForm({ ...form, vibe: e.target.value })} /></Field>
-          <Field label="Cover image URL"><input className="w-full border border-foreground bg-background p-3" value={form.cover_url || ""} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} /></Field>
+          <div className="border border-foreground/30 p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="eyebrow">Cover image</p>
+              {coverPreview && (
+                <button type="button" onClick={() => setForm({ ...form, cover_url: "" })} className="text-xs underline text-muted-foreground">
+                  Remove cover
+                </button>
+              )}
+            </div>
+            {coverPreview ? (
+              <img src={coverPreview} alt="Cover preview" className="w-32 h-48 object-cover border border-foreground/20" />
+            ) : (
+              <div className="w-32 h-48 bg-muted flex items-center justify-center text-xs text-muted-foreground border border-foreground/20">
+                No cover
+              </div>
+            )}
+            <Field label="Manual cover URL">
+              <input placeholder="Paste image URL when TMDB has no match…" className="w-full border border-foreground bg-background p-3" value={form.cover_url || ""} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
+            </Field>
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Streamer"><input className="w-full border border-foreground bg-background p-3" value={form.streamer || ""} onChange={(e) => setForm({ ...form, streamer: e.target.value })} /></Field>
             <Field label="The Verdict (1–10)"><input type="number" min={1} max={10} className="w-full border border-foreground bg-background p-3" value={form.rating ?? ""} onChange={(e) => setForm({ ...form, rating: e.target.value ? Number(e.target.value) : null })} /></Field>
