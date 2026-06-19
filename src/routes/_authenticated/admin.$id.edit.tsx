@@ -70,6 +70,25 @@ function Editor({ form, setForm, save, saving, err }: any) {
     } finally { setTmdbLoading(false); }
   }
   const coverPreview = form.cover_url?.trim() ? form.cover_url.trim() : null;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadErr, setUploadErr] = useState<string | null>(null);
+  async function uploadCover(file: File) {
+    setUploading(true); setUploadErr(null);
+    try {
+      if (!file.type.startsWith("image/")) throw new Error("Please choose an image file");
+      if (file.size > 10 * 1024 * 1024) throw new Error("Image must be under 10MB");
+      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `${form.id}/${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("covers").upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data, error: signErr } = await supabase.storage.from("covers").createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+      if (signErr || !data?.signedUrl) throw signErr || new Error("Could not create URL");
+      setForm({ ...form, cover_url: data.signedUrl });
+    } catch (e) {
+      setUploadErr(e instanceof Error ? e.message : "Upload failed");
+    } finally { setUploading(false); }
+  }
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
@@ -109,7 +128,25 @@ function Editor({ form, setForm, save, saving, err }: any) {
                 No cover
               </div>
             )}
-            <Field label="Manual cover URL">
+            <div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadCover(f); e.target.value = ""; }}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="border border-foreground px-4 py-2 font-display uppercase text-xs tracking-widest disabled:opacity-50"
+              >
+                {uploading ? "Uploading…" : "Upload image"}
+              </button>
+              {uploadErr && <p className="mt-1 text-xs text-destructive">{uploadErr}</p>}
+            </div>
+            <Field label="Or paste a URL">
               <input placeholder="Paste image URL when TMDB has no match…" className="w-full border border-foreground bg-background p-3" value={form.cover_url || ""} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} />
             </Field>
           </div>
