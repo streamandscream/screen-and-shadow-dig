@@ -39,8 +39,8 @@ export const listPublishedPosts = createServerFn({ method: "GET" })
       section: z.enum(["tv", "true_crime"]).optional(),
       sections: z.array(z.enum(["tv", "true_crime"])).optional(),
       limit: z.number().int().positive().optional(),
-      minRating: z.number().int().min(1).max(10).optional(),
-      maxRating: z.number().int().min(1).max(10).optional(),
+      minRating: z.number().min(1).max(10).multipleOf(0.5).optional(),
+      maxRating: z.number().min(1).max(10).multipleOf(0.5).optional(),
       sort: z.enum(["newest", "highest_score", "lowest_score"]).optional().default("newest"),
     }).parse(d ?? {})
   )
@@ -147,7 +147,7 @@ const PostInput = z.object({
   body: z.string().min(1).max(50000),
   cover_url: z.string().url().nullable().optional(),
   streamer: z.string().max(100).nullable().optional(),
-  rating: z.number().int().min(1).max(10).nullable().optional(),
+  rating: z.number().min(1).max(10).multipleOf(0.5).nullable().optional(),
   tags: z.array(z.string().min(1).max(50)).max(10).default([]),
   published: z.boolean().default(false),
   justwatch_slug: z.string().max(200).regex(/^[a-z0-9-]+$/).nullable().optional(),
