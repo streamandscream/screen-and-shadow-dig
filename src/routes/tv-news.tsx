@@ -57,7 +57,7 @@ function TvNewsPage() {
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-6 py-12 w-full flex-1">
         <p className="eyebrow text-accent-red">Industry Wire</p>
-        <h1 className="font-display text-6xl mt-2 border-b-2 border-foreground pb-4">
+        <h1 className="font-display text-4xl md:text-5xl mt-2 border-b-2 border-foreground pb-4">
           TV News: Cancelled & Renewed
         </h1>
         <div className="mt-8 flex flex-wrap gap-2">
