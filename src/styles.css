@@ -33,6 +33,7 @@
   --color-ink-deep: var(--ink-deep);
   --color-rule: var(--rule);
   --color-accent-red: var(--accent-red);
+  --color-status-renewed: var(--status-renewed);
   --font-display: "Archivo Black", "Arial Black", system-ui, sans-serif;
   --font-sans: "Hind", system-ui, -apple-system, sans-serif;
 }
