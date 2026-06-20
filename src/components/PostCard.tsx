@@ -51,14 +51,14 @@ export function WhereToWatchLink({ post, className }: { post: PostCardData; clas
 export function FeatureCard({ post }: { post: PostCardData }) {
   return (
     <article className="grid md:grid-cols-2 gap-8 border-b-2 border-foreground pb-10">
-      <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper">
-        {post.cover_url && (
-          <>
-            <img src={post.cover_url} alt={post.title} className="w-full h-72 md:h-96 object-cover" loading="lazy" />
-            <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>
-          </>
-        )}
-      </Link>
+      <div>
+        <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3] md:aspect-[3/4]">
+          {post.cover_url && (
+            <img src={post.cover_url} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
+          )}
+        </Link>
+        {post.cover_url && <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>}
+      </div>
       <div className="flex flex-col justify-center">
         <span className="eyebrow text-accent-red">{label(post.section)}</span>
         <Link to="/post/$slug" params={{ slug: post.slug }}>
