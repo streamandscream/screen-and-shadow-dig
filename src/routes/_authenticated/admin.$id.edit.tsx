@@ -199,4 +199,29 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   return <div><label className="eyebrow block mb-1">{label}</label>{children}</div>;
 }
 
+function CsvInput({ value, onChange }: { value: string[]; onChange: (arr: string[]) => void }) {
+  const [text, setText] = useState(value.join(", "));
+  const lastEmitted = useRef(value.join(", "));
+  useEffect(() => {
+    const joined = value.join(", ");
+    if (joined !== lastEmitted.current) {
+      setText(joined);
+      lastEmitted.current = joined;
+    }
+  }, [value]);
+  return (
+    <input
+      className="w-full border border-foreground bg-background p-3"
+      value={text}
+      onChange={(e) => {
+        const next = e.target.value;
+        setText(next);
+        const arr = next.split(",").map((s) => s.trim()).filter(Boolean);
+        lastEmitted.current = arr.join(", ");
+        onChange(arr);
+      }}
+    />
+  );
+}
+
 export { Editor };
