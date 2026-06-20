@@ -29,6 +29,8 @@ function Admin() {
   });
   const [ingesting, setIngesting] = useState(false);
   const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -36,9 +38,20 @@ function Admin() {
   }
 
   async function remove(id: string) {
-    if (!confirm("Delete this post?")) return;
-    await delFn({ data: { id } });
-    refetch();
+    if (confirmDeleteId !== id) {
+      setConfirmDeleteId(id);
+      return;
+    }
+    setDeletingId(id);
+    try {
+      await delFn({ data: { id } });
+      setConfirmDeleteId(null);
+      await refetch();
+    } catch (e) {
+      alert(`Delete failed: ${(e as Error).message}`);
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   async function forceIngest() {
