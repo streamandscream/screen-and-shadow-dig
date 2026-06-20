@@ -129,9 +129,8 @@ function TvNewsPage() {
           )}
         </section>
 
-        <p className="mt-10 text-xs text-muted-foreground">
-          News items link to original sources. Bold News does not republish full articles.{" "}
-          <Link to="/" className="underline">Back to home</Link>
+        <p className="mt-10 text-xs text-muted-foreground whitespace-pre-wrap">
+          {"\n"}
         </p>
       </main>
       <SiteFooter />
