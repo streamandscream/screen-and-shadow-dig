@@ -30,7 +30,7 @@ function RecommendationsEditor() {
           </Link>
         </div>
         <p className="mt-4 text-muted-foreground text-sm">
-          Quickly tweak “Our favourite episode” and “Your next binge” for every TV post.
+          Quickly tweak “Your next binge” for every TV post.
         </p>
 
         {isLoading ? (
