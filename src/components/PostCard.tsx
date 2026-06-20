@@ -65,7 +65,7 @@ export function FeatureCard({ post }: { post: PostCardData }) {
           <h2 className="mt-3 font-display text-4xl md:text-5xl">{post.title}</h2>
         </Link>
         <p className="mt-4 text-lg text-muted-foreground">{post.excerpt}</p>
-        <div className="mt-4 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
+        <div className="mt-4 flex items-center gap-3 text-sm uppercase tracking-widest text-muted-foreground">
           {post.streamer && <span>{post.streamer}</span>}
           {post.rating != null && <span>· The Verdict: {post.rating}/10</span>}
         </div>
@@ -89,7 +89,7 @@ export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData
         <h3 className="mt-2 font-display text-2xl">{post.title}</h3>
       </Link>
       <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{post.excerpt}</p>
-      <div className="mt-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+      <div className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">
         {post.streamer}{post.rating != null && ` · The Verdict: ${post.rating}/10`}
       </div>
       {showWhereToWatch && <WhereToWatchLink post={post} />}
