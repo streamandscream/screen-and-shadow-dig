@@ -147,7 +147,7 @@ const PostInput = z.object({
   body: z.string().min(1).max(50000),
   cover_url: z.string().url().nullable().optional(),
   streamer: z.string().max(100).nullable().optional(),
-  rating: z.number().int().min(1).max(10).nullable().optional(),
+  rating: z.number().min(1).max(10).multipleOf(0.5).nullable().optional(),
   tags: z.array(z.string().min(1).max(50)).max(10).default([]),
   published: z.boolean().default(false),
   justwatch_slug: z.string().max(200).regex(/^[a-z0-9-]+$/).nullable().optional(),
