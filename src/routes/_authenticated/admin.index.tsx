@@ -110,7 +110,13 @@ function Admin() {
                   <td>{p.published ? "Published" : "Draft"}</td>
                   <td className="text-right">
                     <Link to="/admin/$id/edit" params={{ id: p.id }} className="underline mr-4">Edit</Link>
-                    <button onClick={() => remove(p.id)} className="underline text-destructive">Delete</button>
+                    <button
+                      onClick={() => remove(p.id)}
+                      disabled={deletingId === p.id}
+                      className="underline text-destructive disabled:opacity-50"
+                    >
+                      {deletingId === p.id ? "Deleting…" : confirmDeleteId === p.id ? "Click again to confirm" : "Delete"}
+                    </button>
                   </td>
                 </tr>
               ))}
