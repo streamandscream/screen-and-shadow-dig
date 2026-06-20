@@ -33,8 +33,8 @@
   --color-ink-deep: var(--ink-deep);
   --color-rule: var(--rule);
   --color-accent-red: var(--accent-red);
-  --font-display: "Syne", "Arial Black", system-ui, sans-serif;
-  --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
+  --font-display: "Archivo Black", "Arial Black", system-ui, sans-serif;
+  --font-sans: "Hind", system-ui, -apple-system, sans-serif;
 }
 
 :root {
@@ -104,23 +104,14 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  h1, h2 {
+  h1, h2, h3, h4, h5, h6, .font-display {
     font-family: var(--font-display);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--ink-deep);
-    line-height: 1.02;
-  }
-  h3, h4, h5, h6, .font-display {
-    font-family: var(--font-display);
-    font-weight: 600;
     letter-spacing: -0.02em;
     color: var(--ink-deep);
     line-height: 1.02;
   }
   .eyebrow {
     font-family: var(--font-display);
-    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.18em;
     font-size: 0.7rem;
@@ -134,7 +125,6 @@
     border-left: 3px solid var(--ink-deep);
     padding-left: 1.2rem;
     font-family: var(--font-display);
-    font-weight: 600;
     font-size: 1.4rem;
     line-height: 1.2;
     margin: 1.5em 0;
