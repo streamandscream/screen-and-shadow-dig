@@ -96,3 +96,29 @@ export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData
     </article>
   );
 }
+
+export function HorizontalPostCard({ post, showWhereToWatch = true }: { post: PostCardData; showWhereToWatch?: boolean }) {
+  return (
+    <article className="grid grid-cols-1 sm:grid-cols-[12rem_minmax(0,1fr)] md:grid-cols-[14rem_minmax(0,1fr)] gap-6 border-b border-foreground/20 pb-8">
+      <div>
+        <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
+          {post.cover_url && (
+            <img src={post.cover_url} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
+          )}
+        </Link>
+        {post.cover_url && <p className="card-credit mt-1">Image courtesy of TMDB. Used under license.</p>}
+      </div>
+      <div className="min-w-0 flex flex-col">
+        <span className="card-eyebrow">{label(post.section)}</span>
+        <Link to="/post/$slug" params={{ slug: post.slug }}>
+          <h3 className="card-title-lg mt-2">{post.title}</h3>
+        </Link>
+        <p className="card-excerpt-sm mt-3">{post.excerpt}</p>
+        <div className="card-meta mt-3">
+          {post.streamer}{post.rating != null && ` · The Verdict: ${post.rating}/10`}
+        </div>
+        {showWhereToWatch && <WhereToWatchLink post={post} />}
+      </div>
+    </article>
+  );
+}

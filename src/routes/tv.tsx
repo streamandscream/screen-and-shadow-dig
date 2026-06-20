@@ -1,7 +1,7 @@
 import { createFileRoute, useSearch, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { PostCard } from "@/components/PostCard";
+import { HorizontalPostCard } from "@/components/PostCard";
 import { listPublishedPosts } from "@/lib/posts.functions";
 
 const postsQuery = (minRating?: number, maxRating?: number, sort?: string) =>
@@ -72,8 +72,8 @@ function Page() {
           </div>
         </div>
 
-        <section className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {data.map((p) => <PostCard key={p.id} post={p} showWhereToWatch={false} />)}
+        <section className="mt-10 flex flex-col gap-10">
+          {data.map((p) => <HorizontalPostCard key={p.id} post={p} showWhereToWatch={false} />)}
         </section>
       </main>
       <SiteFooter />
