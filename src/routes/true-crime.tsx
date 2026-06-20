@@ -66,8 +66,8 @@ function Page() {
           </div>
         </div>
 
-        <section className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {data.map((p) => <PostCard key={p.id} post={p} />)}
+        <section className="mt-10 flex flex-col gap-10">
+          {data.map((p) => <HorizontalPostCard key={p.id} post={p} />)}
         </section>
       </main>
       <SiteFooter />
