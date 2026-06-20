@@ -2,6 +2,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { listMyPosts, deletePost } from "@/lib/posts.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,7 +49,7 @@ function Admin() {
       setConfirmDeleteId(null);
       await refetch();
     } catch (e) {
-      alert(`Delete failed: ${(e as Error).message}`);
+      toast.error(`Delete failed: ${(e as Error).message}`);
     } finally {
       setDeletingId(null);
     }
