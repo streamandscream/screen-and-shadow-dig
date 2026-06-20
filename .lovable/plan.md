@@ -1,18 +1,27 @@
-## Allow half-point ratings (e.g. 7.5)
+# Single-column post layout
 
-### Database
-- Migration to change `public.posts.rating` from `int` to `numeric(3,1)`, with a CHECK constraint enforcing values between 1 and 10 in 0.5 increments.
+Yes — responsive horizontal cards on web, stacked vertical on mobile.
 
-### Server validators (`src/lib/posts.functions.ts`)
-- Replace `z.number().int().min(1).max(10)` with `z.number().min(1).max(10).multipleOf(0.5)` for `rating` in `PostInput`.
-- Same change for `minRating` / `maxRating` in `listPublishedPosts`.
+## 1. New `HorizontalPostCard` in `src/components/PostCard.tsx`
+Add a new exported component (keep existing `PostCard` intact for any other usages):
 
-### Admin form (`admin.$id.edit.tsx`)
-- Change the rating input to `step={0.5}` and update the label to "The Verdict (1–10, 0.5 steps)".
-- Keep `Number(e.target.value)` (no `parseInt`).
+- Mobile: vertical (poster on top, text below) — same as current `PostCard`.
+- `sm:` and up: 2-column row — poster on left (~fixed width, e.g. `sm:w-48 md:w-56`, aspect `2/3`), text block on right (title, eyebrow, full excerpt, streamer + verdict, optional Where-to-watch).
+- Use `grid sm:grid-cols-[12rem_minmax(0,1fr)] md:grid-cols-[14rem_minmax(0,1fr)] gap-6` with `min-w-0` on the text column so long titles/excerpts truncate cleanly.
+- Reuse `WhereToWatchLink` and the existing `card-*` typography classes (no design token changes).
 
-### Display
-- `PostCard.tsx` and `post.$slug.tsx` already render `{post.rating}/10`, which works for decimals — no change needed.
+## 2. `src/routes/index.tsx` (home)
+- Remove the two-column `grid md:grid-cols-2` wrapper.
+- Combine `tv` + `tc` posts into a single list sorted by newest first (the loader already returns newest first from `listPublishedPosts`; just merge and re-sort by `published_at` desc — or fetch with no section filter).
+- Render as a single vertical stack of `HorizontalPostCard`s.
+- Drop the per-section headers + "See all" links (since it's now one merged feed). The site header nav still links to `/tv` and `/true-crime`.
+- Also remove the stray trailing `.` after the `tv.map(...)` block (existing bug).
 
-### Filters (`tv.tsx` / `true-crime.tsx` / `search.tsx`)
-- No code change required if rating sliders use whole numbers; half-step ratings still match `gte`/`lte` correctly. (If you want the slider itself to step by 0.5, say so and I'll update it.)
+## 3. `src/routes/tv.tsx` and `src/routes/true-crime.tsx`
+- Replace `section className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-10"` with a single-column stack: `section className="mt-10 flex flex-col gap-8 divide-y divide-foreground/20"` (or just `gap-10`).
+- Swap `<PostCard>` for `<HorizontalPostCard>`. Keep the `showWhereToWatch` prop behavior (off on /tv, on on /true-crime).
+
+## Technical notes
+- No data/API changes. No new dependencies.
+- `PostCardData` type unchanged.
+- The home loader currently passes `sections: ["tv", "true_crime"], limit: 6`. To honor "newest first across both", I'll keep that call and sort the combined array by `published_at` client-side (the field already exists on returned rows; if not, I'll add it to the select in `listPublishedPosts`).
