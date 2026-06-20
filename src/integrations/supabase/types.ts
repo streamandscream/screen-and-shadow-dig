@@ -197,6 +197,27 @@ export type Database = {
         }
         Relationships: []
       }
+      tags: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tv_news: {
         Row: {
           created_at: string
@@ -265,6 +286,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_tag: { Args: { _name: string }; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -272,6 +294,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      rename_tag: { Args: { _new: string; _old: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "author"
