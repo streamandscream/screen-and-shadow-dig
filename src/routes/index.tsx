@@ -32,7 +32,7 @@ function Home() {
               <a href="/tv" className="eyebrow underline">See all</a>
             </div>
             <div className="grid gap-8">
-              {tv.map((p) => <PostCard key={p.id} post={p} />)}
+              {tv.map((p) => <PostCard key={p.id} post={p} showWhereToWatch={false} />)}.
             </div>
           </section>
           <section>
