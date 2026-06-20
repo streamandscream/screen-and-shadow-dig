@@ -92,16 +92,19 @@ function Page() {
           </div>
         )}
         {post.tags && post.tags.length > 0 && (
-          <p className={`${post.rating != null ? "mt-4" : "mt-10 border-t-2 border-foreground pt-6"} text-base md:text-lg leading-snug`}>
-            {post.tags.map((t: string, i: number) => (
-              <span key={t}>
-                {i > 0 && " "}
-                <Link to="/tag/$tag" params={{ tag: t }} className="hover:underline">
-                  #{t}
-                </Link>
-              </span>
-            ))}
-          </p>
+          <div className={post.rating != null ? "mt-4" : "mt-10 border-t-2 border-foreground pt-6"}>
+            <p className="eyebrow text-accent-red">Tags</p>
+            <p className="text-sm md:text-base leading-snug">
+              {post.tags.map((t: string, i: number) => (
+                <span key={t}>
+                  {i > 0 && " "}
+                  <Link to="/tag/$tag" params={{ tag: t }} className="hover:underline">
+                    #{t}
+                  </Link>
+                </span>
+              ))}
+            </p>
+          </div>
         )}
         {(post.section === "tv" && post.favourite_episode) || (post.next_binge && post.next_binge.length > 0) ? (
           <aside className="mt-12 border-t-2 border-foreground pt-6 space-y-6">
