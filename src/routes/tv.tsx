@@ -1,7 +1,7 @@
 import { createFileRoute, useSearch, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { PostCard } from "@/components/PostCard";
+import { HorizontalPostCard } from "@/components/PostCard";
 import { listPublishedPosts } from "@/lib/posts.functions";
 
 const postsQuery = (minRating?: number, maxRating?: number, sort?: string) =>
