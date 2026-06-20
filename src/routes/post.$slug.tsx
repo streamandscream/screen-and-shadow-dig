@@ -65,12 +65,14 @@ function Page() {
         <Link to={sectionTo} className="eyebrow text-accent-red">{sectionLabel}</Link>
         <h1 className="font-display text-5xl md:text-6xl mt-3">{post.title}</h1>
         {post.cover_url && (
-          <>
-            <div className="mt-6 w-full bg-paper aspect-[2/3] max-h-[70vh] flex items-center justify-center overflow-hidden">
-              <img src={post.cover_url} alt={post.title} className="w-full h-full object-contain" />
-            </div>
-            <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>
-          </>
+          <figure className="mt-6">
+            <img
+              src={post.cover_url}
+              alt={post.title}
+              className="block max-h-[70vh] w-auto max-w-full h-auto object-contain"
+            />
+            <figcaption className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</figcaption>
+          </figure>
         )}
         {(post as any).vibe && (
           <blockquote className="mt-8 border-l-4 border-accent-red pl-5">
