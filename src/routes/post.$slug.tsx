@@ -66,7 +66,9 @@ function Page() {
         <h1 className="font-display text-5xl md:text-6xl mt-3">{post.title}</h1>
         {post.cover_url && (
           <>
-            <img src={post.cover_url} alt={post.title} className="mt-6 w-full h-[420px] object-cover bg-paper" />
+            <div className="mt-6 w-full bg-paper aspect-[2/3] max-h-[70vh] flex items-center justify-center overflow-hidden">
+              <img src={post.cover_url} alt={post.title} className="w-full h-full object-contain" />
+            </div>
             <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>
           </>
         )}
