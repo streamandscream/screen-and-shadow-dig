@@ -98,7 +98,7 @@ function Page() {
               {post.tags.map((t: string, i: number) => (
                 <span key={t}>
                   {i > 0 && " "}
-                  <Link to="/tag/$tag" params={{ tag: t }} className="hover:underline">
+                  <Link to="/tag/$tag" params={{ tag: t }} className="hover:underline hover:text-accent-red active:text-accent-red transition-colors">
                     #{t}
                   </Link>
                 </span>
