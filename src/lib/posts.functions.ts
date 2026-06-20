@@ -227,7 +227,6 @@ export const updateRecommendations = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       id: z.string().uuid(),
-      favourite_episode: z.string().max(300).nullable(),
       next_binge: z.array(z.string().min(1).max(120)).max(3),
     }).parse(d)
   )
@@ -235,7 +234,6 @@ export const updateRecommendations = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("posts")
       .update({
-        favourite_episode: data.favourite_episode,
         next_binge: data.next_binge,
       })
       .eq("id", data.id);
