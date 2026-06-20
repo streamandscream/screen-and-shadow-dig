@@ -1,21 +1,18 @@
-# Remove "Our favourite episode" field
+## Allow half-point ratings (e.g. 7.5)
 
-Strip the `favourite_episode` field from the database, admin portal, and public post page.
+### Database
+- Migration to change `public.posts.rating` from `int` to `numeric(3,1)`, with a CHECK constraint enforcing values between 1 and 10 in 0.5 increments.
 
-## Database
-- Migration: `ALTER TABLE public.posts DROP COLUMN favourite_episode;`
+### Server validators (`src/lib/posts.functions.ts`)
+- Replace `z.number().int().min(1).max(10)` with `z.number().min(1).max(10).multipleOf(0.5)` for `rating` in `PostInput`.
+- Same change for `minRating` / `maxRating` in `listPublishedPosts`.
 
-## Server data layer (`src/lib/posts.functions.ts`)
-- Remove `favourite_episode` from `POST_COLS` select list.
-- Remove it from the upsert input validator and from the update payload mapping.
+### Admin form (`admin.$id.edit.tsx`)
+- Change the rating input to `step={0.5}` and update the label to "The Verdict (1–10, 0.5 steps)".
+- Keep `Number(e.target.value)` (no `parseInt`).
 
-## Admin portal
-- `admin.$id.edit.tsx`: remove the "Our favourite episode" `<Field>` input and the `favourite_episode` key from the save payload.
-- `admin.new.tsx`: remove `favourite_episode` from initial form state and from the insert payload.
-- `admin.recommendations.tsx`: remove the entire "Our favourite episode" input, its state (`episode`, setter), and the field from the save payload. Update the page subtitle to mention only "Your next binge".
+### Display
+- `PostCard.tsx` and `post.$slug.tsx` already render `{post.rating}/10`, which works for decimals — no change needed.
 
-## Public post page (`src/routes/post.$slug.tsx`)
-- Remove the favourite-episode block. Simplify the surrounding conditional so the recommendations section renders based on `next_binge` only.
-
-## Notes
-Supabase types regenerate after the migration runs, so the code edits land after the column drop is approved.
+### Filters (`tv.tsx` / `true-crime.tsx` / `search.tsx`)
+- No code change required if rating sliders use whole numbers; half-step ratings still match `gte`/`lte` correctly. (If you want the slider itself to step by 0.5, say so and I'll update it.)
