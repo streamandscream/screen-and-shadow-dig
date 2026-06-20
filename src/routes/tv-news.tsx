@@ -37,7 +37,7 @@ export const Route = createFileRoute("/tv-news")({
 });
 
 const statusStyles: Record<TvNewsStatus, string> = {
-  renewed: "bg-foreground text-background",
+  renewed: "bg-status-renewed text-background",
   cancelled: "bg-accent-red text-background",
   ended: "bg-paper text-foreground border border-foreground",
   other: "bg-paper text-foreground border border-foreground",
