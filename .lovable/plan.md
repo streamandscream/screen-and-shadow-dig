@@ -1,28 +1,21 @@
+# Remove "Our favourite episode" field
 
-## Goal
-Show each post's tags on the full post page (under "The Verdict"), styled like the highlighted excerpt line. Tags are clickable and lead to a combined listing of all posts (TV + True Crime) with that tag.
+Strip the `favourite_episode` field from the database, admin portal, and public post page.
 
-## Changes
+## Database
+- Migration: `ALTER TABLE public.posts DROP COLUMN favourite_episode;`
 
-### 1. `src/routes/post.$slug.tsx`
-Below the existing "Streamer · The Verdict" meta line, render `post.tags` as inline `#tag` links, using the same font/size as the excerpt (e.g. `text-base md:text-lg leading-snug`) with `hover:underline`, separated by spaces. Hidden when `tags` is empty.
-Each tag uses `<Link to="/tag/$tag" params={{ tag }}>`.
+## Server data layer (`src/lib/posts.functions.ts`)
+- Remove `favourite_episode` from `POST_COLS` select list.
+- Remove it from the upsert input validator and from the update payload mapping.
 
-### 2. New route `src/routes/tag.$tag.tsx` → `/tag/:tag`
-- Loader uses TanStack Query (`ensureQueryData` + `useSuspenseQuery`) calling a new public server fn `listPostsByTag({ tag })`.
-- Returns published posts from BOTH sections containing the tag, newest first.
-- Layout mirrors `true-crime.tsx`: `SiteHeader`, page title `#tag`, subtitle "Posts tagged #tag", responsive `PostCard` grid, `SiteFooter`.
-- `head()` sets title/description/og for the tag page.
-- Includes `errorComponent` and `notFoundComponent`.
+## Admin portal
+- `admin.$id.edit.tsx`: remove the "Our favourite episode" `<Field>` input and the `favourite_episode` key from the save payload.
+- `admin.new.tsx`: remove `favourite_episode` from initial form state and from the insert payload.
+- `admin.recommendations.tsx`: remove the entire "Our favourite episode" input, its state (`episode`, setter), and the field from the save payload. Update the page subtitle to mention only "Your next binge".
 
-### 3. `src/lib/posts.functions.ts`
-Add `listPostsByTag` server fn (no auth middleware, public read) using the existing publishable client pattern. Query: `posts` where `published = true` and `tags @> ARRAY[tag]`, ordered by `published_at desc`, projecting the same columns as `listPublishedPosts`.
+## Public post page (`src/routes/post.$slug.tsx`)
+- Remove the favourite-episode block. Simplify the surrounding conditional so the recommendations section renders based on `next_binge` only.
 
-### 4. No DB / styling-token / admin changes
-- `posts.tags` column and admin tag editor already exist.
-- Existing public SELECT policy on `posts` already permits this read.
-
-## Out of scope
-- Cards on home/section pages stay unchanged.
-- No tag index page, no tag autocomplete.
-- The unrelated tv-news date hydration warning is not touched here.
+## Notes
+Supabase types regenerate after the migration runs, so the code edits land after the column drop is approved.

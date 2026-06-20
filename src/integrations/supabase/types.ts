@@ -69,7 +69,6 @@ export type Database = {
           cover_url: string | null
           created_at: string
           excerpt: string
-          favourite_episode: string | null
           id: string
           justwatch_country: string
           justwatch_slug: string | null
@@ -91,7 +90,6 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           excerpt: string
-          favourite_episode?: string | null
           id?: string
           justwatch_country?: string
           justwatch_slug?: string | null
@@ -113,7 +111,6 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           excerpt?: string
-          favourite_episode?: string | null
           id?: string
           justwatch_country?: string
           justwatch_slug?: string | null
