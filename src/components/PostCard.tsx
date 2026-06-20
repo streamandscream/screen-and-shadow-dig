@@ -78,14 +78,12 @@ export function FeatureCard({ post }: { post: PostCardData }) {
 export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData; showWhereToWatch?: boolean }) {
   return (
     <article className="flex flex-col">
-      <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper">
+      <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
         {post.cover_url && (
-          <>
-            <img src={post.cover_url} alt={post.title} className="w-full h-56 object-cover" loading="lazy" />
-            <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>
-          </>
+          <img src={post.cover_url} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
         )}
       </Link>
+      {post.cover_url && <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>}
       <span className="eyebrow mt-3 text-accent-red">{label(post.section)}</span>
       <Link to="/post/$slug" params={{ slug: post.slug }}>
         <h3 className="mt-2 font-display text-2xl">{post.title}</h3>
