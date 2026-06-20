@@ -155,11 +155,12 @@ function Editor({ form, setForm, save, saving, err }: any) {
             <Field label="The Verdict (1–10, 0.5 steps)"><input type="number" min={1} max={10} step={0.5} className="w-full border border-foreground bg-background p-3" value={form.rating ?? ""} onChange={(e) => setForm({ ...form, rating: e.target.value ? Number(e.target.value) : null })} /></Field>
           </div>
           <Field label="Tags (comma separated)">
-            <input className="w-full border border-foreground bg-background p-3" value={(form.tags || []).join(", ")} onChange={(e) => setForm({ ...form, tags: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean) })} />
+            <CsvInput value={form.tags || []} onChange={(arr) => setForm({ ...form, tags: arr })} />
           </Field>
           <Field label="Body (Markdown)"><textarea className="w-full border border-foreground bg-background p-3 font-mono text-sm" rows={20} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} /></Field>
           <Field label="Your next binge (2–3 titles, comma separated)">
-            <input className="w-full border border-foreground bg-background p-3" value={(form.next_binge || []).join(", ")} onChange={(e) => setForm({ ...form, next_binge: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean).slice(0, 3) })} />
+            <CsvInput value={form.next_binge || []} onChange={(arr) => setForm({ ...form, next_binge: arr.slice(0, 3) })} />
+
           </Field>
           <div className="border-t border-foreground/30 pt-4">
             <p className="eyebrow mb-2">Where to watch (JustWatch)</p>
