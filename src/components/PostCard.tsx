@@ -57,15 +57,15 @@ export function FeatureCard({ post }: { post: PostCardData }) {
             <img src={post.cover_url} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
           )}
         </Link>
-        {post.cover_url && <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>}
+        {post.cover_url && <p className="card-credit mt-1">Image courtesy of TMDB. Used under license.</p>}
       </div>
       <div className="flex flex-col justify-center">
-        <span className="eyebrow text-accent-red">{label(post.section)}</span>
+        <span className="card-eyebrow">{label(post.section)}</span>
         <Link to="/post/$slug" params={{ slug: post.slug }}>
-          <h2 className="mt-3 font-display text-4xl md:text-5xl">{post.title}</h2>
+          <h2 className="card-title-lg mt-3">{post.title}</h2>
         </Link>
-        <p className="mt-4 text-lg text-muted-foreground">{post.excerpt}</p>
-        <div className="mt-4 flex items-center gap-3 text-sm uppercase tracking-widest text-muted-foreground">
+        <p className="card-excerpt-lg mt-4">{post.excerpt}</p>
+        <div className="card-meta mt-4 flex items-center gap-3">
           {post.streamer && <span>{post.streamer}</span>}
           {post.rating != null && <span>· The Verdict: {post.rating}/10</span>}
         </div>
@@ -83,13 +83,13 @@ export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData
           <img src={post.cover_url} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
         )}
       </Link>
-      {post.cover_url && <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>}
-      <span className="eyebrow mt-3 text-accent-red">{label(post.section)}</span>
+      {post.cover_url && <p className="card-credit mt-1">Image courtesy of TMDB. Used under license.</p>}
+      <span className="card-eyebrow mt-3">{label(post.section)}</span>
       <Link to="/post/$slug" params={{ slug: post.slug }}>
-        <h3 className="mt-2 font-display text-2xl">{post.title}</h3>
+        <h3 className="card-title-sm mt-2">{post.title}</h3>
       </Link>
-      <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{post.excerpt}</p>
-      <div className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">
+      <p className="card-excerpt-sm mt-2 line-clamp-3">{post.excerpt}</p>
+      <div className="card-meta mt-2">
         {post.streamer}{post.rating != null && ` · The Verdict: ${post.rating}/10`}
       </div>
       {showWhereToWatch && <WhereToWatchLink post={post} />}
