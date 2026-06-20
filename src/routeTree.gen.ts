@@ -22,6 +22,7 @@ import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as PostSlugRouteImport } from './routes/post.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin.tags'
 import { Route as AuthenticatedAdminStreamRouteImport } from './routes/_authenticated/admin.stream'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminRecommendationsRouteImport } from './routes/_authenticated/admin.recommendations'
@@ -94,6 +95,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminTagsRoute = AuthenticatedAdminTagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminStreamRoute =
   AuthenticatedAdminStreamRouteImport.update({
     id: '/stream',
@@ -153,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/stream': typeof AuthenticatedAdminStreamRoute
+  '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/stream': typeof AuthenticatedAdminStreamRoute
+  '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
@@ -196,6 +204,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/stream': typeof AuthenticatedAdminStreamRoute
+  '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/admin/recommendations'
     | '/admin/settings'
     | '/admin/stream'
+    | '/admin/tags'
     | '/admin/'
     | '/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/admin/recommendations'
     | '/admin/settings'
     | '/admin/stream'
+    | '/admin/tags'
     | '/admin'
     | '/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/recommendations'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/stream'
+    | '/_authenticated/admin/tags'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
@@ -374,6 +386,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/tags': {
+      id: '/_authenticated/admin/tags'
+      path: '/tags'
+      fullPath: '/admin/tags'
+      preLoaderRoute: typeof AuthenticatedAdminTagsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/stream': {
       id: '/_authenticated/admin/stream'
       path: '/stream'
@@ -432,6 +451,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminRecommendationsRoute: typeof AuthenticatedAdminRecommendationsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminStreamRoute: typeof AuthenticatedAdminStreamRoute
+  AuthenticatedAdminTagsRoute: typeof AuthenticatedAdminTagsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminIdEditRoute: typeof AuthenticatedAdminIdEditRoute
 }
@@ -444,6 +464,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminRecommendationsRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminStreamRoute: AuthenticatedAdminStreamRoute,
+  AuthenticatedAdminTagsRoute: AuthenticatedAdminTagsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminIdEditRoute: AuthenticatedAdminIdEditRoute,
 }
