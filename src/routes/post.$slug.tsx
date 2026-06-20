@@ -89,6 +89,18 @@ function Page() {
             <p className="font-display text-4xl mt-2">
               {post.rating}<span className="text-2xl text-muted-foreground">/10</span>
             </p>
+            {post.tags && post.tags.length > 0 && (
+              <p className="mt-4 text-base md:text-lg leading-snug">
+                {post.tags.map((t: string, i: number) => (
+                  <span key={t}>
+                    {i > 0 && " "}
+                    <Link to="/tag/$tag" params={{ tag: t }} className="hover:underline">
+                      #{t}
+                    </Link>
+                  </span>
+                ))}
+              </p>
+            )}
           </div>
         )}
         {(post.section === "tv" && post.favourite_episode) || (post.next_binge && post.next_binge.length > 0) ? (
