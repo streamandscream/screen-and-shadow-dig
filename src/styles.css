@@ -33,6 +33,7 @@
   --color-ink-deep: var(--ink-deep);
   --color-rule: var(--rule);
   --color-accent-red: var(--accent-red);
+  --color-status-renewed: var(--status-renewed);
   --font-display: "Archivo Black", "Arial Black", system-ui, sans-serif;
   --font-sans: "Hind", system-ui, -apple-system, sans-serif;
 }
@@ -47,6 +48,7 @@
   --ink-deep: oklch(0.12 0 0);               /* #0d0d0d */
   --rule: oklch(0.55 0 0);
   --accent-red: oklch(0.52 0.18 28);         /* editorial red */
+  --status-renewed: oklch(0.45 0.1 165);      /* deep teal-green */
 
   --card: oklch(0.969 0.008 80);
   --card-foreground: var(--foreground);
@@ -91,6 +93,7 @@
   --border: oklch(0.3 0 0);
   --input: oklch(0.3 0 0);
   --ring: oklch(0.95 0 0);
+  --status-renewed: oklch(0.6 0.1 165);
 }
 
 @layer base {
