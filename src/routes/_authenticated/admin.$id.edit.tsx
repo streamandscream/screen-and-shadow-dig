@@ -35,7 +35,7 @@ function EditPost() {
         justwatch_slug: form.justwatch_slug || null,
         justwatch_type: form.justwatch_type || "tv-show",
         justwatch_country: form.justwatch_country || "us",
-        favourite_episode: form.favourite_episode || null,
+        
         next_binge: form.next_binge || [],
         vibe: form.vibe || null,
       } });
