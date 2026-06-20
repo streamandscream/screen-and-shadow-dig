@@ -30,7 +30,7 @@ function RecommendationsEditor() {
           </Link>
         </div>
         <p className="mt-4 text-muted-foreground text-sm">
-          Quickly tweak “Our favourite episode” and “Your next binge” for every TV post.
+          Quickly tweak “Your next binge” for every TV post.
         </p>
 
         {isLoading ? (
@@ -51,7 +51,6 @@ function RecommendationsEditor() {
 }
 
 function PostRecommendationsCard({ post, saveFn, onSaved }: { post: any; saveFn: ReturnType<typeof useServerFn>; onSaved: () => void }) {
-  const [episode, setEpisode] = useState(post.favourite_episode || "");
   const [bingeRaw, setBingeRaw] = useState((post.next_binge || []).join(", "));
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -62,7 +61,6 @@ function PostRecommendationsCard({ post, saveFn, onSaved }: { post: any; saveFn:
       const nextBinge = bingeRaw.split(",").map((s: string) => s.trim()).filter(Boolean).slice(0, 3);
       await saveFn({ data: {
         id: post.id,
-        favourite_episode: episode.trim() || null,
         next_binge: nextBinge,
       }});
       setSaved(true);
@@ -82,25 +80,14 @@ function PostRecommendationsCard({ post, saveFn, onSaved }: { post: any; saveFn:
           Full edit
         </Link>
       </div>
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <label className="eyebrow block mb-1">Our favourite episode</label>
-          <input
-            className="w-full border border-foreground bg-background p-3"
-            placeholder="S2E5 — “The One With…”"
-            value={episode}
-            onChange={(e) => setEpisode(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="eyebrow block mb-1">Your next binge (2–3 titles, comma separated)</label>
-          <input
-            className="w-full border border-foreground bg-background p-3"
-            placeholder="The Crown, Breaking Bad, Succession"
-            value={bingeRaw}
-            onChange={(e) => setBingeRaw(e.target.value)}
-          />
-        </div>
+      <div>
+        <label className="eyebrow block mb-1">Your next binge (2–3 titles, comma separated)</label>
+        <input
+          className="w-full border border-foreground bg-background p-3"
+          placeholder="The Crown, Breaking Bad, Succession"
+          value={bingeRaw}
+          onChange={(e) => setBingeRaw(e.target.value)}
+        />
       </div>
       <div className="flex items-center gap-3">
         <button

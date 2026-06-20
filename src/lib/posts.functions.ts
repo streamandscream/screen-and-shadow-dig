@@ -31,7 +31,7 @@ export const getSearchFilters = createServerFn({ method: "GET" })
     };
   });
 
-const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country, favourite_episode, next_binge, vibe";
+const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe";
 
 export const listPublishedPosts = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) =>
@@ -153,7 +153,7 @@ const PostInput = z.object({
   justwatch_slug: z.string().max(200).regex(/^[a-z0-9-]+$/).nullable().optional(),
   justwatch_type: z.enum(["tv-show", "movie"]).default("tv-show"),
   justwatch_country: z.string().min(2).max(5).regex(/^[a-z-]+$/).default("us"),
-  favourite_episode: z.string().max(300).nullable().optional(),
+  
   next_binge: z.array(z.string().min(1).max(120)).max(3).default([]),
   vibe: z.string().max(160).nullable().optional(),
 });
@@ -227,7 +227,6 @@ export const updateRecommendations = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({
       id: z.string().uuid(),
-      favourite_episode: z.string().max(300).nullable(),
       next_binge: z.array(z.string().min(1).max(120)).max(3),
     }).parse(d)
   )
@@ -235,7 +234,6 @@ export const updateRecommendations = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("posts")
       .update({
-        favourite_episode: data.favourite_episode,
         next_binge: data.next_binge,
       })
       .eq("id", data.id);

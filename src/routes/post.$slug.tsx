@@ -106,14 +106,8 @@ function Page() {
             </p>
           </div>
         )}
-        {(post.section === "tv" && post.favourite_episode) || (post.next_binge && post.next_binge.length > 0) ? (
+        {post.next_binge && post.next_binge.length > 0 ? (
           <aside className="mt-12 border-t-2 border-foreground pt-6 space-y-6">
-            {post.section === "tv" && post.favourite_episode && (
-              <div>
-                <p className="eyebrow text-accent-red">Our favourite episode</p>
-                <p className="font-display text-2xl mt-2">{post.favourite_episode}</p>
-              </div>
-            )}
             {post.next_binge && post.next_binge.length > 0 && (
               <div>
                 <p className="eyebrow text-accent-red">Your next binge if you loved {post.title}</p>
