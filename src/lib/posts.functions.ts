@@ -67,6 +67,20 @@ export const listPublishedPosts = createServerFn({ method: "GET" })
     return rows ?? [];
   });
 
+export const listPostsByTag = createServerFn({ method: "GET" })
+  .inputValidator((d: { tag: string }) => z.object({ tag: z.string().min(1).max(50) }).parse(d))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("posts")
+      .select(POST_COLS)
+      .eq("published", true)
+      .contains("tags", [data.tag])
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
 export const getPostsByTitles = createServerFn({ method: "GET" })
   .inputValidator((d: { titles: string[] }) =>
     z.object({ titles: z.array(z.string().min(1).max(200)).max(10) }).parse(d)

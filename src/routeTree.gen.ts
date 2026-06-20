@@ -18,6 +18,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as PostSlugRouteImport } from './routes/post.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -71,6 +72,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagTagRoute = TagTagRouteImport.update({
+  id: '/tag/$tag',
+  path: '/tag/$tag',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostSlugRoute = PostSlugRouteImport.update({
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/tv-news': typeof TvNewsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
+  '/tag/$tag': typeof TagTagRoute
   '/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
   '/post/$slug': typeof PostSlugRoute
+  '/tag/$tag': typeof TagTagRoute
   '/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/tv-news': typeof TvNewsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
+  '/tag/$tag': typeof TagTagRoute
   '/_authenticated/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/_authenticated/admin/new': typeof AuthenticatedAdminNewRoute
   '/_authenticated/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
@@ -204,6 +213,7 @@ export interface FileRouteTypes {
     | '/tv-news'
     | '/admin'
     | '/post/$slug'
+    | '/tag/$tag'
     | '/admin/ingestion-health'
     | '/admin/new'
     | '/admin/recommendations'
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/tv'
     | '/tv-news'
     | '/post/$slug'
+    | '/tag/$tag'
     | '/admin/ingestion-health'
     | '/admin/new'
     | '/admin/recommendations'
@@ -244,6 +255,7 @@ export interface FileRouteTypes {
     | '/tv-news'
     | '/_authenticated/admin'
     | '/post/$slug'
+    | '/tag/$tag'
     | '/_authenticated/admin/ingestion-health'
     | '/_authenticated/admin/new'
     | '/_authenticated/admin/recommendations'
@@ -265,6 +277,7 @@ export interface RootRouteChildren {
   TvRoute: typeof TvRoute
   TvNewsRoute: typeof TvNewsRoute
   PostSlugRoute: typeof PostSlugRoute
+  TagTagRoute: typeof TagTagRoute
   ApiPublicHooksIngestTvNewsRoute: typeof ApiPublicHooksIngestTvNewsRoute
 }
 
@@ -331,6 +344,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tag/$tag': {
+      id: '/tag/$tag'
+      path: '/tag/$tag'
+      fullPath: '/tag/$tag'
+      preLoaderRoute: typeof TagTagRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/post/$slug': {
@@ -453,6 +473,7 @@ const rootRouteChildren: RootRouteChildren = {
   TvRoute: TvRoute,
   TvNewsRoute: TvNewsRoute,
   PostSlugRoute: PostSlugRoute,
+  TagTagRoute: TagTagRoute,
   ApiPublicHooksIngestTvNewsRoute: ApiPublicHooksIngestTvNewsRoute,
 }
 export const routeTree = rootRouteImport
