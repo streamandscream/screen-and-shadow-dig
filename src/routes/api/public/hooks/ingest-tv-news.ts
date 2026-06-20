@@ -143,10 +143,10 @@ async function runIngest() {
       }
       itemsFetched = items.length;
 
-      // Classify + filter: keep only renewed/cancelled/ended
+      // Classify + filter: keep only renewed/cancelled
       const keepable = items
         .map((item) => ({ item, c: classify(item.title, item.categories) }))
-        .filter(({ c }) => c.status === "renewed" || c.status === "cancelled" || c.status === "ended");
+        .filter(({ c }) => c.status === "renewed" || c.status === "cancelled");
 
       const urls = keepable.map(({ item }) => item.link);
       const { data: existing } = await supabaseAdmin
