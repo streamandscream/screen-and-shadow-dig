@@ -1,5 +1,2 @@
-Update the `cover_url` column on the `posts` table for the post with slug `skyking` to:
-
-`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSj3iFuoe2CiLKMrIGxKNw_1CNFVCVMFgAa-HzrUDw2uuUCZ1A7`
-
-No code changes — single data update via the database.
+1. Delete existing `tv_news` rows where title matches the roundup pattern `cancelled or renewed? status of ... tv shows` (case-insensitive).
+2. Update `src/routes/api/public/hooks/ingest-tv-news.ts` `classify()` to skip roundup posts: if the title matches `/cancel(l)?ed or renewed\??.*status of/i`, return `status: "other"` with null fields so it gets filtered out of future ingestion.
