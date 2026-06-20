@@ -69,6 +69,10 @@ const NETWORKS = [
 
 function classify(title: string, categories: string[]): { status: Status; show_title: string | null; network: string | null } {
   const t = title.toLowerCase();
+  // Skip network roundup posts like "Cancelled or Renewed? Status of NBC TV Shows"
+  if (/cancel(l)?ed or renewed\??.*status of/i.test(title)) {
+    return { status: "other", show_title: null, network: null };
+  }
   let status: Status = "other";
   if (/\b(cancel{1,2}ed|cancellation)\b/.test(t)) status = "cancelled";
   else if (/\b(renew(ed|al|s)?)\b/.test(t)) status = "renewed";
