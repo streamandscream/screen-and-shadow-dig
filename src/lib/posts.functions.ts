@@ -196,7 +196,14 @@ export const deletePost = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("posts").delete().eq("id", data.id);
+    const [{ data: isAuthor }, { data: isAdmin }] = await Promise.all([
+      context.supabase.rpc("has_role", { _user_id: context.userId, _role: "author" }),
+      context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" }),
+    ]);
+    if (!isAuthor && !isAdmin) throw new Error("You do not have permission to delete posts.");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("posts").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
