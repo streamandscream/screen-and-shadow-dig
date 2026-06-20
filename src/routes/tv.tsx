@@ -51,7 +51,7 @@ function Page() {
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
-      <main className="mx-auto max-w-6xl px-6 py-12 w-full flex-1">
+      <main className="mx-auto max-w-4xl px-6 py-12 w-full flex-1">
         
         <h1 className="font-display text-6xl mt-2 border-b-2 border-foreground pb-4">The Stream</h1>
         <div className="mt-4 max-w-2xl text-muted-foreground whitespace-pre-line">Prestige dramas, sharp thrillers, angsty new-adult sagas, and slow-burn gems—because your watchlist deserves stories that linger long after the screen fades to black.{"\n\n"}</div>
