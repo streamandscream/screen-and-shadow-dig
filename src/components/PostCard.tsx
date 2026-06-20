@@ -51,14 +51,14 @@ export function WhereToWatchLink({ post, className }: { post: PostCardData; clas
 export function FeatureCard({ post }: { post: PostCardData }) {
   return (
     <article className="grid md:grid-cols-2 gap-8 border-b-2 border-foreground pb-10">
-      <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper">
-        {post.cover_url && (
-          <>
-            <img src={post.cover_url} alt={post.title} className="w-full h-72 md:h-96 object-cover" loading="lazy" />
-            <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>
-          </>
-        )}
-      </Link>
+      <div>
+        <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3] md:aspect-[3/4]">
+          {post.cover_url && (
+            <img src={post.cover_url} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
+          )}
+        </Link>
+        {post.cover_url && <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>}
+      </div>
       <div className="flex flex-col justify-center">
         <span className="eyebrow text-accent-red">{label(post.section)}</span>
         <Link to="/post/$slug" params={{ slug: post.slug }}>
@@ -78,14 +78,12 @@ export function FeatureCard({ post }: { post: PostCardData }) {
 export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData; showWhereToWatch?: boolean }) {
   return (
     <article className="flex flex-col">
-      <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper">
+      <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
         {post.cover_url && (
-          <>
-            <img src={post.cover_url} alt={post.title} className="w-full h-56 object-cover" loading="lazy" />
-            <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>
-          </>
+          <img src={post.cover_url} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
         )}
       </Link>
+      {post.cover_url && <p className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</p>}
       <span className="eyebrow mt-3 text-accent-red">{label(post.section)}</span>
       <Link to="/post/$slug" params={{ slug: post.slug }}>
         <h3 className="mt-2 font-display text-2xl">{post.title}</h3>
