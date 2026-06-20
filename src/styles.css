@@ -134,6 +134,7 @@
     border-left: 3px solid var(--ink-deep);
     padding-left: 1.2rem;
     font-family: var(--font-display);
+    font-weight: 600;
     font-size: 1.4rem;
     line-height: 1.2;
     margin: 1.5em 0;
