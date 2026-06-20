@@ -7,7 +7,6 @@ const STATUSES: { value: "" | TvNewsStatus; label: string }[] = [
   { value: "", label: "All" },
   { value: "renewed", label: "Renewed" },
   { value: "cancelled", label: "Cancelled" },
-  { value: "ended", label: "Ended" },
 ];
 
 const newsQuery = (status: "" | TvNewsStatus) =>
@@ -19,7 +18,7 @@ const newsQuery = (status: "" | TvNewsStatus) =>
 export const Route = createFileRoute("/tv-news")({
   validateSearch: (search: Record<string, unknown>): { status: "" | TvNewsStatus } => {
     const s = search.status;
-    if (s === "renewed" || s === "cancelled" || s === "ended") return { status: s };
+    if (s === "renewed" || s === "cancelled") return { status: s };
     return { status: "" };
   },
   head: () => ({
