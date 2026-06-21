@@ -91,7 +91,6 @@ export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData
       <div className="card-meta mt-2">
         {post.streamer}{post.rating != null && ` · The Verdict: ${post.rating}/10`}
       </div>
-      {showWhereToWatch && <WhereToWatchLink post={post} />}
     </article>
   );
 }
