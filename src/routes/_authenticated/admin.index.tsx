@@ -5,7 +5,25 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { listMyPosts, deletePost } from "@/lib/posts.functions";
+import { getTvNewsScheduleStatus } from "@/lib/tv-news-schedule.functions";
 import { supabase } from "@/integrations/supabase/client";
+
+function formatDateTime(iso: string | null): string {
+  if (!iso) return "Never";
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+}
+
+function formatRelative(iso: string | null): string {
+  if (!iso) return "";
+  const diffMs = new Date(iso).getTime() - Date.now();
+  const abs = Math.abs(diffMs);
+  const mins = Math.round(abs / 60000);
+  const hours = Math.round(mins / 60);
+  const days = Math.round(hours / 24);
+  const value = days >= 1 ? `${days}d` : hours >= 1 ? `${hours}h` : `${mins}m`;
+  return diffMs >= 0 ? `in ${value}` : `${value} ago`;
+}
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: Admin,
@@ -24,9 +42,15 @@ function Admin() {
   const router = useRouter();
   const listFn = useServerFn(listMyPosts);
   const delFn = useServerFn(deletePost);
+  const statusFn = useServerFn(getTvNewsScheduleStatus);
   const { data: posts, isLoading, refetch } = useQuery({
     queryKey: ["my-posts"],
     queryFn: () => listFn(),
+  });
+  const { data: schedule, refetch: refetchSchedule } = useQuery({
+    queryKey: ["tv-news-schedule"],
+    queryFn: () => statusFn(),
+    refetchInterval: 60_000,
   });
   const [ingesting, setIngesting] = useState(false);
   const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
@@ -62,6 +86,7 @@ function Admin() {
       const res = await fetch("/api/public/hooks/ingest-tv-news", { method: "POST" });
       const json = (await res.json()) as IngestResult;
       setIngestResult(json);
+      refetchSchedule();
     } catch (e) {
       setIngestResult({ success: false, inserted: 0, skipped: 0, classified: 0, errors: [(e as Error).message], error: (e as Error).message });
     } finally {
@@ -151,6 +176,27 @@ function Admin() {
             </div>
 
           </div>
+
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 border border-foreground/30 p-4">
+            <div>
+              <p className="font-display uppercase tracking-widest text-xs text-muted-foreground">Last successful refresh</p>
+              <p className="mt-1 font-semibold">{formatDateTime(schedule?.lastSuccessAt ?? null)}</p>
+              {schedule?.lastSuccessAt && (
+                <p className="text-xs text-muted-foreground">{formatRelative(schedule.lastSuccessAt)}{schedule.lastInserted != null ? ` • ${schedule.lastInserted} inserted, ${schedule.lastSkipped} skipped` : ""}</p>
+              )}
+            </div>
+            <div>
+              <p className="font-display uppercase tracking-widest text-xs text-muted-foreground">Next scheduled run</p>
+              <p className="mt-1 font-semibold">{schedule ? formatDateTime(schedule.nextRunAt) : "—"}</p>
+              {schedule && <p className="text-xs text-muted-foreground">{formatRelative(schedule.nextRunAt)}</p>}
+            </div>
+            <div>
+              <p className="font-display uppercase tracking-widest text-xs text-muted-foreground">Schedule</p>
+              <p className="mt-1 font-semibold">{schedule?.scheduleLabel ?? "—"}</p>
+              {schedule && <p className="text-xs text-muted-foreground font-mono">{schedule.scheduleCron}</p>}
+            </div>
+          </div>
+
 
           {ingestResult && (
             <div className="mt-6 text-sm">
