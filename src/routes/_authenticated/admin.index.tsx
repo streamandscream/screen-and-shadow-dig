@@ -86,6 +86,7 @@ function Admin() {
       const res = await fetch("/api/public/hooks/ingest-tv-news", { method: "POST" });
       const json = (await res.json()) as IngestResult;
       setIngestResult(json);
+      refetchSchedule();
     } catch (e) {
       setIngestResult({ success: false, inserted: 0, skipped: 0, classified: 0, errors: [(e as Error).message], error: (e as Error).message });
     } finally {
