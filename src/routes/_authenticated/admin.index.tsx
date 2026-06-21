@@ -5,7 +5,25 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { listMyPosts, deletePost } from "@/lib/posts.functions";
+import { getTvNewsScheduleStatus } from "@/lib/tv-news-schedule.functions";
 import { supabase } from "@/integrations/supabase/client";
+
+function formatDateTime(iso: string | null): string {
+  if (!iso) return "Never";
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+}
+
+function formatRelative(iso: string | null): string {
+  if (!iso) return "";
+  const diffMs = new Date(iso).getTime() - Date.now();
+  const abs = Math.abs(diffMs);
+  const mins = Math.round(abs / 60000);
+  const hours = Math.round(mins / 60);
+  const days = Math.round(hours / 24);
+  const value = days >= 1 ? `${days}d` : hours >= 1 ? `${hours}h` : `${mins}m`;
+  return diffMs >= 0 ? `in ${value}` : `${value} ago`;
+}
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: Admin,
