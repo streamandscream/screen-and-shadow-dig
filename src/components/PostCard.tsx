@@ -69,7 +69,6 @@ export function FeatureCard({ post }: { post: PostCardData }) {
           {post.streamer && <span>{post.streamer}</span>}
           {post.rating != null && <span>· The Verdict: {post.rating}/10</span>}
         </div>
-        <WhereToWatchLink post={post} />
       </div>
     </article>
   );
@@ -92,7 +91,6 @@ export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData
       <div className="card-meta mt-2">
         {post.streamer}{post.rating != null && ` · The Verdict: ${post.rating}/10`}
       </div>
-      {showWhereToWatch && <WhereToWatchLink post={post} />}
     </article>
   );
 }
@@ -117,7 +115,7 @@ export function HorizontalPostCard({ post, showWhereToWatch = true }: { post: Po
         <div className="card-meta mt-3">
           {post.streamer}{post.rating != null && ` · The Verdict: ${post.rating}/10`}
         </div>
-        {showWhereToWatch && <WhereToWatchLink post={post} />}
+        
       </div>
     </article>
   );
