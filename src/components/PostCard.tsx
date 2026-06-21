@@ -115,7 +115,7 @@ export function HorizontalPostCard({ post, showWhereToWatch = true }: { post: Po
         <div className="card-meta mt-3">
           {post.streamer}{post.rating != null && ` · The Verdict: ${post.rating}/10`}
         </div>
-        {showWhereToWatch && <WhereToWatchLink post={post} />}
+        
       </div>
     </article>
   );
