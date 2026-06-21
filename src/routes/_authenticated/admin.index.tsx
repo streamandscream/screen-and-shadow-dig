@@ -42,9 +42,15 @@ function Admin() {
   const router = useRouter();
   const listFn = useServerFn(listMyPosts);
   const delFn = useServerFn(deletePost);
+  const statusFn = useServerFn(getTvNewsScheduleStatus);
   const { data: posts, isLoading, refetch } = useQuery({
     queryKey: ["my-posts"],
     queryFn: () => listFn(),
+  });
+  const { data: schedule, refetch: refetchSchedule } = useQuery({
+    queryKey: ["tv-news-schedule"],
+    queryFn: () => statusFn(),
+    refetchInterval: 60_000,
   });
   const [ingesting, setIngesting] = useState(false);
   const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
