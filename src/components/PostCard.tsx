@@ -69,7 +69,6 @@ export function FeatureCard({ post }: { post: PostCardData }) {
           {post.streamer && <span>{post.streamer}</span>}
           {post.rating != null && <span>· The Verdict: {post.rating}/10</span>}
         </div>
-        <WhereToWatchLink post={post} />
       </div>
     </article>
   );
