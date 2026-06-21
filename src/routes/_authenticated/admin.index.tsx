@@ -177,6 +177,27 @@ function Admin() {
 
           </div>
 
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 border border-foreground/30 p-4">
+            <div>
+              <p className="font-display uppercase tracking-widest text-xs text-muted-foreground">Last successful refresh</p>
+              <p className="mt-1 font-semibold">{formatDateTime(schedule?.lastSuccessAt ?? null)}</p>
+              {schedule?.lastSuccessAt && (
+                <p className="text-xs text-muted-foreground">{formatRelative(schedule.lastSuccessAt)}{schedule.lastInserted != null ? ` • ${schedule.lastInserted} inserted, ${schedule.lastSkipped} skipped` : ""}</p>
+              )}
+            </div>
+            <div>
+              <p className="font-display uppercase tracking-widest text-xs text-muted-foreground">Next scheduled run</p>
+              <p className="mt-1 font-semibold">{schedule ? formatDateTime(schedule.nextRunAt) : "—"}</p>
+              {schedule && <p className="text-xs text-muted-foreground">{formatRelative(schedule.nextRunAt)}</p>}
+            </div>
+            <div>
+              <p className="font-display uppercase tracking-widest text-xs text-muted-foreground">Schedule</p>
+              <p className="mt-1 font-semibold">{schedule?.scheduleLabel ?? "—"}</p>
+              {schedule && <p className="text-xs text-muted-foreground font-mono">{schedule.scheduleCron}</p>}
+            </div>
+          </div>
+
+
           {ingestResult && (
             <div className="mt-6 text-sm">
               {ingestResult.success ? (
