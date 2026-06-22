@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import { TagPicker } from "@/components/TagPicker";
 import { upsertPost, getMyPost } from "@/lib/posts.functions";
 import { fetchTmdbMeta } from "@/lib/tmdb.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -154,8 +155,8 @@ function Editor({ form, setForm, save, saving, err }: any) {
             <Field label="Streamer"><input className="w-full border border-foreground bg-background p-3" value={form.streamer || ""} onChange={(e) => setForm({ ...form, streamer: e.target.value })} /></Field>
             <Field label="The Verdict (1–10, 0.5 steps)"><input type="number" min={1} max={10} step={0.5} className="w-full border border-foreground bg-background p-3" value={form.rating ?? ""} onChange={(e) => setForm({ ...form, rating: e.target.value ? Number(e.target.value) : null })} /></Field>
           </div>
-          <Field label="Tags (comma separated)">
-            <CsvInput value={form.tags || []} onChange={(arr) => setForm({ ...form, tags: arr })} />
+          <Field label="Tags">
+            <TagPicker value={form.tags || []} onChange={(arr) => setForm({ ...form, tags: arr })} />
           </Field>
           <Field label="Body (Markdown)"><textarea className="w-full border border-foreground bg-background p-3 font-mono text-sm" rows={20} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} /></Field>
           <Field label="Your next binge (2–3 titles, comma separated)">
