@@ -1,27 +1,27 @@
-# Single-column post layout
+# Make tagging easier in the post editor
 
-Yes — responsive horizontal cards on web, stacked vertical on mobile.
+Right now tags are a single text box where you type a comma-separated list (`mystery, hulu, true crime`). That's error-prone: easy to misspell, duplicate, or forget what already exists in the catalog.
 
-## 1. New `HorizontalPostCard` in `src/components/PostCard.tsx`
-Add a new exported component (keep existing `PostCard` intact for any other usages):
+## What I'll build
 
-- Mobile: vertical (poster on top, text below) — same as current `PostCard`.
-- `sm:` and up: 2-column row — poster on left (~fixed width, e.g. `sm:w-48 md:w-56`, aspect `2/3`), text block on right (title, eyebrow, full excerpt, streamer + verdict, optional Where-to-watch).
-- Use `grid sm:grid-cols-[12rem_minmax(0,1fr)] md:grid-cols-[14rem_minmax(0,1fr)] gap-6` with `min-w-0` on the text column so long titles/excerpts truncate cleanly.
-- Reuse `WhereToWatchLink` and the existing `card-*` typography classes (no design token changes).
+A proper **TagPicker** component that replaces the current CSV input on both the New Post and Edit Post screens.
 
-## 2. `src/routes/index.tsx` (home)
-- Remove the two-column `grid md:grid-cols-2` wrapper.
-- Combine `tv` + `tc` posts into a single list sorted by newest first (the loader already returns newest first from `listPublishedPosts`; just merge and re-sort by `published_at` desc — or fetch with no section filter).
-- Render as a single vertical stack of `HorizontalPostCard`s.
-- Drop the per-section headers + "See all" links (since it's now one merged feed). The site header nav still links to `/tv` and `/true-crime`.
-- Also remove the stray trailing `.` after the `tv.map(...)` block (existing bug).
+**Features**
+- **Chips for selected tags** — each tag shows as a pill with an × to remove.
+- **Autocomplete dropdown** — as you type, it filters the existing tag catalog (and tags already used on other posts) and shows matches you can click or arrow-key + Enter to add.
+- **Create-new inline** — if what you typed doesn't exist, the dropdown shows `+ Create "horror"`; pressing Enter or clicking it adds the new tag to the post and saves it to the catalog so the next post can reuse it.
+- **No duplicates** — already-selected tags are hidden from the suggestion list.
+- **Keyboard friendly** — Enter to add the highlighted suggestion, Backspace on empty input removes the last chip, Esc closes the dropdown.
 
-## 3. `src/routes/tv.tsx` and `src/routes/true-crime.tsx`
-- Replace `section className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-10"` with a single-column stack: `section className="mt-10 flex flex-col gap-8 divide-y divide-foreground/20"` (or just `gap-10`).
-- Swap `<PostCard>` for `<HorizontalPostCard>`. Keep the `showWhereToWatch` prop behavior (off on /tv, on on /true-crime).
+## Technical sketch
 
-## Technical notes
-- No data/API changes. No new dependencies.
-- `PostCardData` type unchanged.
-- The home loader currently passes `sections: ["tv", "true_crime"], limit: 6`. To honor "newest first across both", I'll keep that call and sort the combined array by `published_at` client-side (the field already exists on returned rows; if not, I'll add it to the select in `listPublishedPosts`).
+- New component `src/components/TagPicker.tsx` (chip UI + suggestion popover, same border/uppercase styling as the rest of the admin).
+- New public server fn `listTagCatalog` in `src/lib/tags.functions.ts` — returns the full tag list to any signed-in author/admin (the existing `listTags` is fine but also returns counts; a lighter `{ name }[]` version keeps the picker fast). Called once on editor mount via `useQuery`.
+- When a user adds a brand-new tag, the picker calls the existing `createTag` server fn in the background so the catalog stays in sync — no extra trip to `/admin/tags` required.
+- Swap `<CsvInput value={form.tags} … />` in `src/routes/_authenticated/admin.$id.edit.tsx` (line 158) for `<TagPicker value={form.tags} onChange={…} />`. The `next_binge` CsvInput on line 162 stays as-is — it isn't a tag catalog.
+- No DB schema changes, no migrations.
+
+## Out of scope (ask if you want these too)
+- Bulk re-tagging across multiple posts.
+- Color-coded tags or tag descriptions.
+- A "suggest tags from the post body" AI helper.
