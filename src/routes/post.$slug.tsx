@@ -86,7 +86,7 @@ function Page() {
         {post.rating != null && (
           <div className="mt-10 border-t-2 border-foreground pt-6">
             <p className="eyebrow text-accent-red">The verdict</p>
-            <p className="font-sans text-[17px] mt-2">
+            <p className="font-sans mt-2">
               {post.rating}/10
             </p>
           </div>
