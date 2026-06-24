@@ -115,7 +115,7 @@ function Page() {
                   {post.next_binge.map((title: string) => {
                     const matchSlug = linkMap.get(title.toLowerCase().trim());
                     return (
-                      <li key={title} className="font-display text-xl">
+                      <li key={title} className="font-sans text-[17px]">
                         →{" "}
                         {matchSlug ? (
                           <Link to="/post/$slug" params={{ slug: matchSlug }} className="underline hover:text-accent-red">
