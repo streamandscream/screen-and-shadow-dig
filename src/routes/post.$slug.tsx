@@ -76,7 +76,7 @@ function Page() {
         )}
         {(post as any).vibe && (
           <blockquote className="mt-8 border-l-4 border-accent-red pl-5">
-            <p className="font-display text-3xl md:text-4xl italic leading-tight">“{(post as any).vibe}”</p>
+            <p className="font-display text-[28px] md:text-4xl italic leading-tight">“{(post as any).vibe}”</p>
           </blockquote>
         )}
         <WhereToWatchLink post={post as any} className="mt-8 inline-block border border-foreground px-5 py-3 font-display uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors" />
