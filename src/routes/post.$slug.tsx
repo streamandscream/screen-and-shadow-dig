@@ -107,29 +107,25 @@ function Page() {
           </div>
         )}
         {post.next_binge && post.next_binge.length > 0 ? (
-          <aside className="mt-12 border-t-2 border-foreground pt-6 space-y-6">
-            {post.next_binge && post.next_binge.length > 0 && (
-              <div>
-                <p className="eyebrow text-accent-red">Your next binge if you loved {post.title}</p>
-                <ul className="mt-2 space-y-1">
-                  {post.next_binge.map((title: string) => {
-                    const matchSlug = linkMap.get(title.toLowerCase().trim());
-                    return (
-                      <li key={title} className="font-sans text-[17px]">
-                        →{" "}
-                        {matchSlug ? (
-                          <Link to="/post/$slug" params={{ slug: matchSlug }} className="underline hover:text-accent-red">
-                            {title}
-                          </Link>
-                        ) : (
-                          title
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
+          <aside className="mt-12 border-t-2 border-foreground pt-6">
+            <p className="eyebrow text-accent-red">Your next binge if you loved {post.title}</p>
+            <ul className="mt-4 space-y-3 md:space-y-2">
+              {post.next_binge.map((title: string) => {
+                const matchSlug = linkMap.get(title.toLowerCase().trim());
+                return (
+                  <li key={title} className="font-sans text-[17px] leading-snug flex gap-3">
+                    <span className="text-accent-red shrink-0" aria-hidden>→</span>
+                    {matchSlug ? (
+                      <Link to="/post/$slug" params={{ slug: matchSlug }} className="underline underline-offset-4 decoration-foreground/30 hover:decoration-accent-red hover:text-accent-red transition-colors">
+                        {title}
+                      </Link>
+                    ) : (
+                      <span>{title}</span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           </aside>
         ) : null}
       </main>
