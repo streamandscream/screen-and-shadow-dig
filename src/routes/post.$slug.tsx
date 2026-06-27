@@ -63,7 +63,7 @@ function Page() {
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-6 py-12 w-full flex-1">
         <Link to={sectionTo} className="eyebrow text-accent-red">{sectionLabel}</Link>
-        <h1 className="font-display text-[45px] md:text-[64px] mt-3">{post.title}</h1>
+        <h1 className="font-display text-[40px] md:text-[59px] mt-3">{post.title}</h1>
         {post.cover_url && (
           <figure className="mt-6">
             <img
