@@ -173,7 +173,7 @@
     line-height: 1.02;
   }
   @media (min-width: 768px) {
-    .card-title-lg { font-size: 3rem; } /* 48px */
+    .card-title-lg { font-size: 59px; }
   }
   .card-tag {
     font-family: var(--font-sans);
