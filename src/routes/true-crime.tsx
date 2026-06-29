@@ -47,7 +47,7 @@ function Page() {
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-6 py-12 w-full flex-1">
         
-        <h1 className="font-display text-6xl mt-2 border-b-2 border-foreground pb-4">The Scream</h1>
+        <h1 className="font-display text-[40px] mt-2 border-b-2 border-foreground pb-4">The Scream</h1>
         <div className="mt-4 max-w-2xl text-muted-foreground whitespace-pre-line">True crime and documentary picks for the endlessly curious—where every story pulls you deeper, and the truth is never simple.{"\n\n"}</div>
 
         <div className="mt-6 flex flex-wrap gap-4 items-center">
