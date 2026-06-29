@@ -28,14 +28,33 @@ export function SiteHeader() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex items-center justify-between py-2 text-[11px] uppercase tracking-widest text-muted-foreground">
           <span>{today}</span>
-          <button
-            onClick={() => setMenuOpen((o) => !o)}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-            className="p-1 -mr-1"
-          >
-            {menuOpen ? <X size={20} strokeWidth={2.5} /> : <Menu size={20} strokeWidth={2.5} />}
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              className="p-1 -mr-1"
+            >
+              {menuOpen ? <X size={20} strokeWidth={2.5} /> : <Menu size={20} strokeWidth={2.5} />}
+            </button>
+            {menuOpen && (
+              <nav className="absolute right-0 top-full mt-2 w-48 border border-foreground/80 bg-background py-3 text-sm uppercase tracking-widest font-display shadow-lg z-50">
+                <div className="flex flex-col items-start gap-3 px-4">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      activeOptions={link.exact ? { exact: true } : undefined}
+                      activeProps={{ className: "underline underline-offset-4" }}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </nav>
+            )}
+          </div>
         </div>
         <div className="rule" />
         <div className="py-6 text-center">
@@ -43,23 +62,6 @@ export function SiteHeader() {
             <h1 className="font-display text-5xl md:text-7xl tracking-tight lowercase">stream & scream</h1>
           </Link>
         </div>
-        {menuOpen && (
-          <nav className="border-t border-b border-foreground/80 py-4 text-sm uppercase tracking-widest font-display">
-            <div className="flex flex-col items-center gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  activeOptions={link.exact ? { exact: true } : undefined}
-                  activeProps={{ className: "underline underline-offset-4" }}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </nav>
-        )}
       </div>
     </header>
   );
