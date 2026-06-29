@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export function SiteHeader() {
   const [signedIn, setSignedIn] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSignedIn(!!s));
@@ -13,33 +14,52 @@ export function SiteHeader() {
 
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
+  const navLinks = [
+    { to: "/", label: "Home", exact: true },
+    { to: "/tv", label: "The Stream" },
+    { to: "/true-crime", label: "The Scream" },
+    { to: "/tv-news", label: "TV News" },
+    ...(signedIn ? [{ to: "/admin" as const, label: "Admin" }] : []),
+    { to: "/search", label: "Search" },
+  ];
+
   return (
     <header className="border-b-2 border-foreground bg-background">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex items-center justify-between py-2 text-[11px] uppercase tracking-widest text-muted-foreground">
           <span>{today}</span>
-          <span>{"\n"}</span>
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            className="p-1 -mr-1"
+          >
+            {menuOpen ? <X size={20} strokeWidth={2.5} /> : <Menu size={20} strokeWidth={2.5} />}
+          </button>
         </div>
         <div className="rule" />
         <div className="py-6 text-center">
           <Link to="/" className="inline-block">
             <h1 className="font-display text-5xl md:text-7xl tracking-tight lowercase">stream & scream</h1>
-            
           </Link>
         </div>
-        <nav className="flex flex-wrap justify-center gap-6 border-t border-b border-foreground/80 py-3 text-sm uppercase tracking-widest font-display">
-          <Link to="/" activeOptions={{ exact: true }} activeProps={{ className: "underline underline-offset-4" }}>Home</Link>
-          <Link to="/tv" activeProps={{ className: "underline underline-offset-4" }}>The Stream</Link>
-          <Link to="/true-crime" activeProps={{ className: "underline underline-offset-4" }}>The Scream</Link>
-          <Link to="/tv-news" activeProps={{ className: "underline underline-offset-4" }}>TV News</Link>
-          {signedIn && (
-            <Link to="/admin" activeProps={{ className: "underline underline-offset-4" }}>Admin</Link>
-          )}
-          <Link to="/search" activeProps={{ className: "underline underline-offset-4" }} className="flex items-center gap-1">
-            <Search size={14} strokeWidth={2.5} />
-            <span className="sr-only">Search</span>
-          </Link>
-        </nav>
+        {menuOpen && (
+          <nav className="border-t border-b border-foreground/80 py-4 text-sm uppercase tracking-widest font-display">
+            <div className="flex flex-col items-center gap-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  activeOptions={link.exact ? { exact: true } : undefined}
+                  activeProps={{ className: "underline underline-offset-4" }}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </nav>
+        )}
       </div>
     </header>
   );
