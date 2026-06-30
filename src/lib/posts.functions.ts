@@ -7,8 +7,6 @@ function matchPost(post: { title: string; excerpt: string; body: string; streame
   const term = q.toLowerCase();
   return (
     post.title.toLowerCase().includes(term) ||
-    post.excerpt.toLowerCase().includes(term) ||
-    post.body.toLowerCase().includes(term) ||
     (post.streamer && post.streamer.toLowerCase().includes(term)) ||
     post.tags.some((t) => t.toLowerCase().includes(term))
   );
