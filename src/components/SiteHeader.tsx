@@ -39,7 +39,7 @@ export function SiteHeader() {
     { to: "/true-crime", label: "The Scream" },
     { to: "/tv-news", label: "TV News" },
     ...(signedIn ? [{ to: "/admin" as const, label: "Admin" }] : []),
-    { to: "/search", label: "Search" },
+    
   ];
 
   const closeMenu = () => {
