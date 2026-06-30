@@ -1,1 +1,1 @@
-In `src/routes/post.$slug.tsx`, update the `<h1>` title size from `text-[45px] md:text-[64px]` to `text-[40px] md:text-[59px]`.
+Restrict search matching in `src/lib/posts.functions.ts` so the `matchPost` helper only checks title, tags, and streamer — remove the `excerpt` and `body` checks. This affects both the `/search` page and the header dropdown (both call `searchPosts`). No UI changes.
