@@ -128,6 +128,11 @@ function Page() {
             </ul>
           </aside>
         ) : null}
+        <div className="mt-12 border-t-2 border-foreground pt-6">
+          <Link to={sectionTo} className="eyebrow text-accent-red hover:underline">
+            ← Back to {sectionLabel}
+          </Link>
+        </div>
       </main>
       <SiteFooter />
     </div>
