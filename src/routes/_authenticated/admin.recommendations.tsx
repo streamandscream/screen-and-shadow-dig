@@ -30,7 +30,7 @@ function RecommendationsEditor() {
           </Link>
         </div>
         <p className="mt-4 text-muted-foreground text-sm">
-          Quickly tweak “Your next binge” for every TV post.
+          Quickly tweak “More like this” for every TV post.
         </p>
 
         {isLoading ? (
@@ -81,7 +81,7 @@ function PostRecommendationsCard({ post, saveFn, onSaved }: { post: any; saveFn:
         </Link>
       </div>
       <div>
-        <label className="eyebrow block mb-1">Your next binge (2–3 titles, comma separated)</label>
+        <label className="eyebrow block mb-1">More like this (2–3 titles, comma separated)</label>
         <input
           className="w-full border border-foreground bg-background p-3"
           placeholder="The Crown, Breaking Bad, Succession"

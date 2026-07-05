@@ -159,7 +159,7 @@ function Editor({ form, setForm, save, saving, err }: any) {
             <TagPicker value={form.tags || []} onChange={(arr) => setForm({ ...form, tags: arr })} />
           </Field>
           <Field label="Body (Markdown)"><textarea className="w-full border border-foreground bg-background p-3 font-mono text-sm" rows={20} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} /></Field>
-          <Field label="Your next binge (2–3 titles, comma separated)">
+          <Field label="More like this (2–3 titles, comma separated)">
             <CsvInput value={form.next_binge || []} onChange={(arr) => setForm({ ...form, next_binge: arr.slice(0, 3) })} />
 
           </Field>

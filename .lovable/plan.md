@@ -1,17 +1,17 @@
-## Summary
-Add a section-specific "← Back to" link at the bottom of every post detail page, placed after the "Your next binge" section (or after tags if no binge links exist).
+The user wants the "Next binge" section heading changed to "More like this" everywhere it appears on the site.
 
-## What changes
-1. In `src/routes/post.$slug.tsx`, insert a `<Link>` near the bottom of `<main>` that uses the existing `sectionLabel` and `sectionTo` variables.
+## Changes
 
-## Why this works
-The post page already derives the correct section label and route:
-- `section === "tv"` → label "The Stream", path `/tv`
-- otherwise → label "The Scream", path `/true-crime`
+Update the visible label text in these locations:
 
-Reusing those variables keeps the link consistent with the section breadcrumb already shown at the top of the page.
+1. **Post detail page** (`src/routes/post.$slug.tsx`)
+   - Line 111: change heading from `Your next binge if you loved {post.title}` to `More like this`
 
-## Design
-- Text: `← Back to { data`
-- Style: eyebrow text, red accent, underline on hover—matching the existing section breadcrumb at the top of the post.
-- Placement: after the "Your next binge" block (or after tags/rating if no binge block), with appropriate top margin (`mt-12`) and a border-top separator to visually close the article before the footer.
+2. **Admin recommendations bulk editor** (`src/routes/_authenticated/admin.recommendations.tsx`)
+   - Line 33: change helper text from `Quickly tweak "Your next binge" for every TV post.` to `Quickly tweak "More like this" for every TV post.`
+   - Line 84: change field label from `Your next binge (2–3 titles, comma separated)` to `More like this (2–3 titles, comma separated)`
+
+3. **Admin post edit form** (`src/routes/_authenticated/admin.$id.edit.tsx`)
+   - Line 162: change field label from `Your next binge (2–3 titles, comma separated)` to `More like this (2–3 titles, comma separated)`
+
+Internal variable names (e.g., `next_binge`, `bingeLinksQuery`) remain unchanged — only user-facing copy is updated.
