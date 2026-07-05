@@ -81,7 +81,7 @@ function PostRecommendationsCard({ post, saveFn, onSaved }: { post: any; saveFn:
         </Link>
       </div>
       <div>
-        <label className="eyebrow block mb-1">Your next binge (2–3 titles, comma separated)</label>
+        <label className="eyebrow block mb-1">More like this (2–3 titles, comma separated)</label>
         <input
           className="w-full border border-foreground bg-background p-3"
           placeholder="The Crown, Breaking Bad, Succession"
