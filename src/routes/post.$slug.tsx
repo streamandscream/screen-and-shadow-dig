@@ -108,7 +108,7 @@ function Page() {
         )}
         {post.next_binge && post.next_binge.length > 0 ? (
           <aside className="mt-12 border-t-2 border-foreground pt-6">
-            <p className="eyebrow text-accent-red">Your next binge if you loved {post.title}</p>
+            <p className="eyebrow text-accent-red">More like this</p>
             <ul className="mt-4 space-y-3 md:space-y-2">
               {post.next_binge.map((title: string) => {
                 const matchSlug = linkMap.get(title.toLowerCase().trim());
