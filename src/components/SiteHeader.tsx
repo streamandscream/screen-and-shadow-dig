@@ -31,7 +31,7 @@ export function SiteHeader() {
     staleTime: 30_000,
   });
 
-  const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+  
 
   const navLinks = [
     { to: "/", label: "Home", exact: true },
