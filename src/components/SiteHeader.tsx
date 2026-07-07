@@ -61,7 +61,7 @@ export function SiteHeader() {
     <header className="border-b-2 border-foreground bg-background">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex items-center justify-between py-2 text-[11px] uppercase tracking-widest text-muted-foreground">
-          <span>{today}</span>
+          <span></span>
           <div className="relative">
             <button
               onClick={() => setMenuOpen((o) => !o)}
