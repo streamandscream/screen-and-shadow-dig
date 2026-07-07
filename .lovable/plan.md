@@ -1,17 +1,16 @@
-The user wants the "Next binge" section heading changed to "More like this" everywhere it appears on the site.
+## Goal
+Remove the current date display from the left-hand side of the site header.
 
-## Changes
+## Where it lives
+- `src/components/SiteHeader.tsx`
+  - Line 34: `const today = new Date().toLocaleDateString(...)`
+  - Line 64: `<span>{today}</span>` inside the top header bar
 
-Update the visible label text in these locations:
+## Change
+1. Delete the `today` const (no longer needed).
+2. Remove the `<span>{today}</span>` element from the top header bar.
+3. Keep the surrounding flex layout and menu button unchanged.
 
-1. **Post detail page** (`src/routes/post.$slug.tsx`)
-   - Line 111: change heading from `Your next binge if you loved {post.title}` to `More like this`
-
-2. **Admin recommendations bulk editor** (`src/routes/_authenticated/admin.recommendations.tsx`)
-   - Line 33: change helper text from `Quickly tweak "Your next binge" for every TV post.` to `Quickly tweak "More like this" for every TV post.`
-   - Line 84: change field label from `Your next binge (2–3 titles, comma separated)` to `More like this (2–3 titles, comma separated)`
-
-3. **Admin post edit form** (`src/routes/_authenticated/admin.$id.edit.tsx`)
-   - Line 162: change field label from `Your next binge (2–3 titles, comma separated)` to `More like this (2–3 titles, comma separated)`
-
-Internal variable names (e.g., `next_binge`, `bingeLinksQuery`) remain unchanged — only user-facing copy is updated.
+## Impact
+- The left-hand side of the header will be empty, maintaining the existing layout structure.
+- No other pages or components reference `today`.
