@@ -23,9 +23,9 @@ export const Route = createFileRoute("/tv-news")({
   },
   head: () => ({
     meta: [
-      { title: "TV News — Cancelled & Renewed | Bold News" },
+      { title: "TV News — Cancelled & Renewed | Stream & Scream" },
       { name: "description", content: "Track which TV shows have been renewed, cancelled, or ended. Up-to-date industry news." },
-      { property: "og:title", content: "TV News — Cancelled & Renewed | Bold News" },
+      { property: "og:title", content: "TV News — Cancelled & Renewed | Stream & Scream" },
       { property: "og:description", content: "Track which TV shows have been renewed, cancelled, or ended." },
     ],
   }),

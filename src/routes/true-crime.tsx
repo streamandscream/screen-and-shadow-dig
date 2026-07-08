@@ -15,9 +15,9 @@ export const Route = createFileRoute("/true-crime")({
     sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
   }),
   head: () => ({ meta: [
-    { title: "The Scream — Bold News" },
+    { title: "The Scream — Stream & Scream" },
     { name: "description", content: "Deep dives into true crime documentaries: The Nightmare Upstairs, Mean Girl Murders, A Plan to Kill, and more." },
-    { property: "og:title", content: "The Scream — Bold News" },
+    { property: "og:title", content: "The Scream — Stream & Scream" },
     { property: "og:description", content: "Deep dives into true crime documentaries." },
   ] }),
   loaderDeps: ({ search }) => ({

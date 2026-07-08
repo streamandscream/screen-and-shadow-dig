@@ -17,9 +17,9 @@ export const Route = createFileRoute("/tv")({
     sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
   }),
   head: () => ({ meta: [
-    { title: "The Stream — Bold News" },
+    { title: "The Stream — Stream & Scream" },
     { name: "description", content: "Reviews and recommendations on prestige TV: The Diplomat, Lioness, Vladimir, The Beast in Me, and more." },
-    { property: "og:title", content: "The Stream — Bold News" },
+    { property: "og:title", content: "The Stream — Stream & Scream" },
     { property: "og:description", content: "Reviews and recommendations on prestige TV." },
   ] }),
   loaderDeps: ({ search }) => ({

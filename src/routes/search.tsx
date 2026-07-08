@@ -31,8 +31,8 @@ export const Route = createFileRoute("/search")({
   }),
   head: () => ({
     meta: [
-      { title: "Search — Bold News" },
-      { name: "description", content: "Search Bold News for TV recommendations and true crime documentaries." },
+      { title: "Search — Stream & Scream" },
+      { name: "description", content: "Search Stream & Scream for TV recommendations and true crime documentaries." },
     ],
   }),
   loaderDeps: ({ search }) => ({
