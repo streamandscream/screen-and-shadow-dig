@@ -37,7 +37,7 @@ function SubscribePage() {
         <div className="mx-auto max-w-2xl px-6 py-20 text-center">
           <p className="eyebrow text-muted-foreground">Newsletter</p>
           <h1 className="font-display mt-4 text-4xl md:text-5xl tracking-tight">
-            Subscribe to Bold News
+            Subscribe to Stream & Scream
           </h1>
           <p className="mt-4 text-muted-foreground">
             Get the latest reviews and picks from The Stream and The Scream

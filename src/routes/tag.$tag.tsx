@@ -14,10 +14,10 @@ export const Route = createFileRoute("/tag/$tag")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(tagQuery(params.tag)),
   head: ({ params }) => ({
     meta: [
-      { title: `#${params.tag} — Bold News` },
-      { name: "description", content: `Posts tagged #${params.tag} on Bold News.` },
-      { property: "og:title", content: `#${params.tag} — Bold News` },
-      { property: "og:description", content: `Posts tagged #${params.tag} on Bold News.` },
+      { title: `#${params.tag} — Stream & Scream` },
+      { name: "description", content: `Posts tagged #${params.tag} on Stream & Scream.` },
+      { property: "og:title", content: `#${params.tag} — Stream & Scream` },
+      { property: "og:description", content: `Posts tagged #${params.tag} on Stream & Scream.` },
     ],
   }),
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
