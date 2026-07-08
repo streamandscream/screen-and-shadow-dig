@@ -31,8 +31,6 @@ export function SiteHeader() {
     staleTime: 30_000,
   });
 
-  
-
   const navLinks = [
     { to: "/", label: "Home", exact: true },
     { to: "/tv", label: "The Stream" },
