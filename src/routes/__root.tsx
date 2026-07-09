@@ -10,7 +10,10 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { GoogleAnalytics } from "../components/GoogleAnalytics";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+
+const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
 function NotFoundComponent() {
   return (
