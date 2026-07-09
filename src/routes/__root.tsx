@@ -10,7 +10,10 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { GoogleAnalytics } from "../components/GoogleAnalytics";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+
+const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
 function NotFoundComponent() {
   return (
@@ -90,6 +93,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hind:wght@400;500;600;700&display=swap" },
     ],
+    scripts: GA_ID
+      ? [
+          {
+            src: `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`,
+            async: true,
+          },
+          {
+            children: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${GA_ID}');`,
+          },
+        ]
+      : [],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -118,6 +132,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <GoogleAnalytics />
     </QueryClientProvider>
   );
 }
