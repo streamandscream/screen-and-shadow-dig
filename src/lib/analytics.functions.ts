@@ -9,6 +9,16 @@ export type OutboundClick = {
   link_text: string | null;
   source_path: string | null;
   is_affiliate: boolean;
+  merchant_id: string | null;
+  original_url: string | null;
+};
+
+export type OutboundStats = {
+  totals: { total: number; affiliate: number; last24h: number; last7d: number };
+  byDomain: Array<{ domain: string; clicks: number; affiliate: number }>;
+  byPath: Array<{ source_path: string; clicks: number }>;
+  byMerchant: Array<{ merchant_id: string; clicks: number }>;
+  recent: OutboundClick[];
 };
 
 export type OutboundStats = {
