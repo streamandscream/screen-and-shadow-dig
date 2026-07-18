@@ -21,12 +21,6 @@ export type OutboundStats = {
   recent: OutboundClick[];
 };
 
-export type OutboundStats = {
-  totals: { total: number; affiliate: number; last24h: number; last7d: number };
-  byDomain: Array<{ domain: string; clicks: number; affiliate: number }>;
-  byPath: Array<{ source_path: string; clicks: number }>;
-  recent: OutboundClick[];
-};
 
 export const getOutboundStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
