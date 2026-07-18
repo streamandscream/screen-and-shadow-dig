@@ -28,7 +28,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           const { data: posts } = await supabaseAdmin
             .from("posts")
             .select("slug, updated_at, tags")
-            .eq("status", "published");
+            .eq("published", true);
 
           for (const p of posts ?? []) {
             if (!p.slug) continue;
