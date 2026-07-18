@@ -29,6 +29,8 @@ import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminRecommendationsRouteImport } from './routes/_authenticated/admin.recommendations'
 import { Route as AuthenticatedAdminNewRouteImport } from './routes/_authenticated/admin.new'
 import { Route as AuthenticatedAdminIngestionHealthRouteImport } from './routes/_authenticated/admin.ingestion-health'
+import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
+import { Route as ApiPublicTrackOutboundClickRouteImport } from './routes/api/public/track/outbound-click'
 import { Route as ApiPublicHooksIngestTvNewsRouteImport } from './routes/api/public/hooks/ingest-tv-news'
 import { Route as AuthenticatedAdminIdEditRouteImport } from './routes/_authenticated/admin.$id.edit'
 
@@ -135,6 +137,18 @@ const AuthenticatedAdminIngestionHealthRoute =
     path: '/ingestion-health',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAnalyticsRoute =
+  AuthenticatedAdminAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const ApiPublicTrackOutboundClickRoute =
+  ApiPublicTrackOutboundClickRouteImport.update({
+    id: '/api/public/track/outbound-click',
+    path: '/api/public/track/outbound-click',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksIngestTvNewsRoute =
   ApiPublicHooksIngestTvNewsRouteImport.update({
     id: '/api/public/hooks/ingest-tv-news',
@@ -161,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
   '/tag/$tag': typeof TagTagRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
@@ -170,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
+  '/api/public/track/outbound-click': typeof ApiPublicTrackOutboundClickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -183,6 +199,7 @@ export interface FileRoutesByTo {
   '/tv-news': typeof TvNewsRoute
   '/post/$slug': typeof PostSlugRoute
   '/tag/$tag': typeof TagTagRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
@@ -192,6 +209,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
+  '/api/public/track/outbound-click': typeof ApiPublicTrackOutboundClickRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -208,6 +226,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
   '/tag/$tag': typeof TagTagRoute
+  '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/_authenticated/admin/new': typeof AuthenticatedAdminNewRoute
   '/_authenticated/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
@@ -217,6 +236,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
+  '/api/public/track/outbound-click': typeof ApiPublicTrackOutboundClickRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -233,6 +253,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/post/$slug'
     | '/tag/$tag'
+    | '/admin/analytics'
     | '/admin/ingestion-health'
     | '/admin/new'
     | '/admin/recommendations'
@@ -242,6 +263,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
+    | '/api/public/track/outbound-click'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -255,6 +277,7 @@ export interface FileRouteTypes {
     | '/tv-news'
     | '/post/$slug'
     | '/tag/$tag'
+    | '/admin/analytics'
     | '/admin/ingestion-health'
     | '/admin/new'
     | '/admin/recommendations'
@@ -264,6 +287,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
+    | '/api/public/track/outbound-click'
   id:
     | '__root__'
     | '/'
@@ -279,6 +303,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/post/$slug'
     | '/tag/$tag'
+    | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/ingestion-health'
     | '/_authenticated/admin/new'
     | '/_authenticated/admin/recommendations'
@@ -288,6 +313,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
+    | '/api/public/track/outbound-click'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -304,6 +330,7 @@ export interface RootRouteChildren {
   PostSlugRoute: typeof PostSlugRoute
   TagTagRoute: typeof TagTagRoute
   ApiPublicHooksIngestTvNewsRoute: typeof ApiPublicHooksIngestTvNewsRoute
+  ApiPublicTrackOutboundClickRoute: typeof ApiPublicTrackOutboundClickRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -448,6 +475,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIngestionHealthRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/analytics': {
+      id: '/_authenticated/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/track/outbound-click': {
+      id: '/api/public/track/outbound-click'
+      path: '/api/public/track/outbound-click'
+      fullPath: '/api/public/track/outbound-click'
+      preLoaderRoute: typeof ApiPublicTrackOutboundClickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/ingest-tv-news': {
       id: '/api/public/hooks/ingest-tv-news'
       path: '/api/public/hooks/ingest-tv-news'
@@ -466,6 +507,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
   AuthenticatedAdminIngestionHealthRoute: typeof AuthenticatedAdminIngestionHealthRoute
   AuthenticatedAdminNewRoute: typeof AuthenticatedAdminNewRoute
   AuthenticatedAdminRecommendationsRoute: typeof AuthenticatedAdminRecommendationsRoute
@@ -477,6 +519,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
   AuthenticatedAdminIngestionHealthRoute:
     AuthenticatedAdminIngestionHealthRoute,
   AuthenticatedAdminNewRoute: AuthenticatedAdminNewRoute,
@@ -517,6 +560,7 @@ const rootRouteChildren: RootRouteChildren = {
   PostSlugRoute: PostSlugRoute,
   TagTagRoute: TagTagRoute,
   ApiPublicHooksIngestTvNewsRoute: ApiPublicHooksIngestTvNewsRoute,
+  ApiPublicTrackOutboundClickRoute: ApiPublicTrackOutboundClickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
