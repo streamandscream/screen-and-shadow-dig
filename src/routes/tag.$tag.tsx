@@ -12,14 +12,19 @@ const tagQuery = (tag: string) =>
 
 export const Route = createFileRoute("/tag/$tag")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(tagQuery(params.tag)),
-  head: ({ params }) => ({
-    meta: [
-      { title: `#${params.tag} — Stream & Scream` },
-      { name: "description", content: `Posts tagged #${params.tag} on Stream & Scream.` },
-      { property: "og:title", content: `#${params.tag} — Stream & Scream` },
-      { property: "og:description", content: `Posts tagged #${params.tag} on Stream & Scream.` },
-    ],
-  }),
+  head: ({ params }) => {
+    const url = `https://screen-and-shadow-dig.lovable.app/tag/${encodeURIComponent(params.tag)}`;
+    return {
+      meta: [
+        { title: `#${params.tag} — Stream & Scream` },
+        { name: "description", content: `Every Stream & Scream review tagged #${params.tag} — reviews, verdicts, and where to watch.` },
+        { property: "og:title", content: `#${params.tag} — Stream & Scream` },
+        { property: "og:description", content: `Every Stream & Scream review tagged #${params.tag}.` },
+        { property: "og:url", content: url },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Page,

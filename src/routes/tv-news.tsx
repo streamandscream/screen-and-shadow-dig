@@ -23,11 +23,13 @@ export const Route = createFileRoute("/tv-news")({
   },
   head: () => ({
     meta: [
-      { title: "TV News — Cancelled & Renewed | Stream & Scream" },
-      { name: "description", content: "Track which TV shows have been renewed, cancelled, or ended. Up-to-date industry news." },
-      { property: "og:title", content: "TV News — Cancelled & Renewed | Stream & Scream" },
-      { property: "og:description", content: "Track which TV shows have been renewed, cancelled, or ended." },
+      { title: "TV News — Which Shows Were Renewed or Cancelled" },
+      { name: "description", content: "The latest renewal and cancellation news across every network and streamer, updated daily." },
+      { property: "og:title", content: "TV News — Which Shows Were Renewed or Cancelled" },
+      { property: "og:description", content: "The latest renewal and cancellation news across every network and streamer." },
+      { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/tv-news" },
     ],
+    links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/tv-news" }],
   }),
   loaderDeps: ({ search }) => ({ status: search.status }),
   loader: ({ context, deps }) => context.queryClient.ensureQueryData(newsQuery(deps.status)),

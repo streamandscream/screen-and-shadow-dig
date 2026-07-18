@@ -14,12 +14,16 @@ export const Route = createFileRoute("/true-crime")({
   validateSearch: (search: Record<string, unknown>) => ({
     sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
   }),
-  head: () => ({ meta: [
-    { title: "The Scream — Stream & Scream" },
-    { name: "description", content: "Deep dives into true crime documentaries: The Nightmare Upstairs, Mean Girl Murders, A Plan to Kill, and more." },
-    { property: "og:title", content: "The Scream — Stream & Scream" },
-    { property: "og:description", content: "Deep dives into true crime documentaries." },
-  ] }),
+  head: () => ({
+    meta: [
+      { title: "The Scream — True Crime Documentary Reviews" },
+      { name: "description", content: "True crime and documentary picks for the endlessly curious. Honest verdicts on the cases and docs everyone's talking about." },
+      { property: "og:title", content: "The Scream — True Crime Documentary Reviews" },
+      { property: "og:description", content: "True crime and documentary picks for the endlessly curious." },
+      { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/true-crime" },
+    ],
+    links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/true-crime" }],
+  }),
   loaderDeps: ({ search }) => ({
     sort: search.sort,
   }),

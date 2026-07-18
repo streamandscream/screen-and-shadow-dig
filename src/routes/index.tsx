@@ -11,6 +11,16 @@ const homePostsQuery = queryOptions({
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(homePostsQuery),
+  head: () => ({
+    meta: [
+      { title: "Stream & Scream — TV Reviews & True Crime Documentary Picks" },
+      { name: "description", content: "Sharp, opinionated reviews of prestige TV and true crime documentaries. The latest picks from The Stream and The Scream." },
+      { property: "og:title", content: "Stream & Scream — TV Reviews & True Crime" },
+      { property: "og:description", content: "Sharp, opinionated reviews of prestige TV and true crime documentaries." },
+      { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/" },
+    ],
+    links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/" }],
+  }),
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Home,

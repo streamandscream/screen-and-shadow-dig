@@ -23,15 +23,24 @@ export const Route = createFileRoute("/post/$slug")({
     if (!post) throw notFound();
     return post;
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData ? [
-      { title: `${loaderData.title} — Stream & Scream` },
-      { name: "description", content: loaderData.excerpt },
-      { property: "og:title", content: loaderData.title },
-      { property: "og:description", content: loaderData.excerpt },
-      ...(loaderData.cover_url ? [{ property: "og:image", content: loaderData.cover_url }] : []),
-    ] : [],
-  }),
+  head: ({ params, loaderData }) => {
+    const url = `https://screen-and-shadow-dig.lovable.app/post/${params.slug}`;
+    if (!loaderData) {
+      return { meta: [{ title: "Not found — Stream & Scream" }, { name: "robots", content: "noindex" }] };
+    }
+    return {
+      meta: [
+        { title: `${loaderData.title} — Stream & Scream` },
+        { name: "description", content: loaderData.excerpt },
+        { property: "og:title", content: loaderData.title },
+        { property: "og:description", content: loaderData.excerpt },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+        ...(loaderData.cover_url ? [{ property: "og:image", content: loaderData.cover_url }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => (
     <div className="min-h-screen flex flex-col">
