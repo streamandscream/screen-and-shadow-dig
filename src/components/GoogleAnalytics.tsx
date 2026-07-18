@@ -48,8 +48,30 @@ export function GoogleAnalytics() {
       if (url.hostname === window.location.hostname) return;
 
       const linkText = (anchor.textContent || "").trim().slice(0, 100);
+      const skimHosts = /(^|\.)(skimresources\.com|redirectingat\.com)$/i;
       const affiliateHosts = /(^|\.)(skimresources\.com|go\.redirectingat\.com|redirectingat\.com|amzn\.to|amazon\.[a-z.]+\/.*tag=)/i;
       const isAffiliate = affiliateHosts.test(url.hostname) || /[?&](tag|utm_source|impactId|irclickid|clickref)=/i.test(url.search);
+
+      // Extract Skimlinks merchant ID + original destination when the link has been transformed.
+      let merchantId: string | null = null;
+      let originalUrl: string | null = null;
+      if (skimHosts.test(url.hostname)) {
+        merchantId = url.searchParams.get("id");
+        const inner = url.searchParams.get("url") || url.searchParams.get("xs");
+        if (inner) {
+          try {
+            originalUrl = new URL(inner).href;
+          } catch {
+            originalUrl = inner;
+          }
+        }
+      } else {
+        // Skimlinks may attach the original href as a data attribute before intercepting.
+        const dataOriginal =
+          anchor.getAttribute("data-skimlinks-original-url") ||
+          anchor.getAttribute("data-vars-outbound-url");
+        if (dataOriginal) originalUrl = dataOriginal;
+      }
 
       // Fire-and-forget log to our own analytics table
       try {
@@ -58,6 +80,8 @@ export function GoogleAnalytics() {
           link_text: linkText,
           source_path: window.location.pathname + window.location.search,
           is_affiliate: isAffiliate,
+          merchant_id: merchantId,
+          original_url: originalUrl,
         });
         const blob = new Blob([payload], { type: "application/json" });
         if (navigator.sendBeacon) {
@@ -83,6 +107,8 @@ export function GoogleAnalytics() {
         link_text: linkText,
         outbound: true,
         is_affiliate: isAffiliate,
+        merchant_id: merchantId ?? undefined,
+        original_url: originalUrl ?? undefined,
         transport_type: "beacon",
       });
 

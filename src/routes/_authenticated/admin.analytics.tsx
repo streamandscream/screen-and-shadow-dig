@@ -113,6 +113,30 @@ function AdminAnalytics() {
             </section>
 
             <section className="mt-12">
+              <h2 className="font-display text-2xl border-b border-foreground pb-2">Top Skimlinks merchants (7d)</h2>
+              {data.byMerchant.length === 0 ? (
+                <p className="mt-4 text-muted-foreground text-sm">No merchant-tagged clicks yet.</p>
+              ) : (
+                <table className="mt-4 w-full text-sm max-w-xl">
+                  <thead className="font-display uppercase tracking-widest text-xs">
+                    <tr>
+                      <th className="text-left py-2">Merchant ID</th>
+                      <th className="text-right">Clicks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.byMerchant.map((m) => (
+                      <tr key={m.merchant_id} className="border-b border-foreground/20">
+                        <td className="py-2 font-mono">{m.merchant_id}</td>
+                        <td className="text-right">{m.clicks}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </section>
+
+            <section className="mt-12">
               <h2 className="font-display text-2xl border-b border-foreground pb-2">Recent clicks</h2>
               {data.recent.length === 0 ? (
                 <p className="mt-4 text-muted-foreground text-sm">No clicks recorded yet.</p>
@@ -123,6 +147,8 @@ function AdminAnalytics() {
                       <th className="text-left py-2">When</th>
                       <th className="text-left">Domain</th>
                       <th className="text-left">Link</th>
+                      <th className="text-left">Original</th>
+                      <th className="text-left">Merchant</th>
                       <th className="text-left">From</th>
                       <th className="text-right">Affiliate</th>
                     </tr>
@@ -132,7 +158,7 @@ function AdminAnalytics() {
                       <tr key={c.id} className="border-b border-foreground/20 align-top">
                         <td className="py-2 whitespace-nowrap">{formatDateTime(c.created_at)}</td>
                         <td className="truncate max-w-[160px]">{c.domain}</td>
-                        <td className="max-w-[320px] truncate">
+                        <td className="max-w-[280px] truncate">
                           <a
                             href={c.url}
                             target="_blank"
@@ -143,6 +169,22 @@ function AdminAnalytics() {
                             {c.link_text || c.url}
                           </a>
                         </td>
+                        <td className="max-w-[240px] truncate text-muted-foreground">
+                          {c.original_url ? (
+                            <a
+                              href={c.original_url}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                              className="underline"
+                              title={c.original_url}
+                            >
+                              {c.original_url}
+                            </a>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td className="font-mono text-xs">{c.merchant_id ?? "—"}</td>
                         <td className="truncate max-w-[200px] text-muted-foreground">{c.source_path ?? "—"}</td>
                         <td className="text-right">{c.is_affiliate ? "Yes" : "—"}</td>
                       </tr>
