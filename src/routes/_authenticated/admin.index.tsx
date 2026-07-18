@@ -113,6 +113,10 @@ function Admin() {
             <Link to="/admin/tags" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Tags
             </Link>
+            <Link to="/admin/analytics" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
+              Analytics
+            </Link>
+
             <Link to="/admin/settings" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Settings
             </Link>
