@@ -107,6 +107,8 @@ export function GoogleAnalytics() {
         link_text: linkText,
         outbound: true,
         is_affiliate: isAffiliate,
+        merchant_id: merchantId ?? undefined,
+        original_url: originalUrl ?? undefined,
         transport_type: "beacon",
       });
 
