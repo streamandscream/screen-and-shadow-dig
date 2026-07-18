@@ -69,6 +69,8 @@ export type Database = {
           id: string
           is_affiliate: boolean
           link_text: string | null
+          merchant_id: string | null
+          original_url: string | null
           source_path: string | null
           url: string
           user_agent: string | null
@@ -79,6 +81,8 @@ export type Database = {
           id?: string
           is_affiliate?: boolean
           link_text?: string | null
+          merchant_id?: string | null
+          original_url?: string | null
           source_path?: string | null
           url: string
           user_agent?: string | null
@@ -89,6 +93,8 @@ export type Database = {
           id?: string
           is_affiliate?: boolean
           link_text?: string | null
+          merchant_id?: string | null
+          original_url?: string | null
           source_path?: string | null
           url?: string
           user_agent?: string | null
