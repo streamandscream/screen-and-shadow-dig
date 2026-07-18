@@ -62,6 +62,39 @@ export type Database = {
         }
         Relationships: []
       }
+      outbound_clicks: {
+        Row: {
+          created_at: string
+          domain: string
+          id: string
+          is_affiliate: boolean
+          link_text: string | null
+          source_path: string | null
+          url: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          domain: string
+          id?: string
+          is_affiliate?: boolean
+          link_text?: string | null
+          source_path?: string | null
+          url: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          domain?: string
+          id?: string
+          is_affiliate?: boolean
+          link_text?: string | null
+          source_path?: string | null
+          url?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_id: string | null
