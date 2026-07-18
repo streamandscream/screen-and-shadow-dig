@@ -113,6 +113,29 @@ function AdminAnalytics() {
             </section>
 
             <section className="mt-12">
+              <h2 className="font-display text-2xl border-b border-foreground pb-2">Top Skimlinks merchants (7d)</h2>
+              {data.byMerchant.length === 0 ? (
+                <p className="mt-4 text-muted-foreground text-sm">No merchant-tagged clicks yet.</p>
+              ) : (
+                <table className="mt-4 w-full text-sm max-w-xl">
+                  <thead className="font-display uppercase tracking-widest text-xs">
+                    <tr>
+                      <th className="text-left py-2">Merchant ID</th>
+                      <th className="text-right">Clicks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.byMerchant.map((m) => (
+                      <tr key={m.merchant_id} className="border-b border-foreground/20">
+                        <td className="py-2 font-mono">{m.merchant_id}</td>
+                        <td className="text-right">{m.clicks}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+
+            <section className="mt-12">
               <h2 className="font-display text-2xl border-b border-foreground pb-2">Recent clicks</h2>
               {data.recent.length === 0 ? (
                 <p className="mt-4 text-muted-foreground text-sm">No clicks recorded yet.</p>
