@@ -2,10 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({ meta: [
-    { title: "About — Stream & Scream" },
-    { name: "description", content: "About Stream & Scream — sharp reviews on prestige TV and true crime documentaries." },
-  ] }),
+  head: () => ({
+    meta: [
+      { title: "About — Stream & Scream Editorial Desk" },
+      { name: "description", content: "About Stream & Scream — sharp, no-spoilers reviews on prestige TV and true crime documentaries." },
+      { property: "og:title", content: "About — Stream & Scream Editorial Desk" },
+      { property: "og:description", content: "About Stream & Scream — sharp, no-spoilers reviews on prestige TV and true crime documentaries." },
+      { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/about" },
+    ],
+    links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/about" }],
+  }),
   component: () => (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />

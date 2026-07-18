@@ -16,12 +16,16 @@ export const Route = createFileRoute("/tv")({
     maxRating: typeof search.maxRating === "string" ? Number(search.maxRating) || undefined : undefined,
     sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
   }),
-  head: () => ({ meta: [
-    { title: "The Stream — Stream & Scream" },
-    { name: "description", content: "Reviews and recommendations on prestige TV: The Diplomat, Lioness, Vladimir, The Beast in Me, and more." },
-    { property: "og:title", content: "The Stream — Stream & Scream" },
-    { property: "og:description", content: "Reviews and recommendations on prestige TV." },
-  ] }),
+  head: () => ({
+    meta: [
+      { title: "The Stream — Prestige TV Reviews & Recommendations" },
+      { name: "description", content: "Prestige dramas, sharp thrillers, and angsty new-adult picks — honest reviews of the TV shows worth your evening." },
+      { property: "og:title", content: "The Stream — Prestige TV Reviews & Recommendations" },
+      { property: "og:description", content: "Honest reviews of prestige TV: dramas, thrillers, and new-adult favourites." },
+      { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/tv" },
+    ],
+    links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/tv" }],
+  }),
   loaderDeps: ({ search }) => ({
     minRating: search.minRating,
     maxRating: search.maxRating,

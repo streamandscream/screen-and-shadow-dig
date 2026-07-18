@@ -33,7 +33,12 @@ export const Route = createFileRoute("/search")({
     meta: [
       { title: "Search — Stream & Scream" },
       { name: "description", content: "Search Stream & Scream for TV recommendations and true crime documentaries." },
+      { name: "robots", content: "noindex, follow" },
+      { property: "og:title", content: "Search — Stream & Scream" },
+      { property: "og:description", content: "Search Stream & Scream for TV recommendations and true crime documentaries." },
+      { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/search" },
     ],
+    links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/search" }],
   }),
   loaderDeps: ({ search }) => ({
     q: search.q,

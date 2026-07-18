@@ -5,6 +5,16 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { subscribeEmail } from "@/lib/subscribers.functions";
 
 export const Route = createFileRoute("/subscribe")({
+  head: () => ({
+    meta: [
+      { title: "Subscribe — Stream & Scream Newsletter" },
+      { name: "description", content: "Get the latest Stream & Scream reviews and true crime picks delivered to your inbox." },
+      { property: "og:title", content: "Subscribe — Stream & Scream Newsletter" },
+      { property: "og:description", content: "Get the latest Stream & Scream reviews and true crime picks delivered to your inbox." },
+      { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/subscribe" },
+    ],
+    links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/subscribe" }],
+  }),
   component: SubscribePage,
 });
 

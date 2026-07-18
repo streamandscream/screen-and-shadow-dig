@@ -5,6 +5,13 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Sign In — Stream & Scream" },
+      { name: "description", content: "Sign in to Stream & Scream." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (data.user) throw redirect({ to: "/admin" });
