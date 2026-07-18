@@ -43,12 +43,12 @@ export const getOutboundStats = createServerFn({ method: "GET" })
       await Promise.all([
         supabaseAdmin
           .from("outbound_clicks")
-          .select("id, created_at, url, domain, link_text, source_path, is_affiliate")
+          .select("id, created_at, url, domain, link_text, source_path, is_affiliate, merchant_id, original_url")
           .order("created_at", { ascending: false })
           .limit(100),
         supabaseAdmin
           .from("outbound_clicks")
-          .select("domain, source_path, is_affiliate, created_at")
+          .select("domain, source_path, is_affiliate, merchant_id, created_at")
           .gte("created_at", since7d),
         supabaseAdmin.from("outbound_clicks").select("*", { count: "exact", head: true }),
         supabaseAdmin
@@ -57,18 +57,26 @@ export const getOutboundStats = createServerFn({ method: "GET" })
           .eq("is_affiliate", true),
       ]);
 
-    const rows = window7d ?? [];
+    const rows = (window7d ?? []) as Array<{
+      domain: string;
+      source_path: string | null;
+      is_affiliate: boolean;
+      merchant_id: string | null;
+      created_at: string;
+    }>;
     const since24h = Date.now() - 24 * 3600 * 1000;
     const last24h = rows.filter((r) => new Date(r.created_at).getTime() >= since24h).length;
 
     const domainMap = new Map<string, { clicks: number; affiliate: number }>();
     const pathMap = new Map<string, number>();
+    const merchantMap = new Map<string, number>();
     for (const r of rows) {
       const d = domainMap.get(r.domain) ?? { clicks: 0, affiliate: 0 };
       d.clicks += 1;
       if (r.is_affiliate) d.affiliate += 1;
       domainMap.set(r.domain, d);
       if (r.source_path) pathMap.set(r.source_path, (pathMap.get(r.source_path) ?? 0) + 1);
+      if (r.merchant_id) merchantMap.set(r.merchant_id, (merchantMap.get(r.merchant_id) ?? 0) + 1);
     }
     const byDomain = [...domainMap.entries()]
       .map(([domain, v]) => ({ domain, ...v }))
@@ -76,6 +84,10 @@ export const getOutboundStats = createServerFn({ method: "GET" })
       .slice(0, 20);
     const byPath = [...pathMap.entries()]
       .map(([source_path, clicks]) => ({ source_path, clicks }))
+      .sort((a, b) => b.clicks - a.clicks)
+      .slice(0, 20);
+    const byMerchant = [...merchantMap.entries()]
+      .map(([merchant_id, clicks]) => ({ merchant_id, clicks }))
       .sort((a, b) => b.clicks - a.clicks)
       .slice(0, 20);
 
@@ -88,6 +100,7 @@ export const getOutboundStats = createServerFn({ method: "GET" })
       },
       byDomain,
       byPath,
+      byMerchant,
       recent: (recent ?? []) as OutboundClick[],
     };
   });
