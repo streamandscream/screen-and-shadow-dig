@@ -79,7 +79,7 @@ export function SiteHeader() {
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Search shows..."
-                      className="flex-1 bg-transparent px-2 py-2 text-xs tracking-normal normal-case text-foreground placeholder:text-muted-foreground outline-none font-sans"
+                      className="flex-1 bg-transparent px-2 py-2 text-base md:text-xs tracking-normal normal-case text-foreground placeholder:text-muted-foreground outline-none font-sans"
                     />
                   </div>
                   {debounced.length >= 2 && (
