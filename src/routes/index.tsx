@@ -14,9 +14,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Stream & Scream — TV Reviews & True Crime Documentary Picks" },
-      { name: "description", content: "Sharp, opinionated reviews of prestige TV and true crime documentaries. The latest picks from The Stream and The Scream." },
-      { property: "og:title", content: "Stream & Scream — TV Reviews & True Crime" },
-      { property: "og:description", content: "Sharp, opinionated reviews of prestige TV and true crime documentaries." },
+      { name: "description", content: "Sharp, opinionated reviews of TV shows and true crime documentaries. The latest picks from The Stream and The Scream." },
+      { property: "og:title", content: "Stream & Scream — TV Reviews & True Crime Documentary Picks" },
+      { property: "og:description", content: "Sharp, opinionated reviews of TV shows and true crime documentaries. The latest picks from The Stream and The Scream." },
       { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/" },
     ],
     links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/" }],
