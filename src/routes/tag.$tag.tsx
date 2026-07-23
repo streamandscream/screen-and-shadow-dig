@@ -13,14 +13,21 @@ const tagQuery = (tag: string) =>
 export const Route = createFileRoute("/tag/$tag")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(tagQuery(params.tag)),
   head: ({ params }) => {
-    const url = `https://screen-and-shadow-dig.lovable.app/tag/${encodeURIComponent(params.tag)}`;
+    const url = `https://streamandscream.com/tag/${encodeURIComponent(params.tag)}`;
+    const image = "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png";
     return {
       meta: [
         { title: `#${params.tag} — Stream & Scream` },
         { name: "description", content: `Every Stream & Scream review tagged #${params.tag} — reviews, verdicts, and where to watch.` },
         { property: "og:title", content: `#${params.tag} — Stream & Scream` },
         { property: "og:description", content: `Every Stream & Scream review tagged #${params.tag}.` },
+        { property: "og:type", content: "website" },
         { property: "og:url", content: url },
+        { property: "og:image", content: image },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: `#${params.tag} — Stream & Scream` },
+        { name: "twitter:description", content: `Every Stream & Scream review tagged #${params.tag}.` },
+        { name: "twitter:image", content: image },
       ],
       links: [{ rel: "canonical", href: url }],
     };

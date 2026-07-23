@@ -8,9 +8,15 @@ export const Route = createFileRoute("/about")({
       { name: "description", content: "About Stream & Scream — sharp, no-spoilers reviews on prestige TV and true crime documentaries." },
       { property: "og:title", content: "About — Stream & Scream Editorial Desk" },
       { property: "og:description", content: "About Stream & Scream — sharp, no-spoilers reviews on prestige TV and true crime documentaries." },
-      { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/about" },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://streamandscream.com/about" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "About — Stream & Scream Editorial Desk" },
+      { name: "twitter:description", content: "About Stream & Scream — sharp, no-spoilers reviews." },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
     ],
-    links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/about" }],
+    links: [{ rel: "canonical", href: "https://streamandscream.com/about" }],
   }),
   component: () => (
     <div className="min-h-screen flex flex-col">
