@@ -24,10 +24,11 @@ export const Route = createFileRoute("/post/$slug")({
     return post;
   },
   head: ({ params, loaderData }) => {
-    const url = `https://screen-and-shadow-dig.lovable.app/post/${params.slug}`;
+    const url = `https://streamandscream.com/post/${params.slug}`;
     if (!loaderData) {
       return { meta: [{ title: "Not found — Stream & Scream" }, { name: "robots", content: "noindex" }] };
     }
+    const image = loaderData.cover_url;
     return {
       meta: [
         { title: `${loaderData.title} — Stream & Scream` },
@@ -36,7 +37,11 @@ export const Route = createFileRoute("/post/$slug")({
         { property: "og:description", content: loaderData.excerpt },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
-        ...(loaderData.cover_url ? [{ property: "og:image", content: loaderData.cover_url }] : []),
+        ...(image ? [{ property: "og:image", content: image }] : []),
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: loaderData.title },
+        { name: "twitter:description", content: loaderData.excerpt },
+        ...(image ? [{ name: "twitter:image", content: image }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
     };
