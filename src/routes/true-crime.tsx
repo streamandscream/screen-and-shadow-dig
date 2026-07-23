@@ -14,7 +14,7 @@ export const Route = createFileRoute("/true-crime")({
   validateSearch: (search: Record<string, unknown>) => ({
     sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
   }),
-  head: () => ({
+  head: ({ loaderData }: { loaderData?: any }) => ({
     meta: [
       { title: "The Scream — True Crime Documentary Reviews" },
       { name: "description", content: "True crime and documentary picks for the endlessly curious. Honest verdicts on the cases and docs everyone's talking about." },
@@ -29,6 +29,29 @@ export const Route = createFileRoute("/true-crime")({
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
     ],
     links: [{ rel: "canonical", href: "https://streamandscream.com/true-crime" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "The Scream — True Crime Documentary Reviews",
+          "url": "https://streamandscream.com/true-crime",
+          "description": "True crime and documentary picks for the endlessly curious.",
+          "mainEntity": {
+            "@type": "ItemList",
+            "itemListOrder": "https://schema.org/ItemListOrderDescending",
+            "numberOfItems": (loaderData ?? []).length,
+            "itemListElement": (loaderData ?? []).slice(0, 30).map((p: any, i: number) => ({
+              "@type": "ListItem",
+              "position": i + 1,
+              "url": `https://streamandscream.com/post/${p.slug}`,
+              "name": p.title,
+            })),
+          },
+        }),
+      },
+    ],
   }),
   loaderDeps: ({ search }) => ({
     sort: search.sort,

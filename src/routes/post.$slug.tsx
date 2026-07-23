@@ -44,6 +44,65 @@ export const Route = createFileRoute("/post/$slug")({
         ...(image ? [{ name: "twitter:image", content: image }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Review",
+            "headline": loaderData.title,
+            "name": loaderData.title,
+            "description": loaderData.excerpt,
+            "url": url,
+            ...(image ? { "image": image } : {}),
+            "datePublished": loaderData.created_at,
+            "dateModified": (loaderData as any).updated_at ?? loaderData.created_at,
+            "inLanguage": "en",
+            "author": { "@type": "Organization", "name": "Stream & Scream" },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Stream & Scream",
+              "url": "https://streamandscream.com",
+            },
+            "mainEntityOfPage": { "@type": "WebPage", "@id": url },
+            "itemReviewed": {
+              "@type": loaderData.section === "tv" ? "TVSeries" : "CreativeWork",
+              "name": loaderData.title,
+              ...(image ? { "image": image } : {}),
+            },
+            ...(loaderData.rating != null
+              ? {
+                  "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": loaderData.rating,
+                    "bestRating": 10,
+                    "worstRating": 0,
+                  },
+                }
+              : {}),
+            ...(loaderData.tags && loaderData.tags.length
+              ? { "keywords": loaderData.tags.join(", ") }
+              : {}),
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://streamandscream.com/" },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": loaderData.section === "tv" ? "The Stream" : "The Scream",
+                "item": loaderData.section === "tv" ? "https://streamandscream.com/tv" : "https://streamandscream.com/true-crime",
+              },
+              { "@type": "ListItem", "position": 3, "name": loaderData.title, "item": url },
+            ],
+          }),
+        },
+      ],
     };
   },
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
