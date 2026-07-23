@@ -16,7 +16,7 @@ export const Route = createFileRoute("/tv")({
     maxRating: typeof search.maxRating === "string" ? Number(search.maxRating) || undefined : undefined,
     sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
   }),
-  head: () => ({
+  head: ({ loaderData }) => ({
     meta: [
       { title: "The Stream — Prestige TV Reviews & Recommendations" },
       { name: "description", content: "Prestige dramas, sharp thrillers, and angsty new-adult picks — honest reviews of the TV shows worth your evening." },
@@ -31,6 +31,29 @@ export const Route = createFileRoute("/tv")({
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
     ],
     links: [{ rel: "canonical", href: "https://streamandscream.com/tv" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "The Stream — Prestige TV Reviews",
+          "url": "https://streamandscream.com/tv",
+          "description": "Honest reviews of prestige TV: dramas, thrillers, and new-adult favourites.",
+          "mainEntity": {
+            "@type": "ItemList",
+            "itemListOrder": "https://schema.org/ItemListOrderDescending",
+            "numberOfItems": (loaderData ?? []).length,
+            "itemListElement": (loaderData ?? []).slice(0, 30).map((p: any, i: number) => ({
+              "@type": "ListItem",
+              "position": i + 1,
+              "url": `https://streamandscream.com/post/${p.slug}`,
+              "name": p.title,
+            })),
+          },
+        }),
+      },
+    ],
   }),
   loaderDeps: ({ search }) => ({
     minRating: search.minRating,
