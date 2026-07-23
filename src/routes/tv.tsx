@@ -16,7 +16,7 @@ export const Route = createFileRoute("/tv")({
     maxRating: typeof search.maxRating === "string" ? Number(search.maxRating) || undefined : undefined,
     sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
   }),
-  head: ({ loaderData }) => ({
+  head: ({ loaderData }: { loaderData?: any }) => ({
     meta: [
       { title: "The Stream — Prestige TV Reviews & Recommendations" },
       { name: "description", content: "Prestige dramas, sharp thrillers, and angsty new-adult picks — honest reviews of the TV shows worth your evening." },
