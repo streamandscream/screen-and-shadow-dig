@@ -106,7 +106,11 @@ function Page() {
       <main className="mx-auto max-w-4xl px-6 py-12 w-full flex-1">
         
         <h1 className="font-display text-[40px] mt-2 border-b-2 border-foreground pb-4">The Scream</h1>
-        <div className="mt-4 max-w-2xl text-muted-foreground whitespace-pre-line">True crime and documentary picks for the endlessly curious—where every story pulls you deeper, and the truth is never simple.{"\n\n"}</div>
+        <h2 className="font-display text-2xl mt-6">Best True Crime of 2026</h2>
+        <div className="mt-3 max-w-2xl text-muted-foreground">
+          Looking for the best true crime 2026 has to offer? The Scream is our running verdict on the year's most talked-about docs and series — from ice-cold cases to buzzy dramatizations. Love true crime like <a href="/post/the-crash" className="underline hover:no-underline">The Crash</a>? You're in the right place.
+        </div>
+
 
         <div className="mt-6 flex flex-wrap gap-4 items-center">
           <div className="flex items-center gap-2">
