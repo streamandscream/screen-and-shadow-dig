@@ -16,16 +16,16 @@ export const Route = createFileRoute("/true-crime")({
   }),
   head: ({ loaderData }: { loaderData?: any }) => ({
     meta: [
-      { title: "The Scream — True Crime Documentary Reviews" },
-      { name: "description", content: "True crime and documentary picks for the endlessly curious. Honest verdicts on the cases and docs everyone's talking about." },
-      { property: "og:title", content: "The Scream — True Crime Documentary Reviews" },
-      { property: "og:description", content: "True crime and documentary picks for the endlessly curious." },
+      { title: "Best True Crime 2026 — Reviews & Picks | The Scream" },
+      { name: "description", content: "The best true crime of 2026 — honest reviews of the docs and series everyone's talking about, including true crime like The Crash. Updated weekly." },
+      { property: "og:title", content: "Best True Crime 2026 — Reviews & Picks | The Scream" },
+      { property: "og:description", content: "The best true crime of 2026 — honest reviews of the docs and series everyone's talking about, including true crime like The Crash. Updated weekly." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://streamandscream.com/true-crime" },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "The Scream — True Crime Documentary Reviews" },
-      { name: "twitter:description", content: "True crime and documentary picks for the endlessly curious." },
+      { name: "twitter:title", content: "Best True Crime 2026 — Reviews & Picks | The Scream" },
+      { name: "twitter:description", content: "The best true crime of 2026 — honest reviews of the docs and series everyone's talking about, including true crime like The Crash." },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
     ],
     links: [{ rel: "canonical", href: "https://streamandscream.com/true-crime" }],
@@ -35,9 +35,9 @@ export const Route = createFileRoute("/true-crime")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "CollectionPage",
-          "name": "The Scream — True Crime Documentary Reviews",
+          "name": "Best True Crime 2026 — Reviews & Picks",
           "url": "https://streamandscream.com/true-crime",
-          "description": "True crime and documentary picks for the endlessly curious.",
+          "description": "The best true crime of 2026 — honest reviews of the docs and series everyone's talking about, including true crime like The Crash.",
           "mainEntity": {
             "@type": "ItemList",
             "itemListOrder": "https://schema.org/ItemListOrderDescending",
@@ -49,6 +49,31 @@ export const Route = createFileRoute("/true-crime")({
               "name": p.title,
             })),
           },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is the best true crime to watch in 2026?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Our running verdict on the best true crime of 2026 lives on The Scream — updated as new docs and series drop, with honest ratings out of 10.",
+              },
+            },
+            {
+              "@type": "Question",
+              "name": "What should I watch if I liked true crime like The Crash?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "If you loved The Crash, browse The Scream for more slow-burn true crime picks with the same twisty, character-driven energy. Start with our review of The Crash, then work through the list below.",
+              },
+            },
+          ],
         }),
       },
     ],
