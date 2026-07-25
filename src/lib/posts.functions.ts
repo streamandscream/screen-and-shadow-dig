@@ -154,6 +154,7 @@ const PostInput = z.object({
   
   next_binge: z.array(z.string().min(1).max(120)).max(3).default([]),
   vibe: z.string().max(160).nullable().optional(),
+  publish_at: z.string().datetime().nullable().optional(),
 });
 
 export const listMyPosts = createServerFn({ method: "GET" })
