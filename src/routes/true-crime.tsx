@@ -73,6 +73,14 @@ export const Route = createFileRoute("/true-crime")({
                 "text": "If you loved The Crash, browse The Scream for more slow-burn true crime picks with the same twisty, character-driven energy. Start with our review of The Crash, then work through the list below.",
               },
             },
+            {
+              "@type": "Question",
+              "name": "What shows are like A Toxic Love Story?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "If you're looking for shows like A Toxic Love Story, try Mr & Mrs Murder, The Trial of Karen Read, and Unknown Number: The High School Catfish — all reviewed on The Scream. Read our full A Toxic Love Story verdict at https://streamandscream.com/post/a-toxic-love-story.",
+              },
+            },
           ],
         }),
       },
@@ -108,7 +116,7 @@ function Page() {
         <h1 className="font-display text-[40px] mt-2 border-b-2 border-foreground pb-4">The Scream</h1>
         <h2 className="font-display text-2xl mt-6">Best True Crime of 2026</h2>
         <div className="mt-3 max-w-2xl text-muted-foreground">
-          Looking for the best true crime 2026 has to offer? The Scream is our running verdict on the year's most talked-about docs and series — from ice-cold cases to buzzy dramatizations. Love true crime like <a href="/post/the-crash" className="underline hover:no-underline">The Crash</a>? You're in the right place.
+          Looking for the best true crime 2026 has to offer? The Scream is our running verdict on the year's most talked-about docs and series — from ice-cold cases to buzzy dramatizations. Love true crime like <a href="/post/the-crash" className="underline hover:no-underline">The Crash</a>? You're in the right place. Hunting for <a href="/post/a-toxic-love-story" className="underline hover:no-underline">shows like A Toxic Love Story</a>? Start with our verdict, then follow the twists.
         </div>
 
 
