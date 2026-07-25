@@ -29,7 +29,7 @@ export const getSearchFilters = createServerFn({ method: "GET" })
     };
   });
 
-const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe";
+const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe, publish_at";
 
 export const listPublishedPosts = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) =>
@@ -154,6 +154,7 @@ const PostInput = z.object({
   
   next_binge: z.array(z.string().min(1).max(120)).max(3).default([]),
   vibe: z.string().max(160).nullable().optional(),
+  publish_at: z.string().datetime().nullable().optional(),
 });
 
 export const listMyPosts = createServerFn({ method: "GET" })

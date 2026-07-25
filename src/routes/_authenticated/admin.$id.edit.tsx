@@ -12,6 +12,13 @@ export const Route = createFileRoute("/_authenticated/admin/$id/edit")({
   component: EditPost,
 });
 
+function toLocalInput(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 function EditPost() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
@@ -28,17 +35,20 @@ function EditPost() {
     if (!form) return;
     setSaving(true); setErr(null);
     try {
+      const publishAtIso = form.publish_at ? new Date(form.publish_at).toISOString() : null;
+      const scheduled = !!publishAtIso && new Date(publishAtIso).getTime() > Date.now();
       await saveFn({ data: {
         id: form.id, slug: form.slug, section: form.section, title: form.title,
         excerpt: form.excerpt, body: form.body, cover_url: form.cover_url || null,
         streamer: form.streamer || null, rating: form.rating, tags: form.tags || [],
-        published: form.published,
+        published: scheduled ? false : form.published,
         justwatch_slug: form.justwatch_slug || null,
         justwatch_type: form.justwatch_type || "tv-show",
         justwatch_country: form.justwatch_country || "us",
-        
+
         next_binge: form.next_binge || [],
         vibe: form.vibe || null,
+        publish_at: scheduled ? publishAtIso : null,
       } });
       navigate({ to: "/admin" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Failed"); }
@@ -181,10 +191,30 @@ function Editor({ form, setForm, save, saving, err }: any) {
             </div>
             <p className="mt-1 text-xs text-muted-foreground">From the JustWatch URL, e.g. justwatch.com/us/tv-show/<strong>the-diplomat</strong>.</p>
           </div>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} />
-            <span className="eyebrow">Published</span>
-          </label>
+          <div className="border border-foreground/30 p-4 space-y-3">
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked, publish_at: e.target.checked ? null : form.publish_at })} />
+              <span className="eyebrow">Published now</span>
+            </label>
+            <Field label="Or schedule publish date & time (your local time)">
+              <div className="flex gap-2 items-center">
+                <input
+                  type="datetime-local"
+                  className="border border-foreground bg-background p-3"
+                  value={toLocalInput(form.publish_at)}
+                  onChange={(e) => setForm({ ...form, publish_at: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                />
+                {form.publish_at && (
+                  <button type="button" onClick={() => setForm({ ...form, publish_at: null })} className="text-xs underline text-muted-foreground">
+                    Clear
+                  </button>
+                )}
+              </div>
+              {form.publish_at && new Date(form.publish_at).getTime() > Date.now() && (
+                <p className="mt-1 text-xs text-muted-foreground">Will auto-publish {new Date(form.publish_at).toLocaleString()}.</p>
+              )}
+            </Field>
+          </div>
           {err && <p className="text-destructive text-sm">{err}</p>}
           <button disabled={saving} onClick={save} className="bg-foreground text-background py-3 px-6 font-display uppercase tracking-widest disabled:opacity-50">
             {saving ? "Saving…" : "Save"}
