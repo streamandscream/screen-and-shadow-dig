@@ -184,10 +184,30 @@ function Editor({ form, setForm, save, saving, err }: any) {
             </div>
             <p className="mt-1 text-xs text-muted-foreground">From the JustWatch URL, e.g. justwatch.com/us/tv-show/<strong>the-diplomat</strong>.</p>
           </div>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} />
-            <span className="eyebrow">Published</span>
-          </label>
+          <div className="border border-foreground/30 p-4 space-y-3">
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked, publish_at: e.target.checked ? null : form.publish_at })} />
+              <span className="eyebrow">Published now</span>
+            </label>
+            <Field label="Or schedule publish date & time (your local time)">
+              <div className="flex gap-2 items-center">
+                <input
+                  type="datetime-local"
+                  className="border border-foreground bg-background p-3"
+                  value={toLocalInput(form.publish_at)}
+                  onChange={(e) => setForm({ ...form, publish_at: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                />
+                {form.publish_at && (
+                  <button type="button" onClick={() => setForm({ ...form, publish_at: null })} className="text-xs underline text-muted-foreground">
+                    Clear
+                  </button>
+                )}
+              </div>
+              {form.publish_at && new Date(form.publish_at).getTime() > Date.now() && (
+                <p className="mt-1 text-xs text-muted-foreground">Will auto-publish {new Date(form.publish_at).toLocaleString()}.</p>
+              )}
+            </Field>
+          </div>
           {err && <p className="text-destructive text-sm">{err}</p>}
           <button disabled={saving} onClick={save} className="bg-foreground text-background py-3 px-6 font-display uppercase tracking-widest disabled:opacity-50">
             {saving ? "Saving…" : "Save"}
