@@ -155,7 +155,6 @@ export function SiteFooter() {
           <Link to="/tv">The Stream</Link>
           <Link to="/true-crime">The Scream</Link>
           <Link to="/tv-news">TV News</Link>
-          <Link to="/subscribe">Subscribe</Link>
         </nav>
         <p className="text-muted-foreground lowercase">© {new Date().getFullYear()} stream & scream</p>
       </div>
