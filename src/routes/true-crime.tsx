@@ -73,6 +73,14 @@ export const Route = createFileRoute("/true-crime")({
                 "text": "If you loved The Crash, browse The Scream for more slow-burn true crime picks with the same twisty, character-driven energy. Start with our review of The Crash, then work through the list below.",
               },
             },
+            {
+              "@type": "Question",
+              "name": "What shows are like A Toxic Love Story?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "If you're looking for shows like A Toxic Love Story, try Mr & Mrs Murder, The Trial of Karen Read, and Unknown Number: The High School Catfish — all reviewed on The Scream. Read our full A Toxic Love Story verdict at https://streamandscream.com/post/a-toxic-love-story.",
+              },
+            },
           ],
         }),
       },
