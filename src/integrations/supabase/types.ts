@@ -113,6 +113,7 @@ export type Database = {
           justwatch_slug: string | null
           justwatch_type: string
           next_binge: string[]
+          publish_at: string | null
           published: boolean
           rating: number | null
           section: Database["public"]["Enums"]["post_section"]
@@ -134,6 +135,7 @@ export type Database = {
           justwatch_slug?: string | null
           justwatch_type?: string
           next_binge?: string[]
+          publish_at?: string | null
           published?: boolean
           rating?: number | null
           section: Database["public"]["Enums"]["post_section"]
@@ -155,6 +157,7 @@ export type Database = {
           justwatch_slug?: string | null
           justwatch_type?: string
           next_binge?: string[]
+          publish_at?: string | null
           published?: boolean
           rating?: number | null
           section?: Database["public"]["Enums"]["post_section"]
