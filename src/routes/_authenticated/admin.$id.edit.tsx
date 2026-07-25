@@ -28,17 +28,20 @@ function EditPost() {
     if (!form) return;
     setSaving(true); setErr(null);
     try {
+      const publishAtIso = form.publish_at ? new Date(form.publish_at).toISOString() : null;
+      const scheduled = !!publishAtIso && new Date(publishAtIso).getTime() > Date.now();
       await saveFn({ data: {
         id: form.id, slug: form.slug, section: form.section, title: form.title,
         excerpt: form.excerpt, body: form.body, cover_url: form.cover_url || null,
         streamer: form.streamer || null, rating: form.rating, tags: form.tags || [],
-        published: form.published,
+        published: scheduled ? false : form.published,
         justwatch_slug: form.justwatch_slug || null,
         justwatch_type: form.justwatch_type || "tv-show",
         justwatch_country: form.justwatch_country || "us",
-        
+
         next_binge: form.next_binge || [],
         vibe: form.vibe || null,
+        publish_at: scheduled ? publishAtIso : null,
       } });
       navigate({ to: "/admin" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Failed"); }
