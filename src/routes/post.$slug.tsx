@@ -51,14 +51,19 @@ export const Route = createFileRoute("/post/$slug")({
             "@context": "https://schema.org",
             "@type": "Review",
             "headline": loaderData.title,
-            "name": loaderData.title,
+            "name": `${loaderData.title} review`,
             "description": loaderData.excerpt,
+            "reviewBody": loaderData.body,
             "url": url,
-            ...(image ? { "image": image } : {}),
+            ...(image ? { "image": image, "thumbnailUrl": image } : {}),
             "datePublished": loaderData.created_at,
             "dateModified": (loaderData as any).updated_at ?? loaderData.created_at,
             "inLanguage": "en",
-            "author": { "@type": "Organization", "name": "Stream & Scream" },
+            "author": {
+              "@type": "Organization",
+              "name": "Stream & Scream",
+              "url": "https://streamandscream.com",
+            },
             "publisher": {
               "@type": "Organization",
               "name": "Stream & Scream",
@@ -66,9 +71,21 @@ export const Route = createFileRoute("/post/$slug")({
             },
             "mainEntityOfPage": { "@type": "WebPage", "@id": url },
             "itemReviewed": {
-              "@type": loaderData.section === "tv" ? "TVSeries" : "CreativeWork",
+              "@type": "TVSeries",
               "name": loaderData.title,
               ...(image ? { "image": image } : {}),
+              ...(loaderData.tags && loaderData.tags.length ? { "genre": loaderData.tags } : {}),
+              ...((loaderData as any).streamer ? {
+                "potentialAction": {
+                  "@type": "WatchAction",
+                  "target": (loaderData as any).streamer_url ?? url,
+                  "expectsAcceptanceOf": {
+                    "@type": "Offer",
+                    "category": "subscription",
+                    "seller": { "@type": "Organization", "name": (loaderData as any).streamer },
+                  },
+                },
+              } : {}),
             },
             ...(loaderData.rating != null
               ? {
@@ -85,6 +102,7 @@ export const Route = createFileRoute("/post/$slug")({
               : {}),
           }),
         },
+
         {
           type: "application/ld+json",
           children: JSON.stringify({
