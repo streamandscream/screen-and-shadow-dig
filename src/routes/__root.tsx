@@ -80,6 +80,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "google-site-verification", content: "RMN3Rb1hLZ7ZANLVr2lNj3cRdo4dg1pTIvukIbyTQmc" },
       { title: "Stream & Scream — TV Reviews & True Crime Documentary Picks" },
       { name: "description", content: "Sharp, opinionated reviews of TV shows and true crime documentaries. The latest picks from The Stream and The Scream." },
       { property: "og:title", content: "Stream & Scream — TV Reviews & True Crime Documentary Picks" },
