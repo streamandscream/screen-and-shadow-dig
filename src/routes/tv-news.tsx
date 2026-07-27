@@ -9,17 +9,17 @@ const STATUSES: { value: "" | TvNewsStatus; label: string }[] = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
-const newsQuery = (status: "" | TvNewsStatus) =>
+const newsQuery = (status: "" | TvNewsStatus | undefined) =>
   queryOptions({
-    queryKey: ["tv-news", status],
+    queryKey: ["tv-news", status ?? ""],
     queryFn: () => listTvNews({ data: status ? { status } : undefined }),
   });
 
 export const Route = createFileRoute("/tv-news")({
-  validateSearch: (search: Record<string, unknown>): { status: "" | TvNewsStatus } => {
+  validateSearch: (search: Record<string, unknown>): { status?: TvNewsStatus } => {
     const s = search.status;
     if (s === "renewed" || s === "cancelled") return { status: s };
-    return { status: "" };
+    return {};
   },
   head: () => ({
     meta: [
@@ -72,7 +72,7 @@ function TvNewsPage() {
           {STATUSES.map((s) => (
             <button
               key={s.value}
-              onClick={() => navigate({ search: { status: s.value } })}
+              onClick={() => navigate({ search: s.value ? { status: s.value } : {} })}
               className={
                 "px-4 py-2 text-xs uppercase tracking-widest font-display border-2 border-foreground transition-colors " +
                 (status === s.value
