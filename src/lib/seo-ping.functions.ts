@@ -51,7 +51,7 @@ export const pingSitemap = createServerFn({ method: "POST" })
           body: JSON.stringify({
             host: "streamandscream.com",
             key: indexNowKey,
-            keyLocation: `https://streamandscream.com/${indexNowKey}.txt`,
+            keyLocation: "https://streamandscream.com/api/public/indexnow-key.txt",
             urlList: [SITEMAP_URL, "https://streamandscream.com/"],
           }),
         });
