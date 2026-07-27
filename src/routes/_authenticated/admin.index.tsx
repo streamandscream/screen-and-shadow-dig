@@ -138,6 +138,14 @@ function Admin() {
             <Link to="/admin/settings" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Settings
             </Link>
+            <button
+              onClick={notifySearchEngines}
+              disabled={pinging}
+              className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm disabled:opacity-50"
+              title="Resubmit sitemap to Google and notify Bing/Yandex via IndexNow"
+            >
+              {pinging ? "Pinging…" : "Ping search engines"}
+            </button>
             <button onClick={signOut} className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Sign out
             </button>
