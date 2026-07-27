@@ -7,6 +7,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { listMyPosts, deletePost } from "@/lib/posts.functions";
 import { getTvNewsScheduleStatus } from "@/lib/tv-news-schedule.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { pingSitemap } from "@/lib/seo-ping.functions";
 
 function formatDateTime(iso: string | null): string {
   if (!iso) return "Never";
@@ -56,6 +57,23 @@ function Admin() {
   const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const pingFn = useServerFn(pingSitemap);
+  const [pinging, setPinging] = useState(false);
+
+  async function notifySearchEngines() {
+    setPinging(true);
+    try {
+      const r = await pingFn();
+      const okCount = r.results.filter((x) => x.ok).length;
+      const summary = r.results.map((x) => `${x.service}: ${x.ok ? "✓" : "✗ " + (x.message ?? "")}`).join(" | ");
+      if (okCount === r.results.length) toast.success(`Notified ${okCount} search engines`);
+      else toast.message(summary);
+    } catch (e) {
+      toast.error(`Ping failed: ${(e as Error).message}`);
+    } finally {
+      setPinging(false);
+    }
+  }
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -120,6 +138,14 @@ function Admin() {
             <Link to="/admin/settings" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Settings
             </Link>
+            <button
+              onClick={notifySearchEngines}
+              disabled={pinging}
+              className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm disabled:opacity-50"
+              title="Resubmit sitemap to Google and notify Bing/Yandex via IndexNow"
+            >
+              {pinging ? "Pinging…" : "Ping search engines"}
+            </button>
             <button onClick={signOut} className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Sign out
             </button>
