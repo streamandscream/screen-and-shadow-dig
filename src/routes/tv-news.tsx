@@ -16,10 +16,10 @@ const newsQuery = (status: "" | TvNewsStatus) =>
   });
 
 export const Route = createFileRoute("/tv-news")({
-  validateSearch: (search: Record<string, unknown>): { status: "" | TvNewsStatus } => {
+  validateSearch: (search: Record<string, unknown>): { status?: TvNewsStatus } => {
     const s = search.status;
     if (s === "renewed" || s === "cancelled") return { status: s };
-    return { status: "" };
+    return {};
   },
   head: () => ({
     meta: [
