@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /auth
 
-Sitemap: https://screen-and-shadow-dig.lovable.app/sitemap.xml
+Sitemap: https://streamandscream.com/sitemap.xml
