@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/api/public/indexnow-key/txt")({
+export const Route = createFileRoute("/api/public/indexnow-key.txt")({
   server: {
     handlers: {
       GET: async () => {

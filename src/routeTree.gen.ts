@@ -23,6 +23,7 @@ import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as PostSlugRouteImport } from './routes/post.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as ApiPublicIndexnowKeyDottxtRouteImport } from './routes/api/public/indexnow-key[.]txt'
 import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin.tags'
 import { Route as AuthenticatedAdminStreamRouteImport } from './routes/_authenticated/admin.stream'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -103,6 +104,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const ApiPublicIndexnowKeyDottxtRoute =
+  ApiPublicIndexnowKeyDottxtRouteImport.update({
+    id: '/api/public/indexnow-key.txt',
+    path: '/api/public/indexnow-key.txt',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminTagsRoute = AuthenticatedAdminTagsRouteImport.update({
   id: '/tags',
   path: '/tags',
@@ -182,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
+  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
@@ -206,6 +214,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
+  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
@@ -233,6 +242,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
+  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/stream'
     | '/admin/tags'
+    | '/api/public/indexnow-key.txt'
     | '/admin/'
     | '/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/stream'
     | '/admin/tags'
+    | '/api/public/indexnow-key.txt'
     | '/admin'
     | '/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
@@ -310,6 +322,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/stream'
     | '/_authenticated/admin/tags'
+    | '/api/public/indexnow-key.txt'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/$id/edit'
     | '/api/public/hooks/ingest-tv-news'
@@ -329,6 +342,7 @@ export interface RootRouteChildren {
   TvNewsRoute: typeof TvNewsRoute
   PostSlugRoute: typeof PostSlugRoute
   TagTagRoute: typeof TagTagRoute
+  ApiPublicIndexnowKeyDottxtRoute: typeof ApiPublicIndexnowKeyDottxtRoute
   ApiPublicHooksIngestTvNewsRoute: typeof ApiPublicHooksIngestTvNewsRoute
   ApiPublicTrackOutboundClickRoute: typeof ApiPublicTrackOutboundClickRoute
 }
@@ -432,6 +446,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/indexnow-key.txt': {
+      id: '/api/public/indexnow-key.txt'
+      path: '/api/public/indexnow-key.txt'
+      fullPath: '/api/public/indexnow-key.txt'
+      preLoaderRoute: typeof ApiPublicIndexnowKeyDottxtRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/tags': {
       id: '/_authenticated/admin/tags'
@@ -559,19 +580,10 @@ const rootRouteChildren: RootRouteChildren = {
   TvNewsRoute: TvNewsRoute,
   PostSlugRoute: PostSlugRoute,
   TagTagRoute: TagTagRoute,
+  ApiPublicIndexnowKeyDottxtRoute: ApiPublicIndexnowKeyDottxtRoute,
   ApiPublicHooksIngestTvNewsRoute: ApiPublicHooksIngestTvNewsRoute,
   ApiPublicTrackOutboundClickRoute: ApiPublicTrackOutboundClickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
