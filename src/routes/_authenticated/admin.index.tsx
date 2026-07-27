@@ -57,6 +57,23 @@ function Admin() {
   const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const pingFn = useServerFn(pingSitemap);
+  const [pinging, setPinging] = useState(false);
+
+  async function notifySearchEngines() {
+    setPinging(true);
+    try {
+      const r = await pingFn();
+      const okCount = r.results.filter((x) => x.ok).length;
+      const summary = r.results.map((x) => `${x.service}: ${x.ok ? "✓" : "✗ " + (x.message ?? "")}`).join(" | ");
+      if (okCount === r.results.length) toast.success(`Notified ${okCount} search engines`);
+      else toast.message(summary);
+    } catch (e) {
+      toast.error(`Ping failed: ${(e as Error).message}`);
+    } finally {
+      setPinging(false);
+    }
+  }
 
   async function signOut() {
     await supabase.auth.signOut();
