@@ -7,6 +7,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { listMyPosts, deletePost } from "@/lib/posts.functions";
 import { getTvNewsScheduleStatus } from "@/lib/tv-news-schedule.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { pingSitemap } from "@/lib/seo-ping.functions";
 
 function formatDateTime(iso: string | null): string {
   if (!iso) return "Never";
