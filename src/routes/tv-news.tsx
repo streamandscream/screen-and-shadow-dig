@@ -9,9 +9,9 @@ const STATUSES: { value: "" | TvNewsStatus; label: string }[] = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
-const newsQuery = (status: "" | TvNewsStatus) =>
+const newsQuery = (status: "" | TvNewsStatus | undefined) =>
   queryOptions({
-    queryKey: ["tv-news", status],
+    queryKey: ["tv-news", status ?? ""],
     queryFn: () => listTvNews({ data: status ? { status } : undefined }),
   });
 
