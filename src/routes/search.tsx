@@ -67,7 +67,7 @@ function SearchPage() {
   const active = q || tag || streamer;
 
   const { data: results } = useSuspenseQuery(
-    active ? searchQuery(q, tag, streamer) : searchQuery("", "", "")
+    active ? searchQuery(q, tag, streamer) : searchQuery()
   );
   const { data: options } = useSuspenseQuery(filterOptionsQuery());
 
