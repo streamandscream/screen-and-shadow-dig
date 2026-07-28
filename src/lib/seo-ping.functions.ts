@@ -45,6 +45,48 @@ async function fetchWithBackoff(
   return { error: lastError, attempts: MAX_ATTEMPTS };
 }
 
+type RedirectIssue = { url: string; status: number; location: string | null };
+
+async function checkSitemapRedirects(): Promise<{
+  checked: number;
+  issues: RedirectIssue[];
+  error?: string;
+}> {
+  try {
+    const smRes = await fetch(SITEMAP_URL, { headers: { Accept: "application/xml" } });
+    if (!smRes.ok) return { checked: 0, issues: [], error: `Sitemap fetch ${smRes.status}` };
+    const xml = await smRes.text();
+    const urls = Array.from(xml.matchAll(/<loc>([^<]+)<\/loc>/g))
+      .map((m) => m[1].trim())
+      .filter((u) => u.startsWith("http"));
+
+    const issues: RedirectIssue[] = [];
+    const concurrency = 8;
+    let i = 0;
+    async function worker() {
+      while (i < urls.length) {
+        const idx = i++;
+        const url = urls[idx];
+        try {
+          let res = await fetch(url, { method: "HEAD", redirect: "manual" });
+          if (res.status === 405 || res.status === 501) {
+            res = await fetch(url, { method: "GET", redirect: "manual" });
+          }
+          if (res.status >= 300 && res.status < 400) {
+            issues.push({ url, status: res.status, location: res.headers.get("location") });
+          }
+        } catch (e) {
+          issues.push({ url, status: 0, location: (e as Error).message });
+        }
+      }
+    }
+    await Promise.all(Array.from({ length: Math.min(concurrency, urls.length) }, worker));
+    return { checked: urls.length, issues };
+  } catch (e) {
+    return { checked: 0, issues: [], error: (e as Error).message };
+  }
+}
+
 export const pingSitemap = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -53,6 +95,9 @@ export const pingSitemap = createServerFn({ method: "POST" })
       context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" }),
     ]);
     if (!isAuthor && !isAdmin) throw new Error("Forbidden");
+
+    // Pre-flight: flag any sitemap URLs that would redirect before we tell Google.
+    const redirectCheck = await checkSitemapRedirects();
 
     const results: {
       service: string;
