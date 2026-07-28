@@ -4,7 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostCard } from "@/components/PostCard";
 import { searchPosts, getSearchFilters } from "@/lib/posts.functions";
 
-const searchQuery = (q: string, tag: string, streamer: string) =>
+const searchQuery = (q?: string, tag?: string, streamer?: string) =>
   queryOptions({
     queryKey: ["posts", "search", q, tag, streamer],
     queryFn: () =>
@@ -24,11 +24,13 @@ const filterOptionsQuery = () =>
   });
 
 export const Route = createFileRoute("/search")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    q: typeof search.q === "string" ? search.q : "",
-    tag: typeof search.tag === "string" ? search.tag : "",
-    streamer: typeof search.streamer === "string" ? search.streamer : "",
-  }),
+  validateSearch: (search: Record<string, unknown>): { q?: string; tag?: string; streamer?: string } => {
+    const out: { q?: string; tag?: string; streamer?: string } = {};
+    if (typeof search.q === "string" && search.q) out.q = search.q;
+    if (typeof search.tag === "string" && search.tag) out.tag = search.tag;
+    if (typeof search.streamer === "string" && search.streamer) out.streamer = search.streamer;
+    return out;
+  },
   head: () => ({
     meta: [
       { title: "Search — Stream & Scream" },
@@ -36,9 +38,9 @@ export const Route = createFileRoute("/search")({
       { name: "robots", content: "noindex, follow" },
       { property: "og:title", content: "Search — Stream & Scream" },
       { property: "og:description", content: "Search Stream & Scream for TV recommendations and true crime documentaries." },
-      { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/search" },
+      { property: "og:url", content: "https://streamandscream.com/search" },
     ],
-    links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/search" }],
+    links: [{ rel: "canonical", href: "https://streamandscream.com/search" }],
   }),
   loaderDeps: ({ search }) => ({
     q: search.q,
@@ -65,7 +67,7 @@ function SearchPage() {
   const active = q || tag || streamer;
 
   const { data: results } = useSuspenseQuery(
-    active ? searchQuery(q, tag, streamer) : searchQuery("", "", "")
+    active ? searchQuery(q, tag, streamer) : searchQuery()
   );
   const { data: options } = useSuspenseQuery(filterOptionsQuery());
 
@@ -87,7 +89,7 @@ function SearchPage() {
   };
 
   const clearAll = () => {
-    navigate({ search: { q: "", tag: "", streamer: "" } });
+    navigate({ search: {} });
   };
 
   return (
