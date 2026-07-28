@@ -38,9 +38,9 @@ export const Route = createFileRoute("/search")({
       { name: "robots", content: "noindex, follow" },
       { property: "og:title", content: "Search — Stream & Scream" },
       { property: "og:description", content: "Search Stream & Scream for TV recommendations and true crime documentaries." },
-      { property: "og:url", content: "https://screen-and-shadow-dig.lovable.app/search" },
+      { property: "og:url", content: "https://streamandscream.com/search" },
     ],
-    links: [{ rel: "canonical", href: "https://screen-and-shadow-dig.lovable.app/search" }],
+    links: [{ rel: "canonical", href: "https://streamandscream.com/search" }],
   }),
   loaderDeps: ({ search }) => ({
     q: search.q,
