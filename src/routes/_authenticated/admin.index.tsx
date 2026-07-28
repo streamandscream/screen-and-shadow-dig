@@ -60,14 +60,26 @@ function Admin() {
   const pingFn = useServerFn(pingSitemap);
   const [pinging, setPinging] = useState(false);
 
+  const [redirectIssues, setRedirectIssues] = useState<
+    { url: string; status: number; location: string | null }[] | null
+  >(null);
+
   async function notifySearchEngines() {
     setPinging(true);
+    setRedirectIssues(null);
     try {
       const r = await pingFn();
+      const issues = r.redirectCheck?.issues ?? [];
+      setRedirectIssues(issues);
       const okCount = r.results.filter((x) => x.ok).length;
       const summary = r.results.map((x) => `${x.service}: ${x.ok ? "✓" : "✗ " + (x.message ?? "")}`).join(" | ");
-      if (okCount === r.results.length) toast.success(`Notified ${okCount} search engines`);
-      else toast.message(summary);
+      if (issues.length > 0) {
+        toast.warning(`${issues.length} sitemap URL${issues.length === 1 ? "" : "s"} redirect (3xx) — see details below`);
+      } else if (okCount === r.results.length) {
+        toast.success(`Notified ${okCount} search engines · ${r.redirectCheck?.checked ?? 0} URLs clean`);
+      } else {
+        toast.message(summary);
+      }
     } catch (e) {
       toast.error(`Ping failed: ${(e as Error).message}`);
     } finally {
