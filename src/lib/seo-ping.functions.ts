@@ -181,5 +181,5 @@ export const pingSitemap = createServerFn({ method: "POST" })
       results.push({ service: "IndexNow (Bing/Yandex)", ok: false, message: "INDEXNOW_KEY secret not set" });
     }
 
-    return { results, pingedAt: new Date().toISOString() };
+    return { results, redirectCheck, pingedAt: new Date().toISOString() };
   });
