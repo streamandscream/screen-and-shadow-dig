@@ -89,7 +89,7 @@ function SearchPage() {
   };
 
   const clearAll = () => {
-    navigate({ search: { q: "", tag: "", streamer: "" } });
+    navigate({ search: {} });
   };
 
   return (
