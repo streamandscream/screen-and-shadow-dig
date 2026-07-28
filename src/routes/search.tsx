@@ -24,11 +24,13 @@ const filterOptionsQuery = () =>
   });
 
 export const Route = createFileRoute("/search")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    q: typeof search.q === "string" ? search.q : "",
-    tag: typeof search.tag === "string" ? search.tag : "",
-    streamer: typeof search.streamer === "string" ? search.streamer : "",
-  }),
+  validateSearch: (search: Record<string, unknown>): { q?: string; tag?: string; streamer?: string } => {
+    const out: { q?: string; tag?: string; streamer?: string } = {};
+    if (typeof search.q === "string" && search.q) out.q = search.q;
+    if (typeof search.tag === "string" && search.tag) out.tag = search.tag;
+    if (typeof search.streamer === "string" && search.streamer) out.streamer = search.streamer;
+    return out;
+  },
   head: () => ({
     meta: [
       { title: "Search — Stream & Scream" },
