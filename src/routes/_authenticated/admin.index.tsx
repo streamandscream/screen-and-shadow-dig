@@ -189,8 +189,9 @@ function Admin() {
           </div>
         )}
 
-
+        {isLoading ? (
           <p className="mt-8 text-muted-foreground">Loading…</p>
+
         ) : !posts || posts.length === 0 ? (
           <p className="mt-8 text-muted-foreground">No posts yet. Create your first.</p>
         ) : (
