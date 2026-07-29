@@ -184,7 +184,7 @@ function Page() {
         )}
         {post.tags && post.tags.length > 0 && (
           <div className={post.rating != null ? "mt-4" : "mt-10 border-t-2 border-foreground pt-6"}>
-            <p className="eyebrow text-accent-red">Tags</p>
+            <h2 className="eyebrow text-accent-red m-0">Tags</h2>
             <p className="text-sm md:text-base leading-snug">
               {post.tags.map((t: string, i: number) => (
                 <span key={t}>
