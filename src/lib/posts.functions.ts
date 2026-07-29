@@ -29,7 +29,7 @@ export const getSearchFilters = createServerFn({ method: "GET" })
     };
   });
 
-const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe, publish_at";
+const POST_COLS = "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe, publish_at, meta_description";
 
 export const listPublishedPosts = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) =>
