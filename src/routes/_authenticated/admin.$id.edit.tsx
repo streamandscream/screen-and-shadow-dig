@@ -49,6 +49,7 @@ function EditPost() {
         next_binge: form.next_binge || [],
         vibe: form.vibe || null,
         publish_at: scheduled ? publishAtIso : null,
+        meta_description: form.meta_description?.trim() ? form.meta_description.trim() : null,
       } });
       navigate({ to: "/admin" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Failed"); }
