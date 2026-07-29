@@ -176,7 +176,7 @@ function Page() {
         </div>
         {post.rating != null && (
           <div className="mt-10 border-t-2 border-foreground pt-6">
-            <p className="eyebrow text-accent-red">The verdict</p>
+            <h2 className="eyebrow text-accent-red m-0">The verdict</h2>
             <p className="font-sans mt-2">
               {post.rating}/10
             </p>
