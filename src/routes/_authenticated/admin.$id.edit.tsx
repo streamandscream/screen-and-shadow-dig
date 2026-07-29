@@ -123,6 +123,16 @@ function Editor({ form, setForm, save, saving, err }: any) {
             </select>
           </Field>
           <Field label="Excerpt"><textarea className="w-full border border-foreground bg-background p-3" rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} /></Field>
+          <Field label={`SEO meta description (${(form.meta_description || "").length}/200 — falls back to excerpt if empty)`}>
+            <textarea
+              className="w-full border border-foreground bg-background p-3"
+              rows={2}
+              maxLength={200}
+              placeholder="Keyword-focused 150–200 char summary for Google & social previews."
+              value={form.meta_description || ""}
+              onChange={(e) => setForm({ ...form, meta_description: e.target.value })}
+            />
+          </Field>
           <Field label="The Vibe (one-line tagline)"><input placeholder="Cozy whodunit with bite." maxLength={160} className="w-full border border-foreground bg-background p-3" value={form.vibe || ""} onChange={(e) => setForm({ ...form, vibe: e.target.value })} /></Field>
           <div className="border border-foreground/30 p-4 space-y-3">
             <div className="flex items-center justify-between">
