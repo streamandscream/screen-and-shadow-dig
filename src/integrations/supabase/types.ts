@@ -112,6 +112,7 @@ export type Database = {
           justwatch_country: string
           justwatch_slug: string | null
           justwatch_type: string
+          meta_description: string | null
           next_binge: string[]
           publish_at: string | null
           published: boolean
@@ -134,6 +135,7 @@ export type Database = {
           justwatch_country?: string
           justwatch_slug?: string | null
           justwatch_type?: string
+          meta_description?: string | null
           next_binge?: string[]
           publish_at?: string | null
           published?: boolean
@@ -156,6 +158,7 @@ export type Database = {
           justwatch_country?: string
           justwatch_slug?: string | null
           justwatch_type?: string
+          meta_description?: string | null
           next_binge?: string[]
           publish_at?: string | null
           published?: boolean

@@ -29,18 +29,19 @@ export const Route = createFileRoute("/post/$slug")({
       return { meta: [{ title: "Not found — Stream & Scream" }, { name: "robots", content: "noindex" }] };
     }
     const image = loaderData.cover_url;
+    const description = (loaderData as any).meta_description?.trim() || loaderData.excerpt;
     return {
       meta: [
         { title: `${loaderData.title} — Stream & Scream` },
-        { name: "description", content: loaderData.excerpt },
+        { name: "description", content: description },
         { property: "og:title", content: loaderData.title },
-        { property: "og:description", content: loaderData.excerpt },
+        { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
         ...(image ? [{ property: "og:image", content: image }] : []),
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: loaderData.title },
-        { name: "twitter:description", content: loaderData.excerpt },
+        { name: "twitter:description", content: description },
         ...(image ? [{ name: "twitter:image", content: image }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
