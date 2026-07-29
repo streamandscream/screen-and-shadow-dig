@@ -176,7 +176,7 @@ function Page() {
         </div>
         {post.rating != null && (
           <div className="mt-10 border-t-2 border-foreground pt-6">
-            <p className="eyebrow text-accent-red">The verdict</p>
+            <h2 className="eyebrow text-accent-red m-0">The verdict</h2>
             <p className="font-sans mt-2">
               {post.rating}/10
             </p>
@@ -184,7 +184,7 @@ function Page() {
         )}
         {post.tags && post.tags.length > 0 && (
           <div className={post.rating != null ? "mt-4" : "mt-10 border-t-2 border-foreground pt-6"}>
-            <p className="eyebrow text-accent-red">Tags</p>
+            <h2 className="eyebrow text-accent-red m-0">Tags</h2>
             <p className="text-sm md:text-base leading-snug">
               {post.tags.map((t: string, i: number) => (
                 <span key={t}>
@@ -199,7 +199,7 @@ function Page() {
         )}
         {post.next_binge && post.next_binge.length > 0 ? (
           <aside className="mt-12 border-t-2 border-foreground pt-6">
-            <p className="eyebrow text-accent-red">More like this</p>
+            <h2 className="eyebrow text-accent-red m-0">More like this</h2>
             <ul className="mt-4 space-y-3 md:space-y-2">
               {post.next_binge.map((title: string) => {
                 const matchSlug = linkMap.get(title.toLowerCase().trim());

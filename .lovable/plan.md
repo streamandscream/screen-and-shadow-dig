@@ -1,25 +1,16 @@
 ## Goal
-Get `streamandscream.com` verified in Google Search Console (GSC) under your connected Google account, then submit `https://streamandscream.com/sitemap.xml` so Google starts crawling.
+Improve semantic structure on post pages by promoting section labels to real headings, without changing their visual size.
 
-## Steps
+## Changes
+In `src/routes/post.$slug.tsx`:
+- Convert "The Verdict" label to `<h2>`
+- Convert "More like this" label to `<h2>`
+- Convert "Tags" label to `<h2>`
 
-1. **Confirm the GSC connector.** Check `standard_connectors--list_connections` for a linked Google Search Console connection with gateway access. If none is linked, prompt you to connect it before continuing.
+## Preserving current appearance
+Each promoted heading gets utility classes matching its current rendered size/weight/tracking/color (e.g. `text-sm font-semibold uppercase tracking-wide text-muted-foreground` or whatever the current span/div uses), plus `m-0` to neutralize default `h2` margins. Net visual result: identical to today; only the underlying tag changes from `span`/`div` to `h2`.
 
-2. **Request a META verification token** from Google Site Verification for `https://streamandscream.com/`. Google returns a `<meta name="google-site-verification" content="...">` token string.
-
-3. **Embed the meta tag in the site head.** Add the tag to `src/routes/__root.tsx` inside the `head()` `meta` array so it renders in the server HTML at every URL (including the root). This is the only file change.
-
-4. **Publish the site** so the meta tag is live on `https://streamandscream.com/`. Google can only verify against the deployed production domain, not the preview.
-
-5. **Call Site Verification `webResource` verify** for `https://streamandscream.com/`. On success, the domain is verified for your Google account.
-
-6. **Add the property to Search Console** via `PUT /webmasters/v3/sites/https%3A%2F%2Fstreamandscream.com%2F` so it appears in your GSC property list.
-
-7. **Submit the sitemap** via `PUT /webmasters/v3/sites/https%3A%2F%2Fstreamandscream.com%2F/sitemaps/https%3A%2F%2Fstreamandscream.com%2Fsitemap.xml`.
-
-8. **Report back** with verification status and sitemap submission confirmation.
-
-## Notes
-- Requires a publish between step 3 and step 5 — verification fails if the meta tag isn't in the live HTML at `streamandscream.com`.
-- The meta tag is harmless to leave in permanently; removing it later would un-verify the property.
-- No DB, schema, or route logic changes — only one edit to `src/routes/__root.tsx`.
+## Out of scope
+- No changes to typography scale in `src/styles.css`
+- No changes to `PostBody.tsx` markdown rendering
+- No changes to `<h1>` or other pages
