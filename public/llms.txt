@@ -1,0 +1,18 @@
+# Stream and Scream
+
+> TV reviews, true crime takes, and streaming picks for people who watch too much (and know it).
+
+Stream and Scream is a UK-focused entertainment site that reviews the latest TV shows, dissects true crime documentaries, and rounds up what’s worth streaming next. Each post is written with opinion, sass, and a clear verdict.
+
+## Pages
+
+- [Home](/): The latest TV and true crime reviews from the site.
+- [The Stream](/tv): TV reviews, streaming picks, and weekly watch recommendations.
+- [The Scream](/true-crime): True crime reviews, documentary deep dives, and "more like this" recommendations.
+- [TV News](/tv-news): Updates on cancelled and renewed shows.
+- [About](/about): What Stream and Scream covers and why.
+- [Search](/search): Find reviews by keyword across the site.
+
+## Optional
+
+- [Sitemap](/sitemap.xml): Machine-readable list of all indexed pages.
