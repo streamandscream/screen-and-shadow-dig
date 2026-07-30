@@ -62,7 +62,7 @@ export const Route = createFileRoute("/post/$slug")({
           children: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Review",
-            "name": `${loaderData.title} review`.replace(/\breview review$/i, "review"),
+            "name": /review/i.test(loaderData.title) ? loaderData.title : `${loaderData.title} review`,
             "description": description,
             "reviewBody": plainBody.length > 1200
               ? `${plainBody.slice(0, 1200).trimEnd()}…`
