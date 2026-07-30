@@ -53,8 +53,11 @@ export const Route = createFileRoute("/post/$slug")({
             "@type": "Review",
             "headline": loaderData.title,
             "name": `${loaderData.title} review`,
-            "description": loaderData.excerpt,
-            "reviewBody": loaderData.body,
+            "description": description,
+            "reviewBody": loaderData.body.length > 1200
+              ? `${loaderData.body.slice(0, 1200).trimEnd()}…`
+              : loaderData.body,
+
             "url": url,
             ...(image ? { "image": image, "thumbnailUrl": image } : {}),
             "datePublished": loaderData.created_at,
