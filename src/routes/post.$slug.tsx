@@ -30,6 +30,17 @@ export const Route = createFileRoute("/post/$slug")({
     }
     const image = loaderData.cover_url;
     const description = (loaderData as any).meta_description?.trim() || loaderData.excerpt;
+    // Structured data must be plain text: strip markdown syntax from the body.
+    const plainBody = loaderData.body
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+      .replace(/^#{1,6}\s+/gm, "")
+      .replace(/^>\s?/gm, "")
+      .replace(/[*_`]+/g, "")
+      .replace(/\s*\n\s*\n\s*/g, " ")
+      .replace(/\s*\n\s*/g, " ")
+      .replace(/\s{2,}/g, " ")
+      .trim();
     return {
       meta: [
         { title: `${loaderData.title} — Stream & Scream` },
@@ -51,12 +62,13 @@ export const Route = createFileRoute("/post/$slug")({
           children: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Review",
-            "headline": loaderData.title,
-            "name": `${loaderData.title} review`,
+            "name": /review/i.test(loaderData.title) ? loaderData.title : `${loaderData.title} review`,
             "description": description,
-            "reviewBody": loaderData.body.length > 1200
-              ? `${loaderData.body.slice(0, 1200).trimEnd()}…`
-              : loaderData.body,
+            "reviewBody": plainBody.length > 1200
+              ? `${plainBody.slice(0, 1200).trimEnd()}…`
+              : plainBody,
+
+
 
             "url": url,
             ...(image ? { "image": image, "thumbnailUrl": image } : {}),
