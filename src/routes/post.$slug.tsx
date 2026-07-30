@@ -101,6 +101,7 @@ export const Route = createFileRoute("/post/$slug")({
                   },
                 }
               : {}),
+            "articleSection": loaderData.section === "tv" ? "The Stream" : "The Scream",
             ...(loaderData.tags && loaderData.tags.length
               ? { "keywords": loaderData.tags.join(", ") }
               : {}),
