@@ -1,16 +1,9 @@
-## Goal
-Improve semantic structure on post pages by promoting section labels to real headings, without changing their visual size.
+The `articleSection` error appears because the post page's JSON-LD uses `@type: "Review"`, and `articleSection` is not a valid property on a `Review` schema in Schema.org (it only belongs to `Article` / `NewsArticle`).
 
-## Changes
-In `src/routes/post.$slug.tsx`:
-- Convert "The Verdict" label to `<h2>`
-- Convert "More like this" label to `<h2>`
-- Convert "Tags" label to `<h2>`
+Fix:
+1. Open `src/routes/post.$slug.tsx`.
+2. Remove the line `"articleSection": loaderData.section === "tv" ? "The Stream" : "The Scream",` from the `Review` JSON-LD object.
+3. Keep the existing `keywords` field (which is valid on `Review`) and the `BreadcrumbList` schema that already names the section.
+4. Verify the build passes and that the page still renders one JSON-LD `Review` block plus one `BreadcrumbList` block.
 
-## Preserving current appearance
-Each promoted heading gets utility classes matching its current rendered size/weight/tracking/color (e.g. `text-sm font-semibold uppercase tracking-wide text-muted-foreground` or whatever the current span/div uses), plus `m-0` to neutralize default `h2` margins. Net visual result: identical to today; only the underlying tag changes from `span`/`div` to `h2`.
-
-## Out of scope
-- No changes to typography scale in `src/styles.css`
-- No changes to `PostBody.tsx` markdown rendering
-- No changes to `<h1>` or other pages
+This keeps the structured data lean and valid without re-adding the duplicate `Article` block we previously removed.
