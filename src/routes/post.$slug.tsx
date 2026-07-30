@@ -53,8 +53,11 @@ export const Route = createFileRoute("/post/$slug")({
             "@type": "Review",
             "headline": loaderData.title,
             "name": `${loaderData.title} review`,
-            "description": loaderData.excerpt,
-            "reviewBody": loaderData.body,
+            "description": description,
+            "reviewBody": loaderData.body.length > 1200
+              ? `${loaderData.body.slice(0, 1200).trimEnd()}…`
+              : loaderData.body,
+
             "url": url,
             ...(image ? { "image": image, "thumbnailUrl": image } : {}),
             "datePublished": loaderData.created_at,
@@ -98,42 +101,14 @@ export const Route = createFileRoute("/post/$slug")({
                   },
                 }
               : {}),
-            ...(loaderData.tags && loaderData.tags.length
-              ? { "keywords": loaderData.tags.join(", ") }
-              : {}),
-          }),
-        },
-
-        {
-          type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": loaderData.title,
-            "description": loaderData.excerpt,
-            "articleBody": loaderData.body,
-            "url": url,
-            ...(image ? { "image": [image], "thumbnailUrl": image } : {}),
-            "datePublished": loaderData.created_at,
-            "dateModified": (loaderData as any).updated_at ?? loaderData.created_at,
-            "inLanguage": "en",
-            "author": {
-              "@type": "Organization",
-              "name": "Stream & Scream",
-              "url": "https://streamandscream.com",
-            },
-            "publisher": {
-              "@type": "Organization",
-              "name": "Stream & Scream",
-              "url": "https://streamandscream.com",
-            },
-            "mainEntityOfPage": { "@type": "WebPage", "@id": url },
             "articleSection": loaderData.section === "tv" ? "The Stream" : "The Scream",
             ...(loaderData.tags && loaderData.tags.length
               ? { "keywords": loaderData.tags.join(", ") }
               : {}),
           }),
         },
+
+
 
 
         {
