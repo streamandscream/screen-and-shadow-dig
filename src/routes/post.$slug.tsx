@@ -41,20 +41,35 @@ export const Route = createFileRoute("/post/$slug")({
       .replace(/\s*\n\s*/g, " ")
       .replace(/\s{2,}/g, " ")
       .trim();
+    const ratingText = loaderData.rating != null
+      ? ` (${String(loaderData.rating).replace(/\.0$/, "")}/10)`
+      : "";
+    const seoTitle = /review/i.test(loaderData.title)
+      ? `${loaderData.title}${ratingText} — Stream & Scream`
+      : `${loaderData.title} Review${ratingText} — Stream & Scream`;
+    const socialTitle = /review/i.test(loaderData.title)
+      ? `${loaderData.title}${ratingText}`
+      : `${loaderData.title} Review${ratingText}`;
+    const sectionName = loaderData.section === "tv" ? "The Stream" : "The Scream";
     return {
       meta: [
-        { title: `${loaderData.title} — Stream & Scream` },
+        { title: seoTitle },
         { name: "description", content: description },
-        { property: "og:title", content: loaderData.title },
+        { property: "og:site_name", content: "Stream & Scream" },
+        { property: "og:title", content: socialTitle },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
-        ...(image ? [{ property: "og:image", content: image }] : []),
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: loaderData.title },
+        { property: "og:locale", content: "en_GB" },
+        { property: "article:section", content: sectionName },
+        ...((loaderData.tags ?? []).map((t: string) => ({ property: "article:tag", content: t }))),
+        ...(image ? [{ property: "og:image", content: image }, { property: "og:image:alt", content: `${loaderData.title} poster art` }] : []),
+        { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+        { name: "twitter:title", content: socialTitle },
         { name: "twitter:description", content: description },
-        ...(image ? [{ name: "twitter:image", content: image }] : []),
+        ...(image ? [{ name: "twitter:image", content: image }, { name: "twitter:image:alt", content: `${loaderData.title} poster art` }] : []),
       ],
+
       links: [{ rel: "canonical", href: url }],
       scripts: [
         {
