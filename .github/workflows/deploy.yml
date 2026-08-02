@@ -26,6 +26,22 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
+      - name: Check Supabase connection
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          echo "Checking Supabase connection..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/posts?select=slug&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+          echo "Supabase response status: ${STATUS}"
+          if [ "${STATUS}" -lt 200 ] || [ "${STATUS}" -ge 300 ]; then
+            echo "Supabase connection check failed" >&2
+            exit 1
+          fi
+
       - name: Build static site
         env:
           STATIC_BUILD: "1"
