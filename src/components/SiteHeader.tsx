@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Menu, X, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { searchPosts } from "@/lib/posts.functions";
+import { searchPosts } from "@/lib/posts.public";
 
 export function SiteHeader() {
   const [signedIn, setSignedIn] = useState(false);
