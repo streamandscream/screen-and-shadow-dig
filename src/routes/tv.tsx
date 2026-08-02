@@ -60,7 +60,7 @@ export const Route = createFileRoute("/tv")({
     maxRating: search.maxRating,
     sort: search.sort,
   }),
-  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.minRating, deps.maxRating, deps.sort)),
+  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.minRating, deps.maxRating, deps.sort as "newest" | "highest_score" | "lowest_score" | undefined)),
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Page,

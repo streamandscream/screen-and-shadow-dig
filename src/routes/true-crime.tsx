@@ -89,7 +89,7 @@ export const Route = createFileRoute("/true-crime")({
   loaderDeps: ({ search }) => ({
     sort: search.sort,
   }),
-  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.sort)),
+  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.sort as "newest" | "highest_score" | "lowest_score" | undefined)),
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Page,
