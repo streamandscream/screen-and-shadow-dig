@@ -18,7 +18,7 @@ DirectoryIndex index.html
   RewriteRule ^(.*?)/?$ /$1/index.html [L]
 
   # Everything else falls back to the SPA shell
-  RewriteRule ^ /index.html [L]
+  RewriteRule ^ /spa.html [L]
 </IfModule>
 
 <IfModule mod_mime.c>
