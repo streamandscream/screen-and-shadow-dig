@@ -33,7 +33,7 @@ async function getPostPages(): Promise<{ path: string }[]> {
 const staticPages = STATIC ? await getPostPages() : [];
 
 export default defineConfig({
-  ...(STATIC ? { nitro: { preset: "static" as const } } : {}),
+  ...(STATIC ? { nitro: false as const } : {}),
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
