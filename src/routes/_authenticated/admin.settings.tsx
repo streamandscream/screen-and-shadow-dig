@@ -1,17 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { getJustWatchAffiliate, setJustWatchAffiliate } from "@/lib/settings.functions";
+import { getJustWatchAffiliate, setJustWatchAffiliate } from "@/lib/settings.public";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: SettingsPage,
 });
 
 function SettingsPage() {
-  const getFn = useServerFn(getJustWatchAffiliate);
-  const setFn = useServerFn(setJustWatchAffiliate);
+  const getFn = getJustWatchAffiliate;
+  const setFn = setJustWatchAffiliate;
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["site-setting", "justwatch_affiliate"],
     queryFn: () => getFn(),

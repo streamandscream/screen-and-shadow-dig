@@ -1,10 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { TagPicker } from "@/components/TagPicker";
-import { upsertPost, getMyPost } from "@/lib/posts.functions";
+import { upsertPost, getMyPost } from "@/lib/posts.admin";
 import { fetchTmdbMeta } from "@/lib/tmdb.functions";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,8 +21,8 @@ function toLocalInput(iso: string | null | undefined): string {
 function EditPost() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const getFn = useServerFn(getMyPost);
-  const saveFn = useServerFn(upsertPost);
+  const getFn = getMyPost;
+  const saveFn = upsertPost;
   const { data: post, isLoading } = useQuery({ queryKey: ["my-post", id], queryFn: () => getFn({ data: { id } }) });
   const [form, setForm] = useState<any>(null);
   const [saving, setSaving] = useState(false);
@@ -61,7 +60,7 @@ function EditPost() {
 }
 
 function Editor({ form, setForm, save, saving, err }: any) {
-  const tmdbFn = useServerFn(fetchTmdbMeta);
+  const tmdbFn = fetchTmdbMeta;
   const [tmdbStatus, setTmdbStatus] = useState<string | null>(null);
   const [tmdbLoading, setTmdbLoading] = useState(false);
   async function runTmdb() {

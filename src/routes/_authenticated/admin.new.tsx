@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { upsertPost } from "@/lib/posts.functions";
+import { upsertPost } from "@/lib/posts.admin";
 import { Editor } from "./admin.$id.edit";
 
 export const Route = createFileRoute("/_authenticated/admin/new")({
@@ -10,7 +9,7 @@ export const Route = createFileRoute("/_authenticated/admin/new")({
 
 function NewPost() {
   const navigate = useNavigate();
-  const saveFn = useServerFn(upsertPost);
+  const saveFn = upsertPost;
   const [form, setForm] = useState<any>({
     slug: "", section: "tv", title: "", excerpt: "", body: "", cover_url: "",
     streamer: "", rating: null, tags: [], published: false,

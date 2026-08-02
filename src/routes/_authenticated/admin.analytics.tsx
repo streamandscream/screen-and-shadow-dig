@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { getOutboundStats } from "@/lib/analytics.functions";
@@ -13,7 +12,7 @@ function formatDateTime(iso: string): string {
 }
 
 function AdminAnalytics() {
-  const statsFn = useServerFn(getOutboundStats);
+  const statsFn = getOutboundStats;
   const { data, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ["outbound-stats"],
     queryFn: () => statsFn(),

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { listTags, createTag } from "@/lib/tags.functions";
+import { listTags, createTag } from "@/lib/tags.admin";
 
 export function TagPicker({
   value,
@@ -12,8 +11,8 @@ export function TagPicker({
   onChange: (next: string[]) => void;
   max?: number;
 }) {
-  const listFn = useServerFn(listTags);
-  const createFn = useServerFn(createTag);
+  const listFn = listTags;
+  const createFn = createTag;
   const { data: catalog, refetch } = useQuery({
     queryKey: ["tag-catalog"],
     queryFn: () => listFn(),

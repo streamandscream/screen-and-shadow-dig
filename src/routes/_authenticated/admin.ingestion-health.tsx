@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { getIngestionHealth } from "@/lib/ingestion-health.functions";
@@ -26,7 +25,7 @@ function fmtTime(iso: string) {
 }
 
 function IngestionHealth() {
-  const fetchHealth = useServerFn(getIngestionHealth);
+  const fetchHealth = getIngestionHealth;
   const { data, isLoading, isError, error, refetch, isFetching } = useQuery({
     queryKey: ["ingestion-health"],
     queryFn: () => fetchHealth(),

@@ -1,10 +1,9 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { listMyPosts, deletePost } from "@/lib/posts.functions";
+import { listMyPosts, deletePost } from "@/lib/posts.admin";
 import { getTvNewsScheduleStatus } from "@/lib/tv-news-schedule.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { pingSitemap } from "@/lib/seo-ping.functions";
@@ -41,9 +40,9 @@ type IngestResult = {
 
 function Admin() {
   const router = useRouter();
-  const listFn = useServerFn(listMyPosts);
-  const delFn = useServerFn(deletePost);
-  const statusFn = useServerFn(getTvNewsScheduleStatus);
+  const listFn = listMyPosts;
+  const delFn = deletePost;
+  const statusFn = getTvNewsScheduleStatus;
   const { data: posts, isLoading, refetch } = useQuery({
     queryKey: ["my-posts"],
     queryFn: () => listFn(),
@@ -57,7 +56,7 @@ function Admin() {
   const [ingestResult, setIngestResult] = useState<IngestResult | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const pingFn = useServerFn(pingSitemap);
+  const pingFn = pingSitemap;
   const [pinging, setPinging] = useState(false);
 
   const [redirectIssues, setRedirectIssues] = useState<
