@@ -41,16 +41,6 @@ export default defineConfig({
     ...(STATIC
       ? {
           spa: { enabled: true },
-          sitemap: { enabled: true, host: SITE_URL },
-          prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true },
-          pages: [
-            { path: "/" },
-            { path: "/tv" },
-            { path: "/true-crime" },
-            { path: "/tv-news" },
-            { path: "/about" },
-            ...staticPages,
-          ],
         }
       : {}),
   },
