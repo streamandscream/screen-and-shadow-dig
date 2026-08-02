@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build:static": "STATIC_BUILD=1 vite build"
+    "build:static": "STATIC_BUILD=1 vite build && node scripts/finalize-static.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -42,7 +42,15 @@ export default defineConfig({
       ? {
           spa: { enabled: true },
           sitemap: { enabled: true, host: SITE_URL },
-          prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8 },
+          prerender: {
+            enabled: true,
+            crawlLinks: true,
+            autoSubfolderIndex: true,
+            concurrency: 8,
+            // Never prerender or list private/editor routes
+            filter: ({ path }: { path: string }) =>
+              !path.startsWith("/admin") && !path.startsWith("/auth"),
+          },
           pages: [
             { path: "/" },
             { path: "/tv" },
