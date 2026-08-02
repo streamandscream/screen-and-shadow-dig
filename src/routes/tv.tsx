@@ -4,6 +4,10 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { HorizontalPostCard } from "@/components/PostCard";
 import { listPublishedPosts } from "@/lib/posts.public";
 
+const SORTS = ["newest", "highest_score", "lowest_score"] as const;
+type Sort = (typeof SORTS)[number];
+type ListSearch = { minRating?: number; maxRating?: number; sort?: Sort };
+
 const postsQuery = (minRating?: number, maxRating?: number, sort?: "newest" | "highest_score" | "lowest_score") =>
   queryOptions({
     queryKey: ["posts", "tv", minRating, maxRating, sort],
@@ -11,11 +15,13 @@ const postsQuery = (minRating?: number, maxRating?: number, sort?: "newest" | "h
   });
 
 export const Route = createFileRoute("/tv")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    minRating: typeof search.minRating === "string" ? Number(search.minRating) || undefined : undefined,
-    maxRating: typeof search.maxRating === "string" ? Number(search.maxRating) || undefined : undefined,
-    sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): ListSearch => {
+    const minRating = typeof search["minRating"] === "string" ? Number(search["minRating"]) || undefined : undefined;
+    const maxRating = typeof search["maxRating"] === "string" ? Number(search["maxRating"]) || undefined : undefined;
+    const rawSort = search["sort"];
+    const sort = typeof rawSort === "string" && SORTS.includes(rawSort as Sort) ? (rawSort as Sort) : undefined;
+    return { ...(minRating !== undefined ? { minRating } : {}), ...(maxRating !== undefined ? { maxRating } : {}), ...(sort ? { sort } : {}) };
+  },
   head: ({ loaderData }: { loaderData?: any }) => ({
     meta: [
       { title: "The Stream — Prestige TV Reviews & Recommendations" },
@@ -60,7 +66,7 @@ export const Route = createFileRoute("/tv")({
     maxRating: search.maxRating,
     sort: search.sort,
   }),
-  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.minRating, deps.maxRating, deps.sort as "newest" | "highest_score" | "lowest_score" | undefined)),
+  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.minRating, deps.maxRating, deps.sort)),
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Page,

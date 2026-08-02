@@ -4,6 +4,10 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { HorizontalPostCard } from "@/components/PostCard";
 import { listPublishedPosts } from "@/lib/posts.public";
 
+const SORTS = ["newest", "highest_score", "lowest_score"] as const;
+type Sort = (typeof SORTS)[number];
+type ListSearch = { minRating?: number; maxRating?: number; sort?: Sort };
+
 const postsQuery = (sort?: "newest" | "highest_score" | "lowest_score") =>
   queryOptions({
     queryKey: ["posts", "true_crime", sort],
@@ -11,9 +15,13 @@ const postsQuery = (sort?: "newest" | "highest_score" | "lowest_score") =>
   });
 
 export const Route = createFileRoute("/true-crime")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): ListSearch => {
+    const minRating = typeof search["minRating"] === "string" ? Number(search["minRating"]) || undefined : undefined;
+    const maxRating = typeof search["maxRating"] === "string" ? Number(search["maxRating"]) || undefined : undefined;
+    const rawSort = search["sort"];
+    const sort = typeof rawSort === "string" && SORTS.includes(rawSort as Sort) ? (rawSort as Sort) : undefined;
+    return { ...(minRating !== undefined ? { minRating } : {}), ...(maxRating !== undefined ? { maxRating } : {}), ...(sort ? { sort } : {}) };
+  },
   head: ({ loaderData }: { loaderData?: any }) => ({
     meta: [
       { title: "Best True Crime 2026 — Reviews & Picks | The Scream" },
@@ -89,7 +97,7 @@ export const Route = createFileRoute("/true-crime")({
   loaderDeps: ({ search }) => ({
     sort: search.sort,
   }),
-  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.sort as "newest" | "highest_score" | "lowest_score" | undefined)),
+  loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.sort)),
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Page,
