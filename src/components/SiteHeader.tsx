@@ -90,7 +90,7 @@ export function SiteHeader() {
                         <p className="text-[11px] normal-case tracking-normal text-muted-foreground py-2 font-sans">No matches</p>
                       ) : (
                         <ul className="flex flex-col">
-                          {topResults.map((p) => (
+                          {topResults.map((p: { id: string; slug: string; title: string }) => (
                             <li key={p.id}>
                               <Link
                                 to="/post/$slug"
