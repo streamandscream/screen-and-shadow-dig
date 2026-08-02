@@ -73,31 +73,6 @@ export function GoogleAnalytics() {
         if (dataOriginal) originalUrl = dataOriginal;
       }
 
-      // Fire-and-forget log to our own analytics table
-      try {
-        const payload = JSON.stringify({
-          url: url.href,
-          link_text: linkText,
-          source_path: window.location.pathname + window.location.search,
-          is_affiliate: isAffiliate,
-          merchant_id: merchantId,
-          original_url: originalUrl,
-        });
-        const blob = new Blob([payload], { type: "application/json" });
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon("/api/public/track/outbound-click", blob);
-        } else {
-          fetch("/api/public/track/outbound-click", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: payload,
-            keepalive: true,
-          }).catch(() => {});
-        }
-      } catch {
-        // ignore
-      }
-
       if (!window.gtag) return;
       window.gtag("event", "click", {
         event_category: "outbound",
