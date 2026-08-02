@@ -4,7 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { HorizontalPostCard } from "@/components/PostCard";
 import { listPublishedPosts } from "@/lib/posts.public";
 
-const postsQuery = (minRating?: number, maxRating?: number, sort?: string) =>
+const postsQuery = (minRating?: number, maxRating?: number, sort?: "newest" | "highest_score" | "lowest_score") =>
   queryOptions({
     queryKey: ["posts", "tv", minRating, maxRating, sort],
     queryFn: () => listPublishedPosts({ data: { section: "tv", minRating, maxRating, sort } }),

@@ -4,7 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { HorizontalPostCard } from "@/components/PostCard";
 import { listPublishedPosts } from "@/lib/posts.public";
 
-const postsQuery = (sort?: string) =>
+const postsQuery = (sort?: "newest" | "highest_score" | "lowest_score") =>
   queryOptions({
     queryKey: ["posts", "true_crime", sort],
     queryFn: () => listPublishedPosts({ data: { section: "true_crime", sort } }),
