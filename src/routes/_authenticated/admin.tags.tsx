@@ -1,20 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { listTags, createTag, renameTag, deleteTag } from "@/lib/tags.functions";
+import { listTags, createTag, renameTag, deleteTag } from "@/lib/tags.admin";
 
 export const Route = createFileRoute("/_authenticated/admin/tags")({
   component: TagsAdmin,
 });
 
 function TagsAdmin() {
-  const listFn = useServerFn(listTags);
-  const createFn = useServerFn(createTag);
-  const renameFn = useServerFn(renameTag);
-  const deleteFn = useServerFn(deleteTag);
+  const listFn = listTags;
+  const createFn = createTag;
+  const renameFn = renameTag;
+  const deleteFn = deleteTag;
 
   const { data: tags, isLoading, refetch } = useQuery({
     queryKey: ["admin-tags"],

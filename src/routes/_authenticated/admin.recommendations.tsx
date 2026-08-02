@@ -1,17 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { listMyPosts, updateRecommendations } from "@/lib/posts.functions";
+import { listMyPosts, updateRecommendations } from "@/lib/posts.admin";
 
 export const Route = createFileRoute("/_authenticated/admin/recommendations")({
   component: RecommendationsEditor,
 });
 
 function RecommendationsEditor() {
-  const listFn = useServerFn(listMyPosts);
-  const saveFn = useServerFn(updateRecommendations);
+  const listFn = listMyPosts;
+  const saveFn = updateRecommendations;
   const { data: posts, isLoading, refetch } = useQuery({
     queryKey: ["my-posts"],
     queryFn: () => listFn(),
@@ -50,7 +49,7 @@ function RecommendationsEditor() {
   );
 }
 
-function PostRecommendationsCard({ post, saveFn, onSaved }: { post: any; saveFn: ReturnType<typeof useServerFn>; onSaved: () => void }) {
+function PostRecommendationsCard({ post, saveFn, onSaved }: { post: any; saveFn: (args: any) => Promise<any>; onSaved: () => void }) {
   const [bingeRaw, setBingeRaw] = useState((post.next_binge || []).join(", "));
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);

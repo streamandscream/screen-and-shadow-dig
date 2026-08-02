@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostCard } from "@/components/PostCard";
-import { listPostsByTag } from "@/lib/posts.functions";
+import { listPostsByTag } from "@/lib/posts.public";
 
 const tagQuery = (tag: string) =>
   queryOptions({

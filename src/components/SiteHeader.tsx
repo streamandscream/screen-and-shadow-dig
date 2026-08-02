@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Menu, X, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { searchPosts } from "@/lib/posts.functions";
+import { searchPosts } from "@/lib/posts.public";
 
 export function SiteHeader() {
   const [signedIn, setSignedIn] = useState(false);
@@ -90,7 +90,7 @@ export function SiteHeader() {
                         <p className="text-[11px] normal-case tracking-normal text-muted-foreground py-2 font-sans">No matches</p>
                       ) : (
                         <ul className="flex flex-col">
-                          {topResults.map((p) => (
+                          {topResults.map((p: { id: string; slug: string; title: string }) => (
                             <li key={p.id}>
                               <Link
                                 to="/post/$slug"

@@ -1,17 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { listMyPosts, deletePost } from "@/lib/posts.functions";
+import { listMyPosts, deletePost } from "@/lib/posts.admin";
 
 export const Route = createFileRoute("/_authenticated/admin/stream")({
   component: StreamAdmin,
 });
 
 function StreamAdmin() {
-  const listFn = useServerFn(listMyPosts);
-  const delFn = useServerFn(deletePost);
+  const listFn = listMyPosts;
+  const delFn = deletePost;
   const { data: posts, isLoading, refetch } = useQuery({
     queryKey: ["my-posts"],
     queryFn: () => listFn(),

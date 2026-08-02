@@ -12,8 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TvNewsRouteImport } from './routes/tv-news'
 import { Route as TvRouteImport } from './routes/tv'
 import { Route as TrueCrimeRouteImport } from './routes/true-crime'
-import { Route as SubscribeRouteImport } from './routes/subscribe'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
@@ -23,16 +21,11 @@ import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as PostSlugRouteImport } from './routes/post.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as ApiPublicIndexnowKeyDottxtRouteImport } from './routes/api/public/indexnow-key[.]txt'
 import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin.tags'
 import { Route as AuthenticatedAdminStreamRouteImport } from './routes/_authenticated/admin.stream'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminRecommendationsRouteImport } from './routes/_authenticated/admin.recommendations'
 import { Route as AuthenticatedAdminNewRouteImport } from './routes/_authenticated/admin.new'
-import { Route as AuthenticatedAdminIngestionHealthRouteImport } from './routes/_authenticated/admin.ingestion-health'
-import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
-import { Route as ApiPublicTrackOutboundClickRouteImport } from './routes/api/public/track/outbound-click'
-import { Route as ApiPublicHooksIngestTvNewsRouteImport } from './routes/api/public/hooks/ingest-tv-news'
 import { Route as AuthenticatedAdminIdEditRouteImport } from './routes/_authenticated/admin.$id.edit'
 
 const TvNewsRoute = TvNewsRouteImport.update({
@@ -48,16 +41,6 @@ const TvRoute = TvRouteImport.update({
 const TrueCrimeRoute = TrueCrimeRouteImport.update({
   id: '/true-crime',
   path: '/true-crime',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SubscribeRoute = SubscribeRouteImport.update({
-  id: '/subscribe',
-  path: '/subscribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -104,12 +87,6 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const ApiPublicIndexnowKeyDottxtRoute =
-  ApiPublicIndexnowKeyDottxtRouteImport.update({
-    id: '/api/public/indexnow-key.txt',
-    path: '/api/public/indexnow-key.txt',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AuthenticatedAdminTagsRoute = AuthenticatedAdminTagsRouteImport.update({
   id: '/tags',
   path: '/tags',
@@ -138,30 +115,6 @@ const AuthenticatedAdminNewRoute = AuthenticatedAdminNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminIngestionHealthRoute =
-  AuthenticatedAdminIngestionHealthRouteImport.update({
-    id: '/ingestion-health',
-    path: '/ingestion-health',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminAnalyticsRoute =
-  AuthenticatedAdminAnalyticsRouteImport.update({
-    id: '/analytics',
-    path: '/analytics',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const ApiPublicTrackOutboundClickRoute =
-  ApiPublicTrackOutboundClickRouteImport.update({
-    id: '/api/public/track/outbound-click',
-    path: '/api/public/track/outbound-click',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksIngestTvNewsRoute =
-  ApiPublicHooksIngestTvNewsRouteImport.update({
-    id: '/api/public/hooks/ingest-tv-news',
-    path: '/api/public/hooks/ingest-tv-news',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AuthenticatedAdminIdEditRoute =
   AuthenticatedAdminIdEditRouteImport.update({
     id: '/$id/edit',
@@ -174,51 +127,37 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/subscribe': typeof SubscribeRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
   '/tag/$tag': typeof TagTagRoute
-  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
-  '/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
-  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
-  '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
-  '/api/public/track/outbound-click': typeof ApiPublicTrackOutboundClickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/subscribe': typeof SubscribeRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
   '/post/$slug': typeof PostSlugRoute
   '/tag/$tag': typeof TagTagRoute
-  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
-  '/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
-  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
-  '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
-  '/api/public/track/outbound-click': typeof ApiPublicTrackOutboundClickRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -227,26 +166,19 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
-  '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/subscribe': typeof SubscribeRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
   '/tag/$tag': typeof TagTagRoute
-  '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
-  '/_authenticated/admin/ingestion-health': typeof AuthenticatedAdminIngestionHealthRoute
   '/_authenticated/admin/new': typeof AuthenticatedAdminNewRoute
   '/_authenticated/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
-  '/api/public/indexnow-key.txt': typeof ApiPublicIndexnowKeyDottxtRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
-  '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
-  '/api/public/track/outbound-click': typeof ApiPublicTrackOutboundClickRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -255,51 +187,37 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/search'
-    | '/sitemap.xml'
-    | '/subscribe'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
     | '/admin'
     | '/post/$slug'
     | '/tag/$tag'
-    | '/admin/analytics'
-    | '/admin/ingestion-health'
     | '/admin/new'
     | '/admin/recommendations'
     | '/admin/settings'
     | '/admin/stream'
     | '/admin/tags'
-    | '/api/public/indexnow-key.txt'
     | '/admin/'
     | '/admin/$id/edit'
-    | '/api/public/hooks/ingest-tv-news'
-    | '/api/public/track/outbound-click'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/auth'
     | '/search'
-    | '/sitemap.xml'
-    | '/subscribe'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
     | '/post/$slug'
     | '/tag/$tag'
-    | '/admin/analytics'
-    | '/admin/ingestion-health'
     | '/admin/new'
     | '/admin/recommendations'
     | '/admin/settings'
     | '/admin/stream'
     | '/admin/tags'
-    | '/api/public/indexnow-key.txt'
     | '/admin'
     | '/admin/$id/edit'
-    | '/api/public/hooks/ingest-tv-news'
-    | '/api/public/track/outbound-click'
   id:
     | '__root__'
     | '/'
@@ -307,26 +225,19 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/search'
-    | '/sitemap.xml'
-    | '/subscribe'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
     | '/_authenticated/admin'
     | '/post/$slug'
     | '/tag/$tag'
-    | '/_authenticated/admin/analytics'
-    | '/_authenticated/admin/ingestion-health'
     | '/_authenticated/admin/new'
     | '/_authenticated/admin/recommendations'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/stream'
     | '/_authenticated/admin/tags'
-    | '/api/public/indexnow-key.txt'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/$id/edit'
-    | '/api/public/hooks/ingest-tv-news'
-    | '/api/public/track/outbound-click'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -335,16 +246,11 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   SearchRoute: typeof SearchRoute
-  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  SubscribeRoute: typeof SubscribeRoute
   TrueCrimeRoute: typeof TrueCrimeRoute
   TvRoute: typeof TvRoute
   TvNewsRoute: typeof TvNewsRoute
   PostSlugRoute: typeof PostSlugRoute
   TagTagRoute: typeof TagTagRoute
-  ApiPublicIndexnowKeyDottxtRoute: typeof ApiPublicIndexnowKeyDottxtRoute
-  ApiPublicHooksIngestTvNewsRoute: typeof ApiPublicHooksIngestTvNewsRoute
-  ApiPublicTrackOutboundClickRoute: typeof ApiPublicTrackOutboundClickRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -368,20 +274,6 @@ declare module '@tanstack/react-router' {
       path: '/true-crime'
       fullPath: '/true-crime'
       preLoaderRoute: typeof TrueCrimeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/subscribe': {
-      id: '/subscribe'
-      path: '/subscribe'
-      fullPath: '/subscribe'
-      preLoaderRoute: typeof SubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -447,13 +339,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/api/public/indexnow-key.txt': {
-      id: '/api/public/indexnow-key.txt'
-      path: '/api/public/indexnow-key.txt'
-      fullPath: '/api/public/indexnow-key.txt'
-      preLoaderRoute: typeof ApiPublicIndexnowKeyDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/admin/tags': {
       id: '/_authenticated/admin/tags'
       path: '/tags'
@@ -489,34 +374,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/ingestion-health': {
-      id: '/_authenticated/admin/ingestion-health'
-      path: '/ingestion-health'
-      fullPath: '/admin/ingestion-health'
-      preLoaderRoute: typeof AuthenticatedAdminIngestionHealthRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/analytics': {
-      id: '/_authenticated/admin/analytics'
-      path: '/analytics'
-      fullPath: '/admin/analytics'
-      preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/api/public/track/outbound-click': {
-      id: '/api/public/track/outbound-click'
-      path: '/api/public/track/outbound-click'
-      fullPath: '/api/public/track/outbound-click'
-      preLoaderRoute: typeof ApiPublicTrackOutboundClickRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/ingest-tv-news': {
-      id: '/api/public/hooks/ingest-tv-news'
-      path: '/api/public/hooks/ingest-tv-news'
-      fullPath: '/api/public/hooks/ingest-tv-news'
-      preLoaderRoute: typeof ApiPublicHooksIngestTvNewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/admin/$id/edit': {
       id: '/_authenticated/admin/$id/edit'
       path: '/$id/edit'
@@ -528,8 +385,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
-  AuthenticatedAdminIngestionHealthRoute: typeof AuthenticatedAdminIngestionHealthRoute
   AuthenticatedAdminNewRoute: typeof AuthenticatedAdminNewRoute
   AuthenticatedAdminRecommendationsRoute: typeof AuthenticatedAdminRecommendationsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
@@ -540,9 +395,6 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
-  AuthenticatedAdminIngestionHealthRoute:
-    AuthenticatedAdminIngestionHealthRoute,
   AuthenticatedAdminNewRoute: AuthenticatedAdminNewRoute,
   AuthenticatedAdminRecommendationsRoute:
     AuthenticatedAdminRecommendationsRoute,
@@ -573,27 +425,12 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   SearchRoute: SearchRoute,
-  SitemapDotxmlRoute: SitemapDotxmlRoute,
-  SubscribeRoute: SubscribeRoute,
   TrueCrimeRoute: TrueCrimeRoute,
   TvRoute: TvRoute,
   TvNewsRoute: TvNewsRoute,
   PostSlugRoute: PostSlugRoute,
   TagTagRoute: TagTagRoute,
-  ApiPublicIndexnowKeyDottxtRoute: ApiPublicIndexnowKeyDottxtRoute,
-  ApiPublicHooksIngestTvNewsRoute: ApiPublicHooksIngestTvNewsRoute,
-  ApiPublicTrackOutboundClickRoute: ApiPublicTrackOutboundClickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

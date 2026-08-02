@@ -3,7 +3,7 @@ import { queryOptions, useSuspenseQuery, useQuery } from "@tanstack/react-query"
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostBody } from "@/components/PostBody";
 import { WhereToWatchLink } from "@/components/PostCard";
-import { getPostBySlug, getPostsByTitles } from "@/lib/posts.functions";
+import { getPostBySlug, getPostsByTitles } from "@/lib/posts.public";
 
 const postQuery = (slug: string) => queryOptions({
   queryKey: ["post", slug],

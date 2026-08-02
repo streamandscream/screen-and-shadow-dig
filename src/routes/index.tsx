@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { HorizontalPostCard } from "@/components/PostCard";
-import { listPublishedPosts } from "@/lib/posts.functions";
+import { listPublishedPosts } from "@/lib/posts.public";
 
 const homePostsQuery = queryOptions({
   queryKey: ["posts", "home"],

@@ -2,20 +2,26 @@ import { createFileRoute, useSearch, useNavigate } from "@tanstack/react-router"
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { HorizontalPostCard } from "@/components/PostCard";
-import { listPublishedPosts } from "@/lib/posts.functions";
+import { listPublishedPosts } from "@/lib/posts.public";
 
-const postsQuery = (minRating?: number, maxRating?: number, sort?: string) =>
+const SORTS = ["newest", "highest_score", "lowest_score"] as const;
+type Sort = (typeof SORTS)[number];
+type ListSearch = { minRating?: number; maxRating?: number; sort?: Sort };
+
+const postsQuery = (minRating?: number, maxRating?: number, sort?: "newest" | "highest_score" | "lowest_score") =>
   queryOptions({
     queryKey: ["posts", "tv", minRating, maxRating, sort],
     queryFn: () => listPublishedPosts({ data: { section: "tv", minRating, maxRating, sort } }),
   });
 
 export const Route = createFileRoute("/tv")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    minRating: typeof search.minRating === "string" ? Number(search.minRating) || undefined : undefined,
-    maxRating: typeof search.maxRating === "string" ? Number(search.maxRating) || undefined : undefined,
-    sort: typeof search.sort === "string" && ["newest", "highest_score", "lowest_score"].includes(search.sort) ? search.sort : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): ListSearch => {
+    const minRating = typeof search["minRating"] === "string" ? Number(search["minRating"]) || undefined : undefined;
+    const maxRating = typeof search["maxRating"] === "string" ? Number(search["maxRating"]) || undefined : undefined;
+    const rawSort = search["sort"];
+    const sort = typeof rawSort === "string" && SORTS.includes(rawSort as Sort) ? (rawSort as Sort) : undefined;
+    return { ...(minRating !== undefined ? { minRating } : {}), ...(maxRating !== undefined ? { maxRating } : {}), ...(sort ? { sort } : {}) };
+  },
   head: ({ loaderData }: { loaderData?: any }) => ({
     meta: [
       { title: "The Stream — Prestige TV Reviews & Recommendations" },

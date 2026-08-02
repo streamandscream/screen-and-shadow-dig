@@ -1,11 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { TagPicker } from "@/components/TagPicker";
-import { upsertPost, getMyPost } from "@/lib/posts.functions";
-import { fetchTmdbMeta } from "@/lib/tmdb.functions";
+import { upsertPost, getMyPost } from "@/lib/posts.admin";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/$id/edit")({
@@ -22,8 +20,8 @@ function toLocalInput(iso: string | null | undefined): string {
 function EditPost() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const getFn = useServerFn(getMyPost);
-  const saveFn = useServerFn(upsertPost);
+  const getFn = getMyPost;
+  const saveFn = upsertPost;
   const { data: post, isLoading } = useQuery({ queryKey: ["my-post", id], queryFn: () => getFn({ data: { id } }) });
   const [form, setForm] = useState<any>(null);
   const [saving, setSaving] = useState(false);
@@ -61,26 +59,6 @@ function EditPost() {
 }
 
 function Editor({ form, setForm, save, saving, err }: any) {
-  const tmdbFn = useServerFn(fetchTmdbMeta);
-  const [tmdbStatus, setTmdbStatus] = useState<string | null>(null);
-  const [tmdbLoading, setTmdbLoading] = useState(false);
-  async function runTmdb() {
-    if (!form.title?.trim()) { setTmdbStatus("Enter a title first"); return; }
-    setTmdbLoading(true); setTmdbStatus(null);
-    try {
-      const type = form.section === "tv" ? "tv-show" : (form.justwatch_type === "movie" ? "movie" : "tv-show");
-      const res: any = await tmdbFn({ data: { title: form.title.trim(), type } });
-      if (!res.found) { setTmdbStatus("No TMDB match — paste a manual cover URL below"); return; }
-      setForm({
-        ...form,
-        cover_url: res.cover_url || form.cover_url,
-        excerpt: form.excerpt?.trim() ? form.excerpt : (res.overview || ""),
-      });
-      setTmdbStatus(`Matched: ${res.name}`);
-    } catch (e) {
-      setTmdbStatus(e instanceof Error ? e.message : "TMDB lookup failed");
-    } finally { setTmdbLoading(false); }
-  }
   const coverPreview = form.cover_url?.trim() ? form.cover_url.trim() : null;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -108,13 +86,7 @@ function Editor({ form, setForm, save, saving, err }: any) {
         <h1 className="font-display text-4xl border-b-2 border-foreground pb-4">Edit post</h1>
         <div className="mt-6 space-y-4">
           <Field label="Title">
-            <div className="flex gap-2">
-              <input className="w-full border border-foreground bg-background p-3" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-              <button type="button" onClick={runTmdb} disabled={tmdbLoading} className="border border-foreground px-4 font-display uppercase text-xs tracking-widest disabled:opacity-50 whitespace-nowrap">
-                {tmdbLoading ? "Fetching…" : "Fetch TMDB"}
-              </button>
-            </div>
-            {tmdbStatus && <p className="mt-1 text-xs text-muted-foreground">{tmdbStatus}</p>}
+            <input className="w-full border border-foreground bg-background p-3" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
           </Field>
           <Field label="Slug"><input className="w-full border border-foreground bg-background p-3" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></Field>
           <Field label="Section">
