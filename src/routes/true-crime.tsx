@@ -108,7 +108,7 @@ function Page() {
   const navigate = useNavigate({ from: "/true-crime" });
   const { data } = useSuspenseQuery(postsQuery(sort));
 
-  const updateSort = (value: string) => {
+  const updateSort = (value: "newest" | "highest_score" | "lowest_score" | "") => {
     navigate({
       search: {
         sort: value || undefined,
