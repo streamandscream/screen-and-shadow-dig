@@ -1,43 +1,46 @@
-## Goal
+# Go live on Hostinger via GitHub Actions
 
-Produce a plain static build (`dist/`) with `index.html` at the root, relative asset paths, and an Apache `.htaccess`, so GitHub → Hostinger deployment works with no Node server and no 403/routing errors.
+The "API key" being requested is the Supabase publishable (anon) key that the build workflow needs as a GitHub repository secret. It is a public key — safe to store as a repo secret and safe to ship in the built site. No private/service key is needed anywhere.
 
-## Important trade-off (please read)
+## What to add in GitHub
 
-The site currently runs server-side: server functions in `src/lib/*.functions.ts` (posts, tags, TMDB fetch, analytics, SEO ping, subscribers, TV-news ingestion), a webhook route under `src/routes/api/public/`, and a server-generated `sitemap.xml`. Apache shared hosting cannot run any of that. Going static means those must be re-implemented client-side or dropped. What survives and how:
+Repo → Settings → Secrets and variables → Actions → New repository secret.
 
-- Public reads (posts, tags, search, TV news) → move to direct browser calls to the backend using the public anon key, protected by the existing row-level policies.
-- Admin (login, create/edit/delete, image upload, scheduling) → keep working, but as browser-side calls with the logged-in session. Anything that relied on admin-only server privileges (delete bypass, TMDB key, SEO ping, ingestion webhook) will not work on Hostinger.
-- TMDB fetch + TV-news ingestion + SEO ping + outbound-click logging → these need a secret key or a server. They get removed from the static build; ingestion would have to be triggered elsewhere (e.g. a scheduled backend job) if you still want it.
-- SSR-rendered meta tags → replaced by build-time generated static pages for existing posts plus client-side meta updates. Search-engine previews for brand-new posts added after a build will not appear until the next build/deploy.
+Supabase (values below are already in the project's `.env`, all public):
 
-## Plan
+| Secret | Value |
+| --- | --- |
+| `SUPABASE_URL` | `https://ocdthsxwhhatspgmjtwe.supabase.co` |
+| `SUPABASE_ANON_KEY` | the publishable key from `.env` (`VITE_SUPABASE_PUBLISHABLE_KEY`) |
+| `VITE_SUPABASE_URL` | same URL as above |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | same publishable key |
+| `VITE_SUPABASE_PROJECT_ID` | `ocdthsxwhhatspgmjtwe` |
+| `VITE_GA_MEASUREMENT_ID` | your real GA4 ID (currently a placeholder in `.env`) |
 
-1. **Switch the build to static output**
-   - Configure the build to emit a fully static site into `dist/` with no server bundle, and set the asset base to relative (`./`) so files resolve from any web root.
-   - Verify `dist/index.html` exists at the top level and that `dist/assets/*` are referenced relatively.
+Hostinger FTP (from hPanel → Files → FTP Accounts):
 
-2. **Remove the server dependency from public pages**
-   - Replace loader calls into `*.functions.ts` with direct browser data fetching for: home, `/tv`, `/true-crime`, `/post/$slug`, `/tag/$tag`, `/search`, `/tv-news`.
-   - Delete or neutralise routes that cannot exist statically: `src/routes/api/public/*`, any server-only route handlers.
+| Secret | Value |
+| --- | --- |
+| `FTP_SERVER` | FTP hostname, e.g. `ftp.streamandscream.com` |
+| `FTP_USERNAME` | FTP account username |
+| `FTP_PASSWORD` | FTP account password |
 
-3. **Static SEO artefacts**
-   - Generate `sitemap.xml`, `robots.txt`, and `llms.txt` into `dist/` at build time from the live post list, using the `streamandscream.com` base URL.
-   - Prerender each existing post/category page to its own `index.html` so crawlers get real title/description/JSON-LD, with the SPA taking over on hydration.
+## Changes to make in the project
 
-4. **Apache routing + permissions**
-   - Add `public/.htaccess` with: SPA fallback (rewrite non-file, non-directory requests to `/index.html`), directory index set to `index.html`, `Options -Indexes`, correct MIME/compression/cache headers for `.js`, `.css`, `.webmanifest`, and no `Require all denied` leftovers.
-   - This addresses the 403: it currently happens because the web root has no `index.html` to serve.
+1. Reduce the secret list: have the connection-check step fall back to `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY` so only one pair of Supabase secrets is required instead of two duplicated pairs.
+2. Add a clearer failure message naming the exact missing secret, so a misnamed secret is obvious in the Actions log.
+3. Verify the built output: confirm `bun run build:static` emits `dist/client/index.html`, hashed assets, `.htaccess`, `robots.txt`, `llms.txt`, and `sitemap.xml` — the FTP step uploads `dist/client/` to `/public_html/`.
+4. Confirm the prerender step can reach Supabase during the build (post pages are generated from the `posts` table), otherwise only the shell pages are prerendered.
 
-5. **GitHub → Hostinger deploy**
-   - Add a GitHub Actions workflow that installs, builds, and publishes only the contents of `dist/` (not the repo source) to the Hostinger web root via FTP/SSH deploy, using repository secrets for credentials.
-   - Ensure the deployed root contains `index.html`, `.htaccess`, `assets/`, and the generated SEO files — nothing else.
+## Going live
 
-6. **Verify**
-   - Build locally, serve `dist/` and check: root loads, a deep link like `/post/<slug>` loads on refresh, assets return 200, `sitemap.xml` and `robots.txt` are reachable.
+1. Add the secrets above.
+2. Push to `main` (or run the workflow manually via "Run workflow") to trigger deploy.
+3. Point the `streamandscream.com` DNS at Hostinger and confirm SSL is issued in hPanel.
+4. Load the site, click through `/tv`, `/true-crime`, `/tv-news`, a post page, and a hard refresh on a deep link to confirm `.htaccess` routing works (no 403/404).
 
 ## Technical notes
 
-- Admin pages will be client-rendered only and excluded from prerender/sitemap.
-- The anon/publishable backend key is safe in the client bundle; the service-role key and TMDB key must never ship — hence those features are dropped rather than ported.
-- Content changes made in the admin UI will show immediately for visitors (data is fetched live), but prerendered HTML and the sitemap only refresh on the next build/deploy.
+- Nothing secret ships in the bundle: the publishable key is protected by row-level security, which is already configured.
+- `dangerous-clean-slate: false` means old files are left in place; if a stale `index.html` or asset lingers after the first deploy, it can be cleared manually in hPanel File Manager.
+- Admin routes (`/admin`, `/auth`) are excluded from prerendering and served by the SPA shell — they will still work on Hostinger.
