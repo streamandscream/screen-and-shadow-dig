@@ -77,7 +77,7 @@ function Page() {
   const navigate = useNavigate({ from: "/tv" });
   const { data } = useSuspenseQuery(postsQuery(minRating, maxRating, sort));
 
-  const updateSort = (value: string) => {
+  const updateSort = (value: "newest" | "highest_score" | "lowest_score" | "") => {
     navigate({
       search: {
         minRating,
