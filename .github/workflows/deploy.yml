@@ -28,13 +28,22 @@ jobs:
 
       - name: Check Supabase connection
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: |
           echo "SUPABASE_URL set: ${SUPABASE_URL:+yes}"
           echo "SUPABASE_ANON_KEY set: ${SUPABASE_ANON_KEY:+yes}"
-          if [ -z "${SUPABASE_URL}" ] || [ -z "${SUPABASE_ANON_KEY}" ]; then
-            echo "Missing Supabase secrets" >&2
+          MISSING=0
+          if [ -z "${SUPABASE_URL}" ]; then
+            echo "Missing repository secret: SUPABASE_URL (or VITE_SUPABASE_URL)" >&2
+            MISSING=1
+          fi
+          if [ -z "${SUPABASE_ANON_KEY}" ]; then
+            echo "Missing repository secret: SUPABASE_ANON_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY)" >&2
+            MISSING=1
+          fi
+          if [ "${MISSING}" -eq 1 ]; then
+            echo "Add them in GitHub: Settings > Secrets and variables > Actions" >&2
             exit 1
           fi
           echo "Checking Supabase connection..."
@@ -52,8 +61,8 @@ jobs:
         env:
           STATIC_BUILD: "1"
           SITE_URL: https://streamandscream.com
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || secrets.SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.SUPABASE_ANON_KEY }}
           VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
           VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
         run: bun run build:static

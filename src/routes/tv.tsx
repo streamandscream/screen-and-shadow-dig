@@ -77,7 +77,7 @@ function Page() {
   const navigate = useNavigate({ from: "/tv" });
   const { data } = useSuspenseQuery(postsQuery(minRating, maxRating, sort));
 
-  const updateSort = (value: string) => {
+  const updateSort = (value: "newest" | "highest_score" | "lowest_score" | "") => {
     navigate({
       search: {
         minRating,
@@ -101,7 +101,7 @@ function Page() {
             <select
               id="sort"
               value={sort ?? "newest"}
-              onChange={(e) => updateSort(e.target.value)}
+              onChange={(e) => updateSort(e.target.value as "newest" | "highest_score" | "lowest_score")}
               className="bg-background border-2 border-foreground px-3 py-2 text-sm text-foreground outline-none cursor-pointer"
             >
               <option value="newest">Newest</option>
