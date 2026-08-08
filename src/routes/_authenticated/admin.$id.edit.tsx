@@ -5,6 +5,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { TagPicker } from "@/components/TagPicker";
 import { upsertPost, getMyPost } from "@/lib/posts.admin";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchTmdbCover } from "@/lib/tmdb.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/$id/edit")({
   component: EditPost,
