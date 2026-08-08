@@ -5,36 +5,12 @@
   run: |
     echo "SUPABASE_URL set: ${SUPABASE_URL:+yes}"
     echo "SUPABASE_ANON_KEY set: ${SUPABASE_ANON_KEY:+yes}"
+    echo "Supabase URL: ${SUPABASE_URL}"
 
-    if [ -z "${SUPABASE_URL}" ] || [ -z "${SUPABASE_ANON_KEY}" ]; then
-      echo "Missing repository secret: SUPABASE_URL and/or SUPABASE_ANON_KEY" >&2
-      echo "Add them in GitHub: Settings > Secrets and variables > Actions" >&2
-      exit 1
-    fi
-
-    # Strip whitespace/newlines and any trailing slash, and force https://
-    URL=$(printf '%s' "${SUPABASE_URL}" | tr -d '[:space:]' | sed 's:/*$::')
-    case "${URL}" in
-      https://*) ;;
-      http://*)  URL="https://${URL#http://}" ;;
-      *)         URL="https://${URL}" ;;
-    esac
-    KEY=$(printf '%s' "${SUPABASE_ANON_KEY}" | tr -d '[:space:]')
-
-    echo "Checking Supabase connection (host: $(printf '%s' "${URL}" | sed 's#https://##'))..."
-
-    set +e
-    STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
-      "${URL}/rest/v1/posts?select=slug&limit=1" \
-      -H "apikey: ${KEY}" \
-      -H "Authorization: Bearer ${KEY}")
-    CURL_EXIT=$?
-    set -e
-
-    if [ "${CURL_EXIT}" -ne 0 ]; then
-      echo "curl failed with exit code ${CURL_EXIT} (3 = malformed URL, 6 = host not resolved)" >&2
-      echo "Check the SUPABASE_URL secret is exactly https://<project-ref>.supabase.co" >&2
-      exit 1
+    curl -v \
+      "${SUPABASE_URL}/rest/v1/posts?select=slug&limit=1" \
+      -H "apikey: ${SUPABASE_ANON_KEY}" \
+      -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
     fi
 
     echo "Supabase response status: ${STATUS}"
