@@ -58,7 +58,6 @@ jobs:
           fi
 
           echo "Supabase connection successful."
-
       - name: Build static site
         env:
                  - name: Build static site
