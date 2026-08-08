@@ -63,7 +63,17 @@ function Editor({ form, setForm, save, saving, err }: any) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadErr, setUploadErr] = useState<string | null>(null);
-  async function uploadCover(file: File) {
+  const [fetching, setFetching] = useState(false);
+  async function fetchTmdb() {
+    setFetching(true); setUploadErr(null);
+    try {
+      const res = await fetchTmdbCover({ data: { title: form.title } });
+      if (!res.cover_url) throw new Error("No TMDB match — paste a URL instead");
+      setForm({ ...form, cover_url: res.cover_url });
+    } catch (e) {
+      setUploadErr(e instanceof Error ? e.message : "TMDB lookup failed");
+    } finally { setFetching(false); }
+  }
     setUploading(true); setUploadErr(null);
     try {
       if (!file.type.startsWith("image/")) throw new Error("Please choose an image file");
