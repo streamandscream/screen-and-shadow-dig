@@ -130,14 +130,24 @@ function Editor({ form, setForm, save, saving, err }: any) {
                 className="hidden"
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadCover(f); e.target.value = ""; }}
               />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="border border-foreground px-4 py-2 font-display uppercase text-xs tracking-widest disabled:opacity-50"
-              >
-                {uploading ? "Uploading…" : "Upload image"}
-              </button>
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="border border-foreground px-4 py-2 font-display uppercase text-xs tracking-widest disabled:opacity-50"
+                >
+                  {uploading ? "Uploading…" : "Upload image"}
+                </button>
+                <button
+                  type="button"
+                  onClick={fetchTmdb}
+                  disabled={fetching || !form.title?.trim()}
+                  className="border border-foreground px-4 py-2 font-display uppercase text-xs tracking-widest disabled:opacity-50"
+                >
+                  {fetching ? "Fetching…" : "Fetch TMDB"}
+                </button>
+              </div>
               {uploadErr && <p className="mt-1 text-xs text-destructive">{uploadErr}</p>}
             </div>
             <Field label="Or paste a URL">
