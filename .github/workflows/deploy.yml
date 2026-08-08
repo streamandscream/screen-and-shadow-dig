@@ -1,13 +1,76 @@
-- name: Check Supabase connection
-  env:
-    SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-    SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-  run: |
-    echo "SUPABASE_URL set: ${SUPABASE_URL:+yes}"
-    echo "SUPABASE_ANON_KEY set: ${SUPABASE_ANON_KEY:+yes}"
-    echo "Supabase URL: ${SUPABASE_URL}"
+name: Deploy to Hostinger
 
-    curl -v \
-      "${SUPABASE_URL}/rest/v1/posts?select=slug&limit=1" \
-      -H "apikey: ${SUPABASE_ANON_KEY}" \
-      -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Restore Bun cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock', 'package.json') }}
+          restore-keys: |
+            bun-${{ runner.os }}-
+
+      - run: bun install --frozen-lockfile
+
+      - name: Check Supabase connection
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          echo "SUPABASE_URL set: ${SUPABASE_URL:+yes}"
+          echo "SUPABASE_ANON_KEY set: ${SUPABASE_ANON_KEY:+yes}"
+
+          if [ -z "${SUPABASE_URL}" ] || [ -z "${SUPABASE_ANON_KEY}" ]; then
+            echo "Missing Supabase secrets" >&2
+            exit 1
+          fi
+
+          echo "Checking Supabase connection..."
+
+          STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/posts?select=slug&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+
+          echo "Supabase response status: ${STATUS}"
+
+          if [ "${STATUS}" -lt 200 ] || [ "${STATUS}" -ge 300 ]; then
+            echo "Supabase connection check failed" >&2
+            exit 1
+          fi
+
+          echo "Supabase connection successful."
+
+      - name: Build static site
+        env:
+          STATIC_BUILD: "1"
+          SITE_URL: https://streamandscream.com
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+          VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
+        run: bun run build:static
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: dist/client/
+          server-dir: /public_html/
+          dangerous-clean-slate: false
