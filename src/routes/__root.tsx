@@ -13,7 +13,7 @@ import appCss from "../styles.css?url";
 import { GoogleAnalytics } from "../components/GoogleAnalytics";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
-const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-8FX8SSZTCT";
 
 function NotFoundComponent() {
   return (
