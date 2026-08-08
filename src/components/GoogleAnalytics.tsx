@@ -1,7 +1,7 @@
 import { useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "G-8FX8SSZTCT";
 
 declare global {
   interface Window {
