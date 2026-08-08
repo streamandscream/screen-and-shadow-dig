@@ -1,31 +1,3 @@
-name: Deploy to Hostinger
-
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Restore Bun cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock', 'package.json') }}
-          restore-keys: |
-            bun-${{ runner.os }}-
-
-      - run: bun install --frozen-lockfile
-
       - name: Check Supabase connection
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -38,6 +10,21 @@ jobs:
             echo "Missing Supabase secrets" >&2
             exit 1
           fi
+
+          # Remove accidental line breaks from copied secret
+          SUPABASE_URL="$(printf '%s' "${SUPABASE_URL}" | tr -d '\r\n')"
+
+          echo "URL length: ${#SUPABASE_URL}"
+
+          case "${SUPABASE_URL}" in
+            https://*.supabase.co)
+              echo "Supabase URL format looks correct."
+              ;;
+            *)
+              echo "ERROR: SUPABASE_URL does not look like a Supabase project URL."
+              exit 1
+              ;;
+          esac
 
           echo "Checking Supabase connection..."
 
@@ -54,23 +41,3 @@ jobs:
           fi
 
           echo "Supabase connection successful."
-
-      - name: Build static site
-        env:
-          STATIC_BUILD: "1"
-          SITE_URL: https://streamandscream.com
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
-          VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
-        run: bun run build:static
-
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: dist/client/
-          server-dir: /public_html/
-          dangerous-clean-slate: false
