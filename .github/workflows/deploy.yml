@@ -61,23 +61,15 @@ jobs:
 
       - name: Build static site
         env:
-            STATIC_BUILD: "1"
-            SITE_URL: https://streamandscream.com
-            VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-            VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-            VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
-            VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
-        run: |
-          # Accept either naming convention for the Supabase secrets.
-          export VITE_SUPABASE_URL="$(printf '%s' "${VITE_SUPABASE_URL_SECRET:-$SUPABASE_URL_SECRET}" | tr -d '[:space:]')"
-          export VITE_SUPABASE_PUBLISHABLE_KEY="$(printf '%s' "${VITE_SUPABASE_PUBLISHABLE_KEY_SECRET:-$SUPABASE_ANON_KEY_SECRET}" | tr -d '[:space:]')"
-
-          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
-            echo "Missing Supabase build secrets (VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY, or SUPABASE_URL / SUPABASE_ANON_KEY)" >&2
-            exit 1
-          fi
-
-          bun run build:static
+                 - name: Build static site
+        env:
+          STATIC_BUILD: "1"
+          SITE_URL: https://streamandscream.com
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+          VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
+        run: bun run build:static
 
 
       - name: Deploy via FTP
