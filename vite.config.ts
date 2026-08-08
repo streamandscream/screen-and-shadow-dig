@@ -33,7 +33,24 @@ async function getPostPages(): Promise<{ path: string }[]> {
 const staticPages = STATIC ? await getPostPages() : [];
 
 export default defineConfig({
+  vite: {
+    build: {
+      chunkSizeWarningLimit: 800,
+      rollupOptions: {
+        output: {
+          manualChunks(id: string) {
+            if (!id.includes("node_modules")) return;
+            if (/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return "react";
+            if (id.includes("@tanstack")) return "tanstack";
+            if (id.includes("@supabase")) return "supabase";
+            return "vendor";
+          },
+        },
+      },
+    },
+  },
   ...(STATIC ? { nitro: false as const } : {}),
+
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
