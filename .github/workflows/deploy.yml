@@ -62,7 +62,6 @@ jobs:
       - name: Build static site
         env:
                  - name: Build static site
-        env:
           STATIC_BUILD: "1"
           SITE_URL: https://streamandscream.com
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
