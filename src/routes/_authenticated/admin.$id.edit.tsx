@@ -74,6 +74,7 @@ function Editor({ form, setForm, save, saving, err }: any) {
       setUploadErr(e instanceof Error ? e.message : "TMDB lookup failed");
     } finally { setFetching(false); }
   }
+  async function uploadCover(file: File) {
     setUploading(true); setUploadErr(null);
     try {
       if (!file.type.startsWith("image/")) throw new Error("Please choose an image file");
