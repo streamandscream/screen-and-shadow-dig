@@ -62,12 +62,31 @@ jobs:
       - name: Build static site
         env:
           STATIC_BUILD: "1"
-          SITE_URL: https://streamandscream.com
+          SITE_URL: "https://streamandscream.com"
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
           VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
         run: bun run build:static
+
+      - name: Check built website
+        run: |
+          echo "Checking dist/client..."
+
+          if [ ! -d "dist/client" ]; then
+            echo "ERROR: dist/client does not exist"
+            exit 1
+          fi
+
+          echo "Files found:"
+          find dist/client -maxdepth 2 -type f | sort | head -100
+
+          if [ -f "dist/client/index.html" ]; then
+            echo "SUCCESS: dist/client/index.html exists"
+          else
+            echo "ERROR: dist/client/index.html does not exist"
+            exit 1
+          fi
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
@@ -77,4 +96,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/client/
           server-dir: /public_html/
-          dangerous-clean-slate: false
+          dangerous-clean-slate: true
