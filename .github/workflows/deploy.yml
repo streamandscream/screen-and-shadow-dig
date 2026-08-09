@@ -88,6 +88,22 @@ jobs:
             exit 1
           fi
 
+      - name: Resolve FTP server directory
+        id: ftpdir
+        env:
+          RAW_DIR: ${{ secrets.FTP_SERVER_DIR }}
+        run: |
+          DIR="${RAW_DIR:-public_html/}"
+          # strip surrounding whitespace/quotes
+          DIR="$(echo "$DIR" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^"//' -e 's/"$//')"
+          # strip leading slashes (FTP-Deploy-Action wants a relative folder)
+          DIR="${DIR#/}"
+          [ -z "$DIR" ] && DIR="public_html/"
+          # ensure trailing slash
+          case "$DIR" in */) ;; *) DIR="$DIR/" ;; esac
+          echo "Using server-dir: $DIR"
+          echo "dir=$DIR" >> "$GITHUB_OUTPUT"
+
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
@@ -95,10 +111,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/client/
-          # Most Hostinger FTP accounts are already rooted at public_html,
-          # so the default "/" places files directly in the web root.
-          # If yours is not, set the FTP_SERVER_DIR secret to e.g. /public_html/
-          # (must be a folder path ending with "/").
-          server-dir: ${{ secrets.FTP_SERVER_DIR || '/public_html/' }}
+          server-dir: ${{ steps.ftpdir.outputs.dir }}
           dangerous-clean-slate: true
           log-level: verbose
+
