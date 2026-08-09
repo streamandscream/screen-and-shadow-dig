@@ -44,10 +44,14 @@ try {
 const sitemapPath = join(OUT, "sitemap.xml");
 const sitemap = await readFile(sitemapPath, "utf8").catch(() => null);
 if (sitemap) {
-  const cleaned = sitemap.replace(
+  let cleaned = sitemap.replace(
     /\s*<url>\s*<loc>[^<]*\/(admin|auth|shell|tag|search)[^<]*<\/loc>[\s\S]*?<\/url>/g,
     "",
   );
+  // The TanStack Start sitemap plugin stamps every <url> with a build-time
+  // <lastmod> (today's date). That is not a page-specific timestamp, so strip
+  // it per the sitemap lastmod policy rather than ship a misleading value.
+  cleaned = cleaned.replace(/\s*<lastmod>[^<]*<\/lastmod>/g, "");
   await writeFile(sitemapPath, cleaned);
 }
 
