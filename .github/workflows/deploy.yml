@@ -95,5 +95,8 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/client/
-          server-dir: /public_html/
+          # Most Hostinger FTP accounts are already rooted at public_html.
+          # If yours is not, set the FTP_SERVER_DIR secret to /public_html/
+          server-dir: ${{ secrets.FTP_SERVER_DIR || './' }}
           dangerous-clean-slate: true
+          log-level: verbose
