@@ -163,7 +163,6 @@ export const Route = createFileRoute("/post/$slug")({
           }),
         },
         {
-        {
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
