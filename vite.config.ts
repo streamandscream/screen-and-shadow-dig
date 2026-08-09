@@ -61,13 +61,20 @@ export default defineConfig({
           sitemap: { enabled: true, host: SITE_URL },
           prerender: {
             enabled: true,
-            crawlLinks: true,
+            // Crawling links pulled in hundreds of low-value archive pages
+            // (every /tag/*). Those routes still work client-side through the
+            // Apache SPA fallback, so only the explicit page list is emitted.
+            crawlLinks: false,
             autoSubfolderIndex: true,
             concurrency: 8,
-            // Never prerender or list private/editor routes
+            // Never prerender or list private/editor/archive routes
             filter: ({ path }: { path: string }) =>
-              !path.startsWith("/admin") && !path.startsWith("/auth"),
+              !path.startsWith("/admin") &&
+              !path.startsWith("/auth") &&
+              !path.startsWith("/tag") &&
+              !path.startsWith("/search"),
           },
+
           pages: [
             { path: "/" },
             { path: "/tv" },
