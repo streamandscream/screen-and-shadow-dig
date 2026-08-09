@@ -134,11 +134,33 @@ jobs:
       - name: Verify Hostinger web-root target
         env:
           SITE_URL: https://streamandscream.com
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           echo "Configured FTP server-dir: /"
           echo "Expected Hostinger FTP account root: public_html"
           echo "Confirmed deployment mapping: dist/client/index.html -> /index.html"
           echo "Therefore, with the FTP account rooted at public_html: /index.html -> public_html/index.html"
+
+          mkdir -p /tmp/hostinger-deploy-check
+          curl --fail --silent --show-error \
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+            "ftp://${FTP_SERVER}/index.html" \
+            --output /tmp/hostinger-deploy-check/index.html
+
+          LOCAL_HASH="$(sha256sum dist/client/index.html | cut -d ' ' -f 1)"
+          REMOTE_HASH="$(sha256sum /tmp/hostinger-deploy-check/index.html | cut -d ' ' -f 1)"
+          REMOTE_SIZE="$(wc -c < /tmp/hostinger-deploy-check/index.html | tr -d ' ')"
+
+          if [ "${LOCAL_HASH}" != "${REMOTE_HASH}" ]; then
+            echo "ERROR: FTP /index.html does not match dist/client/index.html." >&2
+            echo "The FTP account is not rooted at the intended public_html directory." >&2
+            exit 1
+          fi
+
+          echo "SUCCESS: FTP /index.html exactly matches dist/client/index.html (${REMOTE_SIZE} bytes)."
+          echo "With this Hostinger FTP account rooted at public_html, the verified remote file is public_html/index.html."
 
           LIVE_HOME="$(curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "${SITE_URL}/?deploy-check=${GITHUB_RUN_ID}")"
           if ! printf '%s' "${LIVE_HOME}" | grep -q "Stream"; then
