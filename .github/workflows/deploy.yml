@@ -101,6 +101,13 @@ jobs:
             exit 1
           fi
 
+          INDEX_PATH="$(realpath dist/client/index.html)"
+          INDEX_SIZE="$(wc -c < dist/client/index.html | tr -d ' ')"
+          echo "Homepage ready for FTP deployment:"
+          echo "  absolute local path: ${INDEX_PATH}"
+          echo "  file size: ${INDEX_SIZE} bytes"
+          echo "  FTP mapping: ${INDEX_PATH} -> /index.html (FTP account root)"
+
           for required in dist/client/.htaccess dist/client/assets dist/client/sitemap.xml; do
             if [ ! -e "$required" ]; then
               echo "ERROR: missing $required"
@@ -118,7 +125,27 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/client/
-          server-dir: public_html/
+          # The Hostinger FTP account itself must be rooted at public_html.
+          # Using / here prevents public_html/public_html nesting.
+          server-dir: /
           dangerous-clean-slate: true
           log-level: verbose
+
+      - name: Verify Hostinger web-root target
+        env:
+          SITE_URL: https://streamandscream.com
+        run: |
+          echo "Configured FTP server-dir: /"
+          echo "Expected Hostinger FTP account root: public_html"
+          echo "Confirmed deployment mapping: dist/client/index.html -> /index.html"
+          echo "Therefore, with the FTP account rooted at public_html: /index.html -> public_html/index.html"
+
+          LIVE_HOME="$(curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "${SITE_URL}/?deploy-check=${GITHUB_RUN_ID}")"
+          if ! printf '%s' "${LIVE_HOME}" | grep -q "Stream"; then
+            echo "ERROR: ${SITE_URL}/ does not contain the expected homepage after deployment." >&2
+            echo "Check that FTP_USERNAME is configured in Hostinger with its directory set exactly to public_html." >&2
+            exit 1
+          fi
+
+          echo "SUCCESS: ${SITE_URL}/ is serving the Stream & Scream homepage from the configured Hostinger web root."
 
