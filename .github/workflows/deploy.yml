@@ -101,6 +101,13 @@ jobs:
             exit 1
           fi
 
+          INDEX_PATH="$(realpath dist/client/index.html)"
+          INDEX_SIZE="$(wc -c < dist/client/index.html | tr -d ' ')"
+          echo "Homepage ready for FTP deployment:"
+          echo "  absolute local path: ${INDEX_PATH}"
+          echo "  file size: ${INDEX_SIZE} bytes"
+          echo "  FTP mapping: ${INDEX_PATH} -> /index.html (FTP account root)"
+
           for required in dist/client/.htaccess dist/client/assets dist/client/sitemap.xml; do
             if [ ! -e "$required" ]; then
               echo "ERROR: missing $required"
@@ -110,6 +117,26 @@ jobs:
 
           echo "SUCCESS: dist/client/index.html is the real homepage ($(wc -c < dist/client/index.html) bytes)"
 
+      - name: Confirm FTP account is rooted at public_html
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          curl --fail --silent --show-error --list-only \
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+            "ftp://${FTP_SERVER}/" \
+            --output /tmp/ftp-root-listing.txt
+
+          if grep -qx "public_html" /tmp/ftp-root-listing.txt; then
+            echo "ERROR: This FTP login can see a public_html directory, so its root is above the public web root." >&2
+            echo "Create or edit the Hostinger FTP account so its directory is public_html, then update FTP_USERNAME and FTP_PASSWORD." >&2
+            echo "Deployment stopped before dangerous-clean-slate could remove files from the wrong directory." >&2
+            exit 1
+          fi
+
+          echo "FTP preflight passed: no nested public_html directory is visible."
+          echo "The FTP account must be configured in Hostinger with public_html as its root directory."
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
@@ -118,7 +145,49 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/client/
-          server-dir: public_html/
+          # The Hostinger FTP account itself must be rooted at public_html.
+          # Using / here prevents public_html/public_html nesting.
+          server-dir: /
           dangerous-clean-slate: true
           log-level: verbose
+
+      - name: Verify Hostinger web-root target
+        env:
+          SITE_URL: https://streamandscream.com
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          echo "Configured FTP server-dir: /"
+          echo "Expected Hostinger FTP account root: public_html"
+          echo "Confirmed deployment mapping: dist/client/index.html -> /index.html"
+          echo "Therefore, with the FTP account rooted at public_html: /index.html -> public_html/index.html"
+
+          mkdir -p /tmp/hostinger-deploy-check
+          curl --fail --silent --show-error \
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+            "ftp://${FTP_SERVER}/index.html" \
+            --output /tmp/hostinger-deploy-check/index.html
+
+          LOCAL_HASH="$(sha256sum dist/client/index.html | cut -d ' ' -f 1)"
+          REMOTE_HASH="$(sha256sum /tmp/hostinger-deploy-check/index.html | cut -d ' ' -f 1)"
+          REMOTE_SIZE="$(wc -c < /tmp/hostinger-deploy-check/index.html | tr -d ' ')"
+
+          if [ "${LOCAL_HASH}" != "${REMOTE_HASH}" ]; then
+            echo "ERROR: FTP /index.html does not match dist/client/index.html." >&2
+            echo "The FTP account is not rooted at the intended public_html directory." >&2
+            exit 1
+          fi
+
+          echo "SUCCESS: FTP /index.html exactly matches dist/client/index.html (${REMOTE_SIZE} bytes)."
+          echo "With this Hostinger FTP account rooted at public_html, the verified remote file is public_html/index.html."
+
+          LIVE_HOME="$(curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "${SITE_URL}/?deploy-check=${GITHUB_RUN_ID}")"
+          if ! printf '%s' "${LIVE_HOME}" | grep -q "Stream"; then
+            echo "ERROR: ${SITE_URL}/ does not contain the expected homepage after deployment." >&2
+            echo "Check that FTP_USERNAME is configured in Hostinger with its directory set exactly to public_html." >&2
+            exit 1
+          fi
+
+          echo "SUCCESS: ${SITE_URL}/ is serving the Stream & Scream homepage from the configured Hostinger web root."
 
