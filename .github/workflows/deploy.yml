@@ -72,6 +72,12 @@ jobs:
       - name: Check built website
         run: |
           echo "Checking dist/client..."
+          echo "Running required homepage diagnostics:"
+
+          test -f dist/client/index.html
+          wc -c dist/client/index.html
+          ls -lah dist/client/index.html
+          head -20 dist/client/index.html
 
           if [ ! -d "dist/client" ]; then
             echo "ERROR: dist/client does not exist"
@@ -103,6 +109,10 @@ jobs:
 
           INDEX_PATH="$(realpath dist/client/index.html)"
           INDEX_SIZE="$(wc -c < dist/client/index.html | tr -d ' ')"
+          echo "Root contents that will be sent to FTP:"
+          ls -lah dist/client/
+          echo "DEPLOYING HOMEPAGE:"
+          echo "dist/client/index.html -> FTP ROOT/index.html"
           echo "Homepage ready for FTP deployment:"
           echo "  absolute local path: ${INDEX_PATH}"
           echo "  file size: ${INDEX_SIZE} bytes"
@@ -150,6 +160,25 @@ jobs:
           server-dir: /
           dangerous-clean-slate: true
           log-level: verbose
+
+      # FTP-Deploy-Action tracks files in .ftp-deploy-sync-state.json. If a
+      # remote file is removed outside the action, that state can incorrectly
+      # report index.html as unchanged and omit its STOR line. Upload the
+      # verified homepage explicitly so the log and remote result are
+      # deterministic on every run.
+      - name: Force upload homepage to FTP root
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          echo 'uploading "index.html"'
+          echo "dist/client/index.html -> FTP ROOT/index.html"
+          curl --fail --silent --show-error \
+            --ftp-create-dirs \
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+            --upload-file dist/client/index.html \
+            "ftp://${FTP_SERVER}/index.html"
 
       - name: Verify Hostinger web-root target
         env:
