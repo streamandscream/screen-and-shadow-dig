@@ -57,7 +57,7 @@ export default defineConfig({
     ...(STATIC ? {} : { server: { entry: "server" as const } }),
     ...(STATIC
       ? {
-          spa: { enabled: true, maskPath: "/_shell" },
+          spa: { enabled: true, maskPath: "/shell" },
           sitemap: { enabled: true, host: SITE_URL },
           prerender: {
             enabled: true,
