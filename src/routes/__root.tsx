@@ -98,6 +98,38 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hind:wght@400;500;600;700&display=swap" },
     ],
     scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://streamandscream.com/#organization",
+              name: "Stream & Scream",
+              url: "https://streamandscream.com",
+              description:
+                "Sharp, opinionated reviews of TV shows and true crime documentaries.",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://streamandscream.com/#website",
+              name: "Stream & Scream",
+              url: "https://streamandscream.com",
+              inLanguage: "en-GB",
+              publisher: { "@id": "https://streamandscream.com/#organization" },
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://streamandscream.com/search?q={search_term_string}",
+                },
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ],
+        }),
+      },
       { src: "https://s.skimresources.com/js/306364X1794609.skimlinks.js", type: "text/javascript" },
       ...(GA_ID
         ? [
