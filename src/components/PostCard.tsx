@@ -84,7 +84,7 @@ export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData
       {post.cover_url && <p className="card-credit mt-1">Image courtesy of TMDB. Used under license.</p>}
       <span className="card-eyebrow mt-3">{label(post.section)}</span>
       <Link to="/post/$slug" params={{ slug: post.slug }}>
-        <h3 className="card-title-sm mt-2">{post.title}</h3>
+        <h2 className="card-title-sm mt-2">{post.title}</h2>
       </Link>
       <p className="card-excerpt-sm mt-2 line-clamp-3">{post.excerpt}</p>
       <div className="card-meta mt-2">
@@ -108,7 +108,7 @@ export function HorizontalPostCard({ post, showWhereToWatch = true }: { post: Po
       <div className="min-w-0 flex flex-col">
         <span className="card-eyebrow">{label(post.section)}</span>
         <Link to="/post/$slug" params={{ slug: post.slug }}>
-          <h3 className="card-title-lg mt-2">{post.title}</h3>
+          <h2 className="card-title-lg mt-2">{post.title}</h2>
         </Link>
         <p className="card-excerpt-sm mt-3">{post.excerpt}</p>
         <div className="card-meta mt-3">
