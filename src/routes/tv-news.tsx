@@ -21,7 +21,7 @@ export const Route = createFileRoute("/tv-news")({
     if (s === "renewed" || s === "cancelled") return { status: s };
     return {};
   },
-  head: () => ({
+  head: ({ loaderData }: { loaderData?: TvNewsItem[] }) => ({
     meta: [
       { title: "TV News — Which Shows Were Renewed or Cancelled" },
       { name: "description", content: "The latest renewal and cancellation news across every network and streamer, updated daily." },
@@ -36,6 +36,48 @@ export const Route = createFileRoute("/tv-news")({
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
     ],
     links: [{ rel: "canonical", href: "https://streamandscream.com/tv-news" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "TV News: Cancelled & Renewed",
+          url: "https://streamandscream.com/tv-news",
+          itemListElement: (loaderData ?? []).slice(0, 20).map((item, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            item: {
+              "@type": "NewsArticle",
+              headline: item.title,
+              ...(item.summary ? { description: item.summary } : {}),
+              ...(item.image_url ? { image: item.image_url } : {}),
+              datePublished: item.published_at,
+              url: item.source_url,
+              mainEntityOfPage: { "@type": "WebPage", "@id": item.source_url },
+              inLanguage: "en-GB",
+              author: { "@type": "Organization", name: item.source_name },
+              publisher: {
+                "@type": "Organization",
+                name: "Stream & Scream",
+                url: "https://streamandscream.com",
+              },
+            },
+          })),
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://streamandscream.com/" },
+            { "@type": "ListItem", position: 2, name: "TV News", item: "https://streamandscream.com/tv-news" },
+          ],
+        }),
+      },
+    ],
   }),
   loaderDeps: ({ search }) => ({ status: search.status }),
   loader: ({ context, deps }) => context.queryClient.ensureQueryData(newsQuery(deps.status)),
