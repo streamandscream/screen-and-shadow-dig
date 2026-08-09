@@ -45,7 +45,7 @@ const sitemapPath = join(OUT, "sitemap.xml");
 const sitemap = await readFile(sitemapPath, "utf8").catch(() => null);
 if (sitemap) {
   const cleaned = sitemap.replace(
-    /\s*<url>\s*<loc>[^<]*\/(admin|auth|shell)[^<]*<\/loc>[\s\S]*?<\/url>/g,
+    /\s*<url>\s*<loc>[^<]*\/(admin|auth|shell|tag|search)[^<]*<\/loc>[\s\S]*?<\/url>/g,
     "",
   );
   await writeFile(sitemapPath, cleaned);
