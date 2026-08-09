@@ -30,13 +30,19 @@ async function getPublishedSlugs(): Promise<string[]> {
   }
 }
 
+const AMP = String.fromCharCode(38) + "amp;"; // &
+const LT = String.fromCharCode(60) + "lt;"; // <
+const GT = String.fromCharCode(62) + "gt;"; // >
+const QUOT = String.fromCharCode(38) + "quot;"; // "
+const APOS = String.fromCharCode(38) + "apos;"; // '
+
 function escapeXml(value: string): string {
   return value
-    .replace(/&/g, "&")
-    .replace(/</g, "<")
-    .replace(/>/g, ">")
-    .replace(/"/g, """)
-    .replace(/'/g, "'");
+    .replace(/&/g, AMP)
+    .replace(/</g, LT)
+    .replace(/>/g, GT)
+    .replace(/"/g, QUOT)
+    .replace(/'/g, APOS);
 }
 
 export const Route = createFileRoute("/sitemap.xml")({
