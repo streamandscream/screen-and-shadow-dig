@@ -81,12 +81,35 @@ jobs:
           echo "Files found:"
           find dist/client -maxdepth 2 -type f | sort | head -100
 
-          if [ -f "dist/client/index.html" ]; then
-            echo "SUCCESS: dist/client/index.html exists"
-          else
+          if [ ! -f "dist/client/index.html" ]; then
             echo "ERROR: dist/client/index.html does not exist"
             exit 1
           fi
+
+          if [ ! -s "dist/client/index.html" ]; then
+            echo "ERROR: dist/client/index.html is empty"
+            exit 1
+          fi
+
+          if cmp -s dist/client/index.html dist/client/spa.html; then
+            echo "ERROR: dist/client/index.html is the SPA shell, not the prerendered homepage"
+            exit 1
+          fi
+
+          if ! grep -q "Stream" dist/client/index.html; then
+            echo "ERROR: dist/client/index.html does not look like the Stream & Scream homepage"
+            exit 1
+          fi
+
+          for required in dist/client/.htaccess dist/client/assets dist/client/sitemap.xml; do
+            if [ ! -e "$required" ]; then
+              echo "ERROR: missing $required"
+              exit 1
+            fi
+          done
+
+          echo "SUCCESS: dist/client/index.html is the real homepage ($(wc -c < dist/client/index.html) bytes)"
+
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
