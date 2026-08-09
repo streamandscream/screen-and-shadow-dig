@@ -1,7 +1,7 @@
 import { createFileRoute, useSearch, Link, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
-import { listTvNews, type TvNewsStatus } from "@/lib/tv-news.public";
+import { listTvNews, type TvNewsStatus, type TvNewsItem } from "@/lib/tv-news.public";
 
 const STATUSES: { value: "" | TvNewsStatus; label: string }[] = [
   { value: "", label: "All" },
