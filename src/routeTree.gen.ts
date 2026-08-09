@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TvNewsRouteImport } from './routes/tv-news'
 import { Route as TvRouteImport } from './routes/tv'
 import { Route as TrueCrimeRouteImport } from './routes/true-crime'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ShellRouteImport } from './routes/shell'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -42,6 +43,11 @@ const TvRoute = TvRouteImport.update({
 const TrueCrimeRoute = TrueCrimeRouteImport.update({
   id: '/true-crime',
   path: '/true-crime',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShellRoute = ShellRouteImport.update({
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/shell': typeof ShellRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/shell': typeof ShellRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/shell': typeof ShellRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
@@ -197,6 +206,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/search'
     | '/shell'
+    | '/sitemap.xml'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/search'
     | '/shell'
+    | '/sitemap.xml'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/search'
     | '/shell'
+    | '/sitemap.xml'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
@@ -259,6 +271,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   SearchRoute: typeof SearchRoute
   ShellRoute: typeof ShellRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TrueCrimeRoute: typeof TrueCrimeRoute
   TvRoute: typeof TvRoute
   TvNewsRoute: typeof TvNewsRoute
@@ -287,6 +300,13 @@ declare module '@tanstack/react-router' {
       path: '/true-crime'
       fullPath: '/true-crime'
       preLoaderRoute: typeof TrueCrimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shell': {
@@ -446,6 +466,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   SearchRoute: SearchRoute,
   ShellRoute: ShellRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TrueCrimeRoute: TrueCrimeRoute,
   TvRoute: TvRoute,
   TvNewsRoute: TvNewsRoute,
