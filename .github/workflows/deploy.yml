@@ -117,6 +117,26 @@ jobs:
 
           echo "SUCCESS: dist/client/index.html is the real homepage ($(wc -c < dist/client/index.html) bytes)"
 
+      - name: Confirm FTP account is rooted at public_html
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          curl --fail --silent --show-error --list-only \
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+            "ftp://${FTP_SERVER}/" \
+            --output /tmp/ftp-root-listing.txt
+
+          if grep -qx "public_html" /tmp/ftp-root-listing.txt; then
+            echo "ERROR: This FTP login can see a public_html directory, so its root is above the public web root." >&2
+            echo "Create or edit the Hostinger FTP account so its directory is public_html, then update FTP_USERNAME and FTP_PASSWORD." >&2
+            echo "Deployment stopped before dangerous-clean-slate could remove files from the wrong directory." >&2
+            exit 1
+          fi
+
+          echo "FTP preflight passed: no nested public_html directory is visible."
+          echo "The FTP account must be configured in Hostinger with public_html as its root directory."
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
