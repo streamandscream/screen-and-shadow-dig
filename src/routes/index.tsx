@@ -14,15 +14,15 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Stream & Scream — TV Reviews & True Crime Documentary Picks" },
-      { name: "description", content: "Sharp, opinionated reviews of TV shows and true crime documentaries. The latest picks from The Stream and The Scream." },
+      { name: "description", content: "Stream & Scream is your home for what's worth watching. The Stream spills the tea on TV shows and binge-worthy hits; The Scream digs into true crime, twisted tales and real-life nightmares." },
       { property: "og:title", content: "Stream & Scream — TV Reviews & True Crime Documentary Picks" },
-      { property: "og:description", content: "Sharp, opinionated reviews of TV shows and true crime documentaries. The latest picks from The Stream and The Scream." },
+      { property: "og:description", content: "Stream & Scream is your home for what's worth watching. The Stream spills the tea on TV shows and binge-worthy hits; The Scream digs into true crime, twisted tales and real-life nightmares." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://streamandscream.com/" },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Stream & Scream — TV Reviews & True Crime Documentary Picks" },
-      { name: "twitter:description", content: "Sharp, opinionated reviews of TV shows and true crime documentaries." },
+      { name: "twitter:description", content: "Stream & Scream is your home for what's worth watching — TV reviews and true crime documentaries." },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
     ],
     links: [{ rel: "canonical", href: "https://streamandscream.com/" }],
@@ -39,9 +39,20 @@ function Home() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-6 py-12 w-full flex-1">
-        <h3 className="font-display text-[40px] mb-10 border-b-2 border-foreground pb-4">
-          Bold News — Reviews of Prestige TV and True Crime
-        </h3>
+        <div className="mb-10 border-b-2 border-foreground pb-6">
+          <h3 className="font-display text-[40px] mb-4">
+            Welcome to Stream & Scream — your new home for what's worth watching.
+          </h3>
+          <p className="text-[17px] leading-relaxed mb-3">
+            <strong>The Stream</strong> is where we spill the tea on the latest TV shows, binge-worthy hits, guilty pleasures and the ones that have you saying, "just one more episode."
+          </p>
+          <p className="text-[17px] leading-relaxed mb-3">
+            <strong>The Scream</strong> is where things get darker. Expect true-crime documentaries, twisted tales, real-life nightmares and the kind of stories that make you check the locks before bed.
+          </p>
+          <p className="text-[17px] leading-relaxed font-display">
+            Press play. Stay curious. Maybe don't watch alone.
+          </p>
+        </div>
         <div className="flex flex-col gap-10">
           {posts.map((p) => (
             <HorizontalPostCard key={p.id} post={p} showWhereToWatch={p.section === "true_crime"} />
