@@ -181,42 +181,121 @@ jobs:
             "ftp://${FTP_SERVER}/index.html"
 
       - name: Verify Hostinger web-root target
+        shell: bash
         env:
           SITE_URL: https://streamandscream.com
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
-          echo "Configured FTP server-dir: /"
-          echo "Expected Hostinger FTP account root: public_html"
-          echo "Confirmed deployment mapping: dist/client/index.html -> /index.html"
-          echo "Therefore, with the FTP account rooted at public_html: /index.html -> public_html/index.html"
+          set -euo pipefail
 
-          mkdir -p /tmp/hostinger-deploy-check
-          curl --fail --silent --show-error \
-            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
-            "ftp://${FTP_SERVER}/index.html" \
-            --output /tmp/hostinger-deploy-check/index.html
+          LOCAL_FILE="dist/client/index.html"
+          CHECK_DIR="$(mktemp -d)"
+          trap 'rm -rf "${CHECK_DIR}"' EXIT
 
-          LOCAL_HASH="$(sha256sum dist/client/index.html | cut -d ' ' -f 1)"
-          REMOTE_HASH="$(sha256sum /tmp/hostinger-deploy-check/index.html | cut -d ' ' -f 1)"
-          REMOTE_SIZE="$(wc -c < /tmp/hostinger-deploy-check/index.html | tr -d ' ')"
-
-          if [ "${LOCAL_HASH}" != "${REMOTE_HASH}" ]; then
-            echo "ERROR: FTP /index.html does not match dist/client/index.html." >&2
-            echo "The FTP account is not rooted at the intended public_html directory." >&2
+          if [ ! -f "${LOCAL_FILE}" ]; then
+            echo "ERROR: Local homepage artifact is missing: ${LOCAL_FILE}" >&2
+            echo "Confirm the static build completed and wrote dist/client/index.html before FTP deployment." >&2
             exit 1
           fi
 
-          echo "SUCCESS: FTP /index.html exactly matches dist/client/index.html (${REMOTE_SIZE} bytes)."
-          echo "With this Hostinger FTP account rooted at public_html, the verified remote file is public_html/index.html."
-
-          LIVE_HOME="$(curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "${SITE_URL}/?deploy-check=${GITHUB_RUN_ID}")"
-          if ! printf '%s' "${LIVE_HOME}" | grep -q "Stream"; then
-            echo "ERROR: ${SITE_URL}/ does not contain the expected homepage after deployment." >&2
-            echo "Check that FTP_USERNAME is configured in Hostinger with its directory set exactly to public_html." >&2
+          if [ ! -s "${LOCAL_FILE}" ]; then
+            echo "ERROR: Local homepage artifact is empty: ${LOCAL_FILE}" >&2
             exit 1
           fi
 
-          echo "SUCCESS: ${SITE_URL}/ is serving the Stream & Scream homepage from the configured Hostinger web root."
+          echo "Local homepage: $(realpath "${LOCAL_FILE}") ($(wc -c < "${LOCAL_FILE}" | tr -d ' ') bytes)"
+
+          # Remove carriage returns before hashing so CRLF/LF differences do not
+          # make otherwise identical HTML files appear different.
+          tr -d '\r' < "${LOCAL_FILE}" > "${CHECK_DIR}/local.normalized.html"
+          LOCAL_HASH="$(sha256sum "${CHECK_DIR}/local.normalized.html" | awk '{print $1}')"
+          echo "Local normalized SHA256: ${LOCAL_HASH}"
+
+          fetch_ftp_file() {
+            local remote_path="$1"
+            local output_file="$2"
+
+            curl \
+              --fail \
+              --silent \
+              --show-error \
+              --ftp-pasv \
+              --connect-timeout 15 \
+              --max-time 60 \
+              --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+              --output "${output_file}" \
+              "ftp://${FTP_SERVER}${remote_path}"
+          }
+
+          ROOT_FETCHED=false
+          NESTED_FETCHED=false
+          ROOT_MATCH=false
+          NESTED_MATCH=false
+
+          echo "Checking FTP root path: /index.html"
+          if fetch_ftp_file "/index.html" "${CHECK_DIR}/root-index.html"; then
+            ROOT_FETCHED=true
+            tr -d '\r' < "${CHECK_DIR}/root-index.html" > "${CHECK_DIR}/root-index.normalized.html"
+            ROOT_HASH="$(sha256sum "${CHECK_DIR}/root-index.normalized.html" | awk '{print $1}')"
+            echo "FTP /index.html normalized SHA256: ${ROOT_HASH}"
+            if [ "${ROOT_HASH}" = "${LOCAL_HASH}" ]; then
+              ROOT_MATCH=true
+            fi
+          else
+            echo "FTP /index.html was not available. Checking whether the account root is above public_html."
+          fi
+
+          echo "Checking explicit Hostinger path: /public_html/index.html"
+          if fetch_ftp_file "/public_html/index.html" "${CHECK_DIR}/nested-index.html"; then
+            NESTED_FETCHED=true
+            tr -d '\r' < "${CHECK_DIR}/nested-index.html" > "${CHECK_DIR}/nested-index.normalized.html"
+            NESTED_HASH="$(sha256sum "${CHECK_DIR}/nested-index.normalized.html" | awk '{print $1}')"
+            echo "FTP /public_html/index.html normalized SHA256: ${NESTED_HASH}"
+            if [ "${NESTED_HASH}" = "${LOCAL_HASH}" ]; then
+              NESTED_MATCH=true
+            fi
+          else
+            echo "FTP /public_html/index.html was not available (expected when this FTP account is already rooted at public_html)."
+          fi
+
+          if [ "${ROOT_MATCH}" = true ]; then
+            echo "SUCCESS: The deployed artifact matches FTP /index.html."
+            echo "MATCHED REMOTE PATH: /index.html"
+            echo "This is the correct result for an FTP account rooted directly at public_html."
+          elif [ "${NESTED_MATCH}" = true ]; then
+            echo "ERROR: The artifact matched /public_html/index.html, not /index.html." >&2
+            echo "The FTP account is rooted above public_html. In Hostinger, set this FTP account's directory to the site's public_html folder, then keep server-dir: /." >&2
+            exit 1
+          else
+            echo "ERROR: No checked remote file matches ${LOCAL_FILE}." >&2
+            echo "FTP /index.html fetched: ${ROOT_FETCHED}; matching hash: ${ROOT_MATCH}" >&2
+            echo "FTP /public_html/index.html fetched: ${NESTED_FETCHED}; matching hash: ${NESTED_MATCH}" >&2
+            echo "Inspect the FTP account directory, the workflow server-dir, and the upload log line for index.html." >&2
+            exit 1
+          fi
+
+          echo "Checking live homepage: ${SITE_URL}/"
+          LIVE_FILE="${CHECK_DIR}/live-homepage.html"
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --location \
+            --retry 3 \
+            --retry-delay 3 \
+            --retry-all-errors \
+            --connect-timeout 15 \
+            --max-time 60 \
+            --output "${LIVE_FILE}" \
+            "${SITE_URL%/}/?deploy-check=${GITHUB_RUN_ID}"
+
+          if ! grep -Fq "Stream" "${LIVE_FILE}"; then
+            echo "ERROR: The live homepage responded, but it does not contain the expected text: Stream" >&2
+            echo "Inspect Hostinger's domain document root, cache/CDN settings, and public_html/index.html." >&2
+            exit 1
+          fi
+
+          echo "SUCCESS: ${SITE_URL%/}/ serves the expected Stream & Scream homepage."
 
