@@ -39,9 +39,9 @@ function Home() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-6 py-12 w-full flex-1">
-        <h1 className="font-display text-[40px] mb-10 border-b-2 border-foreground pb-4">
+        <h3 className="font-display text-[40px] mb-10 border-b-2 border-foreground pb-4">
           Bold News — Reviews of Prestige TV and True Crime
-        </h1>
+        </h3>
         <div className="flex flex-col gap-10">
           {posts.map((p) => (
             <HorizontalPostCard key={p.id} post={p} showWhereToWatch={p.section === "true_crime"} />
