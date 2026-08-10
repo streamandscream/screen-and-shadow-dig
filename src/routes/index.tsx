@@ -40,7 +40,7 @@ function Home() {
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-6 py-12 w-full flex-1">
         <div className="mb-10 border-b-2 border-foreground pb-6">
-          <h2 className="font-display text-[34px] mb-4">
+          <h2 className="font-display text-[30px] mb-4">
             Welcome to Stream & Scream — your new home for what's worth watching.
           </h2>
           <p className="text-[17px] leading-relaxed mb-3">
