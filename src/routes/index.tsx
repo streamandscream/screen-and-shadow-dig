@@ -39,9 +39,20 @@ function Home() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-6 py-12 w-full flex-1">
-        <h3 className="font-display text-[40px] mb-10 border-b-2 border-foreground pb-4">
-          Bold News — Reviews of Prestige TV and True Crime
-        </h3>
+        <div className="mb-10 border-b-2 border-foreground pb-6">
+          <h3 className="font-display text-[40px] mb-4">
+            Welcome to Stream & Scream — your new home for what's worth watching.
+          </h3>
+          <p className="text-[17px] leading-relaxed mb-3">
+            <strong>The Stream</strong> is where we spill the tea on the latest TV shows, binge-worthy hits, guilty pleasures and the ones that have you saying, "just one more episode."
+          </p>
+          <p className="text-[17px] leading-relaxed mb-3">
+            <strong>The Scream</strong> is where things get darker. Expect true-crime documentaries, twisted tales, real-life nightmares and the kind of stories that make you check the locks before bed.
+          </p>
+          <p className="text-[17px] leading-relaxed font-display">
+            Press play. Stay curious. Maybe don't watch alone.
+          </p>
+        </div>
         <div className="flex flex-col gap-10">
           {posts.map((p) => (
             <HorizontalPostCard key={p.id} post={p} showWhereToWatch={p.section === "true_crime"} />
