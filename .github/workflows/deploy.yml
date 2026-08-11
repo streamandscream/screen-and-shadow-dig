@@ -127,26 +127,34 @@ jobs:
 
           echo "SUCCESS: dist/client/index.html is the real homepage ($(wc -c < dist/client/index.html) bytes)"
 
-      - name: Confirm FTP account is rooted at public_html
+      - name: Detect FTP web root
+        shell: bash
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
-          curl --fail --silent --show-error --list-only \
+          set -euo pipefail
+
+          curl --fail --silent --show-error --ftp-pasv --list-only \
             --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
             "ftp://${FTP_SERVER}/" \
             --output /tmp/ftp-root-listing.txt
 
-          if grep -qx "public_html" /tmp/ftp-root-listing.txt; then
-            echo "ERROR: This FTP login can see a public_html directory, so its root is above the public web root." >&2
-            echo "Create or edit the Hostinger FTP account so its directory is public_html, then update FTP_USERNAME and FTP_PASSWORD." >&2
-            echo "Deployment stopped before dangerous-clean-slate could remove files from the wrong directory." >&2
-            exit 1
-          fi
+          echo "FTP root listing:"
+          cat /tmp/ftp-root-listing.txt
 
-          echo "FTP preflight passed: no nested public_html directory is visible."
-          echo "The FTP account must be configured in Hostinger with public_html as its root directory."
+          # If this login can see a public_html directory, its root is ABOVE the
+          # web root, so deploy into public_html instead of failing the run.
+          if grep -qx "public_html" /tmp/ftp-root-listing.txt; then
+            echo "DEPLOY_DIR=/public_html/" >> "$GITHUB_ENV"
+            echo "REMOTE_INDEX=/public_html/index.html" >> "$GITHUB_ENV"
+            echo "Detected web root: /public_html/"
+          else
+            echo "DEPLOY_DIR=/" >> "$GITHUB_ENV"
+            echo "REMOTE_INDEX=/index.html" >> "$GITHUB_ENV"
+            echo "Detected web root: / (FTP account is already rooted at public_html)"
+          fi
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
@@ -155,30 +163,46 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/client/
-          # The Hostinger FTP account itself must be rooted at public_html.
-          # Using / here prevents public_html/public_html nesting.
-          server-dir: /
-          dangerous-clean-slate: true
+          server-dir: ${{ env.DEPLOY_DIR }}
+          # dangerous-clean-slate is intentionally OFF: if a later step fails
+          # mid-run it would leave the web root empty and the site 403.
+          dangerous-clean-slate: false
           log-level: verbose
 
       # FTP-Deploy-Action tracks files in .ftp-deploy-sync-state.json. If a
       # remote file is removed outside the action, that state can incorrectly
       # report index.html as unchanged and omit its STOR line. Upload the
-      # verified homepage explicitly so the log and remote result are
-      # deterministic on every run.
-      - name: Force upload homepage to FTP root
+      # critical entry files explicitly so every run is deterministic.
+      - name: Force upload homepage and .htaccess
+        shell: bash
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
+          set -euo pipefail
           echo 'uploading "index.html"'
-          echo "dist/client/index.html -> FTP ROOT/index.html"
-          curl --fail --silent --show-error \
+          echo "dist/client/index.html -> FTP ${REMOTE_INDEX}"
+          curl --fail --silent --show-error --ftp-pasv \
             --ftp-create-dirs \
             --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
             --upload-file dist/client/index.html \
-            "ftp://${FTP_SERVER}/index.html"
+            "ftp://${FTP_SERVER}${REMOTE_INDEX}"
+
+          echo 'uploading ".htaccess"'
+          curl --fail --silent --show-error --ftp-pasv \
+            --ftp-create-dirs \
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+            --upload-file dist/client/.htaccess \
+            "ftp://${FTP_SERVER}${DEPLOY_DIR}.htaccess"
+
+          echo 'uploading "spa.html"'
+          curl --fail --silent --show-error --ftp-pasv \
+            --ftp-create-dirs \
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+            --upload-file dist/client/spa.html \
+            "ftp://${FTP_SERVER}${DEPLOY_DIR}spa.html"
+
 
       - name: Verify Hostinger web-root target
         shell: bash
@@ -229,52 +253,24 @@ jobs:
               "ftp://${FTP_SERVER}${remote_path}"
           }
 
-          ROOT_FETCHED=false
-          NESTED_FETCHED=false
-          ROOT_MATCH=false
-          NESTED_MATCH=false
-
-          echo "Checking FTP root path: /index.html"
-          if fetch_ftp_file "/index.html" "${CHECK_DIR}/root-index.html"; then
-            ROOT_FETCHED=true
-            tr -d '\r' < "${CHECK_DIR}/root-index.html" > "${CHECK_DIR}/root-index.normalized.html"
-            ROOT_HASH="$(sha256sum "${CHECK_DIR}/root-index.normalized.html" | awk '{print $1}')"
-            echo "FTP /index.html normalized SHA256: ${ROOT_HASH}"
-            if [ "${ROOT_HASH}" = "${LOCAL_HASH}" ]; then
-              ROOT_MATCH=true
+          echo "Checking deployed path: ${REMOTE_INDEX}"
+          if fetch_ftp_file "${REMOTE_INDEX}" "${CHECK_DIR}/remote-index.html"; then
+            tr -d '\r' < "${CHECK_DIR}/remote-index.html" > "${CHECK_DIR}/remote-index.normalized.html"
+            REMOTE_HASH="$(sha256sum "${CHECK_DIR}/remote-index.normalized.html" | awk '{print $1}')"
+            echo "FTP ${REMOTE_INDEX} normalized SHA256: ${REMOTE_HASH}"
+            if [ "${REMOTE_HASH}" = "${LOCAL_HASH}" ]; then
+              echo "SUCCESS: The deployed artifact matches FTP ${REMOTE_INDEX}."
+            else
+              echo "ERROR: ${REMOTE_INDEX} exists but does not match the local build." >&2
+              echo "Check whether Hostinger serves a different directory, or a cached/older index.html was left behind." >&2
+              exit 1
             fi
           else
-            echo "FTP /index.html was not available. Checking whether the account root is above public_html."
-          fi
-
-          echo "Checking explicit Hostinger path: /public_html/index.html"
-          if fetch_ftp_file "/public_html/index.html" "${CHECK_DIR}/nested-index.html"; then
-            NESTED_FETCHED=true
-            tr -d '\r' < "${CHECK_DIR}/nested-index.html" > "${CHECK_DIR}/nested-index.normalized.html"
-            NESTED_HASH="$(sha256sum "${CHECK_DIR}/nested-index.normalized.html" | awk '{print $1}')"
-            echo "FTP /public_html/index.html normalized SHA256: ${NESTED_HASH}"
-            if [ "${NESTED_HASH}" = "${LOCAL_HASH}" ]; then
-              NESTED_MATCH=true
-            fi
-          else
-            echo "FTP /public_html/index.html was not available (expected when this FTP account is already rooted at public_html)."
-          fi
-
-          if [ "${ROOT_MATCH}" = true ]; then
-            echo "SUCCESS: The deployed artifact matches FTP /index.html."
-            echo "MATCHED REMOTE PATH: /index.html"
-            echo "This is the correct result for an FTP account rooted directly at public_html."
-          elif [ "${NESTED_MATCH}" = true ]; then
-            echo "ERROR: The artifact matched /public_html/index.html, not /index.html." >&2
-            echo "The FTP account is rooted above public_html. In Hostinger, set this FTP account's directory to the site's public_html folder, then keep server-dir: /." >&2
-            exit 1
-          else
-            echo "ERROR: No checked remote file matches ${LOCAL_FILE}." >&2
-            echo "FTP /index.html fetched: ${ROOT_FETCHED}; matching hash: ${ROOT_MATCH}" >&2
-            echo "FTP /public_html/index.html fetched: ${NESTED_FETCHED}; matching hash: ${NESTED_MATCH}" >&2
-            echo "Inspect the FTP account directory, the workflow server-dir, and the upload log line for index.html." >&2
+            echo "ERROR: Could not fetch ${REMOTE_INDEX} from FTP after deployment." >&2
+            echo "Inspect the FTP account directory setting and the upload log line for index.html." >&2
             exit 1
           fi
+
 
           echo "Checking live homepage: ${SITE_URL}/"
           LIVE_FILE="${CHECK_DIR}/live-homepage.html"
