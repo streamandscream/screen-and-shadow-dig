@@ -71,8 +71,10 @@ export default defineConfig({
             filter: ({ path }: { path: string }) =>
               !path.startsWith("/admin") &&
               !path.startsWith("/auth") &&
+              !path.startsWith("/api") &&
               !path.startsWith("/tag") &&
               !path.startsWith("/search"),
+
           },
 
           pages: [
