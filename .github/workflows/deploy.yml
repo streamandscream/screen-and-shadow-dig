@@ -127,26 +127,34 @@ jobs:
 
           echo "SUCCESS: dist/client/index.html is the real homepage ($(wc -c < dist/client/index.html) bytes)"
 
-      - name: Confirm FTP account is rooted at public_html
+      - name: Detect FTP web root
+        shell: bash
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
-          curl --fail --silent --show-error --list-only \
+          set -euo pipefail
+
+          curl --fail --silent --show-error --ftp-pasv --list-only \
             --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
             "ftp://${FTP_SERVER}/" \
             --output /tmp/ftp-root-listing.txt
 
-          if grep -qx "public_html" /tmp/ftp-root-listing.txt; then
-            echo "ERROR: This FTP login can see a public_html directory, so its root is above the public web root." >&2
-            echo "Create or edit the Hostinger FTP account so its directory is public_html, then update FTP_USERNAME and FTP_PASSWORD." >&2
-            echo "Deployment stopped before dangerous-clean-slate could remove files from the wrong directory." >&2
-            exit 1
-          fi
+          echo "FTP root listing:"
+          cat /tmp/ftp-root-listing.txt
 
-          echo "FTP preflight passed: no nested public_html directory is visible."
-          echo "The FTP account must be configured in Hostinger with public_html as its root directory."
+          # If this login can see a public_html directory, its root is ABOVE the
+          # web root, so deploy into public_html instead of failing the run.
+          if grep -qx "public_html" /tmp/ftp-root-listing.txt; then
+            echo "DEPLOY_DIR=/public_html/" >> "$GITHUB_ENV"
+            echo "REMOTE_INDEX=/public_html/index.html" >> "$GITHUB_ENV"
+            echo "Detected web root: /public_html/"
+          else
+            echo "DEPLOY_DIR=/" >> "$GITHUB_ENV"
+            echo "REMOTE_INDEX=/index.html" >> "$GITHUB_ENV"
+            echo "Detected web root: / (FTP account is already rooted at public_html)"
+          fi
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
@@ -155,30 +163,46 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/client/
-          # The Hostinger FTP account itself must be rooted at public_html.
-          # Using / here prevents public_html/public_html nesting.
-          server-dir: /
-          dangerous-clean-slate: true
+          server-dir: ${{ env.DEPLOY_DIR }}
+          # dangerous-clean-slate is intentionally OFF: if a later step fails
+          # mid-run it would leave the web root empty and the site 403.
+          dangerous-clean-slate: false
           log-level: verbose
 
       # FTP-Deploy-Action tracks files in .ftp-deploy-sync-state.json. If a
       # remote file is removed outside the action, that state can incorrectly
       # report index.html as unchanged and omit its STOR line. Upload the
-      # verified homepage explicitly so the log and remote result are
-      # deterministic on every run.
-      - name: Force upload homepage to FTP root
+      # critical entry files explicitly so every run is deterministic.
+      - name: Force upload homepage and .htaccess
+        shell: bash
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
+          set -euo pipefail
           echo 'uploading "index.html"'
-          echo "dist/client/index.html -> FTP ROOT/index.html"
-          curl --fail --silent --show-error \
+          echo "dist/client/index.html -> FTP ${REMOTE_INDEX}"
+          curl --fail --silent --show-error --ftp-pasv \
             --ftp-create-dirs \
             --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
             --upload-file dist/client/index.html \
-            "ftp://${FTP_SERVER}/index.html"
+            "ftp://${FTP_SERVER}${REMOTE_INDEX}"
+
+          echo 'uploading ".htaccess"'
+          curl --fail --silent --show-error --ftp-pasv \
+            --ftp-create-dirs \
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+            --upload-file dist/client/.htaccess \
+            "ftp://${FTP_SERVER}${DEPLOY_DIR}.htaccess"
+
+          echo 'uploading "spa.html"'
+          curl --fail --silent --show-error --ftp-pasv \
+            --ftp-create-dirs \
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+            --upload-file dist/client/spa.html \
+            "ftp://${FTP_SERVER}${DEPLOY_DIR}spa.html"
+
 
       - name: Verify Hostinger web-root target
         shell: bash
