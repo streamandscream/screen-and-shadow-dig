@@ -147,6 +147,11 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          # Hostinger requires explicit FTPS (FTP over TLS) on port 21.
+          # Plain FTP gets dropped by the firewall -> "Timeout (control socket)".
+          protocol: ftps
+          port: 21
+          timeout: 120000
           local-dir: dist/client/
           server-dir: ${{ env.DEPLOY_DIR }}
           # dangerous-clean-slate is intentionally OFF: if a later step fails
