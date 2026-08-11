@@ -235,8 +235,10 @@ jobs:
               --silent \
               --show-error \
               --ftp-pasv \
-              --connect-timeout 15 \
-              --max-time 60 \
+              --ssl-reqd \
+              -k \
+              --connect-timeout 20 \
+              --max-time 120 \
               --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
               --output "${output_file}" \
               "ftp://${FTP_SERVER}${remote_path}"
