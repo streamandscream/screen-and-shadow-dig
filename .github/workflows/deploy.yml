@@ -147,6 +147,11 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          # Hostinger requires explicit FTPS (FTP over TLS) on port 21.
+          # Plain FTP gets dropped by the firewall -> "Timeout (control socket)".
+          protocol: ftps
+          port: 21
+          timeout: 120000
           local-dir: dist/client/
           server-dir: ${{ env.DEPLOY_DIR }}
           # dangerous-clean-slate is intentionally OFF: if a later step fails
@@ -166,27 +171,26 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           set -euo pipefail
+          # --ssl-reqd forces explicit FTPS (AUTH TLS), which Hostinger requires.
+          # -k because Hostinger FTP certs often do not match the hostname.
+          ftp_put() {
+            curl --fail --silent --show-error --ftp-pasv --ssl-reqd -k \
+              --connect-timeout 20 --max-time 120 \
+              --ftp-create-dirs \
+              --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
+              --upload-file "$1" \
+              "ftp://${FTP_SERVER}$2"
+          }
+
           echo 'uploading "index.html"'
           echo "dist/client/index.html -> FTP ${REMOTE_INDEX}"
-          curl --fail --silent --show-error --ftp-pasv \
-            --ftp-create-dirs \
-            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
-            --upload-file dist/client/index.html \
-            "ftp://${FTP_SERVER}${REMOTE_INDEX}"
+          ftp_put dist/client/index.html "${REMOTE_INDEX}"
 
           echo 'uploading ".htaccess"'
-          curl --fail --silent --show-error --ftp-pasv \
-            --ftp-create-dirs \
-            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
-            --upload-file dist/client/.htaccess \
-            "ftp://${FTP_SERVER}${DEPLOY_DIR}.htaccess"
+          ftp_put dist/client/.htaccess "${DEPLOY_DIR}.htaccess"
 
           echo 'uploading "spa.html"'
-          curl --fail --silent --show-error --ftp-pasv \
-            --ftp-create-dirs \
-            --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
-            --upload-file dist/client/spa.html \
-            "ftp://${FTP_SERVER}${DEPLOY_DIR}spa.html"
+          ftp_put dist/client/spa.html "${DEPLOY_DIR}spa.html"
 
 
       - name: Verify Hostinger web-root target
@@ -231,8 +235,10 @@ jobs:
               --silent \
               --show-error \
               --ftp-pasv \
-              --connect-timeout 15 \
-              --max-time 60 \
+              --ssl-reqd \
+              -k \
+              --connect-timeout 20 \
+              --max-time 120 \
               --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
               --output "${output_file}" \
               "ftp://${FTP_SERVER}${remote_path}"
