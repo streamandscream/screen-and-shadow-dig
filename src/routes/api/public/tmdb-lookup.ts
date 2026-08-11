@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/api/public/_tmdb_lookup")({
+export const Route = createFileRoute("/api/public/tmdb-lookup")({
   server: {
     handlers: {
       GET: async ({ request }) => {

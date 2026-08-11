@@ -23,7 +23,7 @@ import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as PostSlugRouteImport } from './routes/post.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as ApiPublicTmdb_lookupRouteImport } from './routes/api/public/_tmdb_lookup'
+import { Route as ApiPublicTmdbLookupRouteImport } from './routes/api/public/tmdb-lookup'
 import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin.tags'
 import { Route as AuthenticatedAdminStreamRouteImport } from './routes/_authenticated/admin.stream'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -100,9 +100,9 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const ApiPublicTmdb_lookupRoute = ApiPublicTmdb_lookupRouteImport.update({
-  id: '/api/public/_tmdb_lookup',
-  path: '/api/public',
+const ApiPublicTmdbLookupRoute = ApiPublicTmdbLookupRouteImport.update({
+  id: '/api/public/tmdb-lookup',
+  path: '/api/public/tmdb-lookup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminTagsRoute = AuthenticatedAdminTagsRouteImport.update({
@@ -158,7 +158,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
-  '/api/public': typeof ApiPublicTmdb_lookupRoute
+  '/api/public/tmdb-lookup': typeof ApiPublicTmdbLookupRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
 }
@@ -179,7 +179,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
-  '/api/public': typeof ApiPublicTmdb_lookupRoute
+  '/api/public/tmdb-lookup': typeof ApiPublicTmdbLookupRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
 }
@@ -203,7 +203,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
-  '/api/public/_tmdb_lookup': typeof ApiPublicTmdb_lookupRoute
+  '/api/public/tmdb-lookup': typeof ApiPublicTmdbLookupRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
 }
@@ -227,7 +227,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/stream'
     | '/admin/tags'
-    | '/api/public'
+    | '/api/public/tmdb-lookup'
     | '/admin/'
     | '/admin/$id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -248,7 +248,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/stream'
     | '/admin/tags'
-    | '/api/public'
+    | '/api/public/tmdb-lookup'
     | '/admin'
     | '/admin/$id/edit'
   id:
@@ -271,7 +271,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/stream'
     | '/_authenticated/admin/tags'
-    | '/api/public/_tmdb_lookup'
+    | '/api/public/tmdb-lookup'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/$id/edit'
   fileRoutesById: FileRoutesById
@@ -289,7 +289,7 @@ export interface RootRouteChildren {
   TvNewsRoute: typeof TvNewsRoute
   PostSlugRoute: typeof PostSlugRoute
   TagTagRoute: typeof TagTagRoute
-  ApiPublicTmdb_lookupRoute: typeof ApiPublicTmdb_lookupRoute
+  ApiPublicTmdbLookupRoute: typeof ApiPublicTmdbLookupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -392,11 +392,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/api/public/_tmdb_lookup': {
-      id: '/api/public/_tmdb_lookup'
-      path: '/api/public'
-      fullPath: '/api/public'
-      preLoaderRoute: typeof ApiPublicTmdb_lookupRouteImport
+    '/api/public/tmdb-lookup': {
+      id: '/api/public/tmdb-lookup'
+      path: '/api/public/tmdb-lookup'
+      fullPath: '/api/public/tmdb-lookup'
+      preLoaderRoute: typeof ApiPublicTmdbLookupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/tags': {
@@ -492,7 +492,7 @@ const rootRouteChildren: RootRouteChildren = {
   TvNewsRoute: TvNewsRoute,
   PostSlugRoute: PostSlugRoute,
   TagTagRoute: TagTagRoute,
-  ApiPublicTmdb_lookupRoute: ApiPublicTmdb_lookupRoute,
+  ApiPublicTmdbLookupRoute: ApiPublicTmdbLookupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
