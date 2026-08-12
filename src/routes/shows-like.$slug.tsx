@@ -28,6 +28,19 @@ type LoaderData = { post: PublicPost; similar: SimilarPost[] };
 
 const sectionLabel = (s: string) => (s === "tv" ? "The Stream" : "The Scream");
 
+/** Plain-text, length-capped copy for JSON-LD values. */
+const clean = (v: string | null | undefined, max = 260) => {
+  const t = (v ?? "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[*_#>`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return t.length > max ? `${t.slice(0, max - 1).trimEnd()}…` : t;
+};
+
+const workType = (s: string) => (s === "tv" ? "TVSeries" : "TVSeries");
+
+
 export const Route = createFileRoute("/shows-like/$slug")({
   loader: async ({ context, params }) => {
     const data = await context.queryClient.ensureQueryData(similarQuery(params.slug));
