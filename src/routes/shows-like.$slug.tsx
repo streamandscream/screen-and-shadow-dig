@@ -140,7 +140,7 @@ export const Route = createFileRoute("/shows-like/$slug")({
                 name: `Shows Like ${post.title}`,
                 description: clean(description, 300),
                 inLanguage: "en",
-                isPartOf: { "@type": "WebSite", "@id": `${BASE}/#website`, name: "Stream & Scream", url: `${BASE}/` },
+                isPartOf: { "@type": "WebSite", "@id": `${BASE}/#website`, name: "Stream & Scream", url: BASE },
                 publisher,
                 ...(image ? { primaryImageOfPage: { "@type": "ImageObject", url: image } } : {}),
                 about: {
