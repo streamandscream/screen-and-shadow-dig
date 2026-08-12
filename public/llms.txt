@@ -14,12 +14,13 @@ Stream and Scream is a UK-focused entertainment site that reviews the latest TV 
 - [Search](/search): Find reviews by keyword across the site.
 - [Only Murders in the Building review](/post/only-murders-in-the-building): Sample review page for a TV show.
 - [A Toxic Love Story review](/post/a-toxic-love-story): Sample review page for a true crime documentary.
+- [Shows like ...](/shows-like/{slug}): "Shows like <title>" pages listing similar reviewed series for each review.
 - [True crime recommendations](/tag/true-crime): Posts tagged as true crime.
 - [TV recommendations](/tag/tv): Posts tagged as TV.
 
 ## Crawl instructions
 
-- Include public marketing and content pages: `/`, `/tv`, `/true-crime`, `/tv-news`, `/about`, `/search`, `/post/*`, and `/tag/*`.
+- Include public marketing and content pages: `/`, `/tv`, `/true-crime`, `/tv-news`, `/about`, `/search`, `/post/*`, `/shows-like/*`, and `/tag/*`.
 - Do not crawl admin surfaces, auth flows, or API endpoints: `/admin/*`, `/auth`, `/api/*`, `/subscribe`, `/sitemap.xml`, and `/_authenticated/*`.
 - Do not use robots.txt, sitemap.xml, or analytics data as a source of truth for site content.
 
