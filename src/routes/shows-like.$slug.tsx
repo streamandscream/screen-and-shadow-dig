@@ -251,6 +251,14 @@ function Page() {
   const { post, similar } = data;
   const label = sectionLabel(post.section);
   const sectionTo = post.section === "tv" ? "/tv" : "/true-crime";
+  const rated = similar.filter((s) => s.post.rating != null);
+  const best = rated.length
+    ? rated.reduce((a, b) => ((b.post.rating ?? 0) > (a.post.rating ?? 0) ? b : a))
+    : null;
+  const streamers = Array.from(
+    new Set(similar.map((s) => s.post.streamer).filter((v): v is string => !!v)),
+  ).slice(0, 4);
+
 
   return (
     <div className="min-h-screen flex flex-col">
