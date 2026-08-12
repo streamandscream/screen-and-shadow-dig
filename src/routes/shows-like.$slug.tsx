@@ -320,7 +320,31 @@ function Page() {
           <p className="mt-2 text-[17px] leading-relaxed">
             {post.rating != null ? `We gave it ${post.rating}/10. ` : ""}{post.excerpt}
           </p>
+          <h2 className="eyebrow text-accent-red m-0 mt-6">How many shows like {post.title} are on this list?</h2>
+          <p className="mt-2 text-[17px] leading-relaxed">
+            We list {similar.length} shows like {post.title}: {similar.map((s) => s.post.title).join(", ")}. Every one has a full
+            Stream &amp; Scream review.
+          </p>
+          {best?.post.rating != null && (
+            <>
+              <h2 className="eyebrow text-accent-red m-0 mt-6">Which show like {post.title} is rated highest?</h2>
+              <p className="mt-2 text-[17px] leading-relaxed">
+                {best.post.title} is our highest-rated pick here with {best.post.rating}/10
+                {best.post.streamer ? `, streaming on ${best.post.streamer}` : ""}. {best.post.excerpt}
+              </p>
+            </>
+          )}
+          {streamers.length > 0 && (
+            <>
+              <h2 className="eyebrow text-accent-red m-0 mt-6">Where can I stream shows like {post.title}?</h2>
+              <p className="mt-2 text-[17px] leading-relaxed">
+                The picks on this page are spread across {streamers.join(", ")}
+                {post.streamer ? `, while ${post.title} itself streams on ${post.streamer}` : ""}. Each review says where to watch.
+              </p>
+            </>
+          )}
         </section>
+
 
         <div className="mt-12 border-t-2 border-foreground pt-6 flex flex-col gap-2">
           <Link to="/post/$slug" params={{ slug: post.slug }} className="eyebrow text-accent-red hover:underline">
