@@ -64,7 +64,13 @@ export const Route = createFileRoute("/sitemap.xml")({
           priority: "0.7",
         }));
 
-        const entries = [...staticEntries, ...postEntries];
+        const showsLikeEntries: SitemapEntry[] = slugs.map((slug) => ({
+          path: `/shows-like/${slug}`,
+          changefreq: "weekly",
+          priority: "0.6",
+        }));
+
+        const entries = [...staticEntries, ...postEntries, ...showsLikeEntries];
 
         const urls = entries.map((e) =>
           [
