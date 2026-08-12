@@ -76,7 +76,7 @@ export const Route = createFileRoute("/shows-like/$slug")({
       "@type": "Organization",
       "@id": `${BASE}/#organization`,
       name: "Stream & Scream",
-      url: `${BASE}/`,
+      url: BASE,
     };
 
     const faq: Array<{ q: string; a: string }> = [
