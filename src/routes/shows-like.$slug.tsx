@@ -38,7 +38,7 @@ const clean = (v: string | null | undefined, max = 260) => {
   return t.length > max ? `${t.slice(0, max - 1).trimEnd()}…` : t;
 };
 
-const workType = (s: string) => (s === "tv" ? "TVSeries" : "TVSeries");
+
 
 
 export const Route = createFileRoute("/shows-like/$slug")({
