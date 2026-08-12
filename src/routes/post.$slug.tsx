@@ -278,6 +278,16 @@ function Page() {
             </ul>
           </aside>
         ) : null}
+        <div className="mt-8">
+          <Link
+            to="/shows-like/$slug"
+            params={{ slug: post.slug }}
+            className="inline-block border border-foreground px-5 py-3 font-display uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors"
+          >
+            Shows like {post.title} →
+          </Link>
+        </div>
+
         <div className="mt-12 border-t-2 border-foreground pt-6">
           <Link to={sectionTo} className="eyebrow text-accent-red hover:underline">
             ← Back to {sectionLabel}

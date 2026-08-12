@@ -20,6 +20,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
+import { Route as ShowsLikeSlugRouteImport } from './routes/shows-like.$slug'
 import { Route as PostSlugRouteImport } from './routes/post.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -83,6 +84,11 @@ const IndexRoute = IndexRouteImport.update({
 const TagTagRoute = TagTagRouteImport.update({
   id: '/tag/$tag',
   path: '/tag/$tag',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShowsLikeSlugRoute = ShowsLikeSlugRouteImport.update({
+  id: '/shows-like/$slug',
+  path: '/shows-like/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PostSlugRoute = PostSlugRouteImport.update({
@@ -153,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/tv-news': typeof TvNewsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
+  '/shows-like/$slug': typeof ShowsLikeSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
@@ -174,6 +181,7 @@ export interface FileRoutesByTo {
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
   '/post/$slug': typeof PostSlugRoute
+  '/shows-like/$slug': typeof ShowsLikeSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/tv-news': typeof TvNewsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
+  '/shows-like/$slug': typeof ShowsLikeSlugRoute
   '/tag/$tag': typeof TagTagRoute
   '/_authenticated/admin/new': typeof AuthenticatedAdminNewRoute
   '/_authenticated/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/tv-news'
     | '/admin'
     | '/post/$slug'
+    | '/shows-like/$slug'
     | '/tag/$tag'
     | '/admin/new'
     | '/admin/recommendations'
@@ -243,6 +253,7 @@ export interface FileRouteTypes {
     | '/tv'
     | '/tv-news'
     | '/post/$slug'
+    | '/shows-like/$slug'
     | '/tag/$tag'
     | '/admin/new'
     | '/admin/recommendations'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/tv-news'
     | '/_authenticated/admin'
     | '/post/$slug'
+    | '/shows-like/$slug'
     | '/tag/$tag'
     | '/_authenticated/admin/new'
     | '/_authenticated/admin/recommendations'
@@ -289,6 +301,7 @@ export interface RootRouteChildren {
   TvRoute: typeof TvRoute
   TvNewsRoute: typeof TvNewsRoute
   PostSlugRoute: typeof PostSlugRoute
+  ShowsLikeSlugRoute: typeof ShowsLikeSlugRoute
   TagTagRoute: typeof TagTagRoute
   ApiPublicHooksIngestTvNewsRoute: typeof ApiPublicHooksIngestTvNewsRoute
 }
@@ -370,6 +383,13 @@ declare module '@tanstack/react-router' {
       path: '/tag/$tag'
       fullPath: '/tag/$tag'
       preLoaderRoute: typeof TagTagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shows-like/$slug': {
+      id: '/shows-like/$slug'
+      path: '/shows-like/$slug'
+      fullPath: '/shows-like/$slug'
+      preLoaderRoute: typeof ShowsLikeSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/post/$slug': {
@@ -492,19 +512,10 @@ const rootRouteChildren: RootRouteChildren = {
   TvRoute: TvRoute,
   TvNewsRoute: TvNewsRoute,
   PostSlugRoute: PostSlugRoute,
+  ShowsLikeSlugRoute: ShowsLikeSlugRoute,
   TagTagRoute: TagTagRoute,
   ApiPublicHooksIngestTvNewsRoute: ApiPublicHooksIngestTvNewsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

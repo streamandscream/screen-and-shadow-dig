@@ -24,7 +24,11 @@ async function getPostPages(): Promise<{ path: string }[]> {
     );
     if (!res.ok) return [];
     const rows = (await res.json()) as { slug: string }[];
-    return rows.filter((r) => r.slug).map((r) => ({ path: `/post/${r.slug}` }));
+    const slugs = rows.filter((r) => r.slug).map((r) => r.slug);
+    return [
+      ...slugs.map((slug) => ({ path: `/post/${slug}` })),
+      ...slugs.map((slug) => ({ path: `/shows-like/${slug}` })),
+    ];
   } catch {
     return [];
   }

@@ -149,3 +149,60 @@ export async function getSearchFilters() {
   }
   return { tags: Array.from(tags).sort(), streamers: Array.from(streamers).sort() };
 }
+
+export type SimilarPost = { post: PublicPost; reason: string };
+
+const sectionName = (s: string) => (s === "tv" ? "The Stream" : "The Scream");
+
+/**
+ * Ranked "shows like X" matches for a post:
+ * 1. its own next_binge picks that exist on the site
+ * 2. same-section posts sharing the most tags
+ * 3. highest-rated same-section posts as filler
+ */
+export function buildSimilarPosts(
+  post: PublicPost,
+  all: PublicPost[],
+  limit = 8,
+): SimilarPost[] {
+  const pool = all.filter((p) => p.slug !== post.slug);
+  const picked = new Map<string, SimilarPost>();
+
+  const bingeTitles = (post.next_binge ?? []).map((t) => t.toLowerCase().trim());
+  for (const title of bingeTitles) {
+    const match = pool.find((p) => p.title.toLowerCase().trim() === title);
+    if (match && !picked.has(match.slug)) {
+      picked.set(match.slug, { post: match, reason: `Hand-picked next binge after ${post.title}` });
+    }
+  }
+
+  const tags = new Set((post.tags ?? []).map((t) => t.toLowerCase()));
+  const scored = pool
+    .filter((p) => p.section === post.section && !picked.has(p.slug))
+    .map((p) => ({
+      p,
+      shared: (p.tags ?? []).filter((t) => tags.has(t.toLowerCase())),
+    }))
+    .filter((x) => x.shared.length > 0)
+    .sort((a, b) => b.shared.length - a.shared.length || (b.p.rating ?? 0) - (a.p.rating ?? 0));
+
+  for (const { p, shared } of scored) {
+    if (picked.size >= limit) break;
+    picked.set(p.slug, {
+      post: p,
+      reason: `Same ${shared.slice(0, 2).join(" and ")} energy`,
+    });
+  }
+
+  if (picked.size < limit) {
+    const filler = pool
+      .filter((p) => p.section === post.section && !picked.has(p.slug))
+      .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+    for (const p of filler) {
+      if (picked.size >= limit) break;
+      picked.set(p.slug, { post: p, reason: `One of the best-rated picks in ${sectionName(p.section)}` });
+    }
+  }
+
+  return Array.from(picked.values()).slice(0, limit);
+}
