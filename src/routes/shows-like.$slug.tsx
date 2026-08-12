@@ -63,6 +63,54 @@ export const Route = createFileRoute("/shows-like/$slug")({
     const title = `Shows Like ${post.title} — ${count} Similar Series to Watch Next | Stream & Scream`;
     const description = `Loved ${post.title}? Here are ${count} similar shows worth your time, including ${top.join(" and ")} — with verdicts and where to watch.`;
     const image = post.cover_url;
+    const label = sectionLabel(post.section);
+    const sectionUrl = post.section === "tv" ? `${BASE}/tv` : `${BASE}/true-crime`;
+    const rated = similar.filter((s) => s.post.rating != null);
+    const best = rated.length
+      ? rated.reduce((a, b) => ((b.post.rating ?? 0) > (a.post.rating ?? 0) ? b : a))
+      : null;
+    const streamers = Array.from(
+      new Set(similar.map((s) => s.post.streamer).filter((v): v is string => !!v)),
+    ).slice(0, 4);
+    const publisher = {
+      "@type": "Organization",
+      "@id": `${BASE}/#organization`,
+      name: "Stream & Scream",
+      url: `${BASE}/`,
+    };
+
+    const faq: Array<{ q: string; a: string }> = [
+      {
+        q: `What should I watch after ${post.title}?`,
+        a: `Start with ${top.join(" or ")}. Both land in the same corner of ${label} as ${post.title}, and we've reviewed every pick on this list.`,
+      },
+      {
+        q: `Is ${post.title} worth watching?`,
+        a: clean(
+          post.rating != null
+            ? `We gave ${post.title} ${post.rating}/10. ${post.excerpt}`
+            : post.excerpt,
+          320,
+        ),
+      },
+      {
+        q: `How many shows like ${post.title} are on this list?`,
+        a: `We list ${count} shows like ${post.title}: ${similar.map((s) => s.post.title).join(", ")}. Every one has a full Stream & Scream review.`,
+      },
+    ];
+    if (best?.post.rating != null) {
+      faq.push({
+        q: `Which show like ${post.title} is rated highest?`,
+        a: `${best.post.title} is our highest-rated pick here with ${best.post.rating}/10${best.post.streamer ? `, streaming on ${best.post.streamer}` : ""}. ${clean(best.post.excerpt, 180)}`,
+      });
+    }
+    if (streamers.length) {
+      faq.push({
+        q: `Where can I stream shows like ${post.title}?`,
+        a: `The picks on this page are spread across ${streamers.join(", ")}${post.streamer ? `, while ${post.title} itself streams on ${post.streamer}` : ""}. Each review says where to watch.`,
+      });
+    }
+
     return {
       meta: [
         { title },
@@ -86,60 +134,100 @@ export const Route = createFileRoute("/shows-like/$slug")({
             "@context": "https://schema.org",
             "@graph": [
               {
+                "@type": "CollectionPage",
+                "@id": `${url}#webpage`,
+                url,
+                name: `Shows Like ${post.title}`,
+                description: clean(description, 300),
+                inLanguage: "en",
+                isPartOf: { "@type": "WebSite", "@id": `${BASE}/#website`, name: "Stream & Scream", url: `${BASE}/` },
+                publisher,
+                ...(image ? { primaryImageOfPage: { "@type": "ImageObject", url: image } } : {}),
+                about: {
+                  "@type": "TVSeries",
+                  name: post.title,
+                  url: `${BASE}/post/${post.slug}`,
+                  ...(post.cover_url ? { image: post.cover_url } : {}),
+                },
+                mainEntity: { "@id": `${url}#itemlist` },
+                breadcrumb: { "@id": `${url}#breadcrumb` },
+              },
+              {
                 "@type": "ItemList",
+                "@id": `${url}#itemlist`,
                 name: `Shows like ${post.title}`,
+                description: clean(`Ranked list of ${count} shows similar to ${post.title}, reviewed by Stream & Scream.`, 300),
                 url,
                 numberOfItems: count,
+                itemListOrder: "https://schema.org/ItemListOrderDescending",
                 itemListElement: similar.map((s, i) => ({
                   "@type": "ListItem",
                   position: i + 1,
                   url: `${BASE}/post/${s.post.slug}`,
                   name: s.post.title,
+                  item: {
+                    "@type": "TVSeries",
+                    "@id": `${BASE}/post/${s.post.slug}#show`,
+                    name: s.post.title,
+                    url: `${BASE}/post/${s.post.slug}`,
+                    description: clean(s.post.excerpt, 300),
+                    ...(s.post.cover_url ? { image: s.post.cover_url } : {}),
+                    ...(s.post.tags?.length ? { genre: s.post.tags.slice(0, 5) } : {}),
+                    ...(s.post.streamer
+                      ? {
+                          potentialAction: {
+                            "@type": "WatchAction",
+                            target: `${BASE}/post/${s.post.slug}`,
+                            name: `Watch on ${s.post.streamer}`,
+                          },
+                        }
+                      : {}),
+                    ...(s.post.rating != null
+                      ? {
+                          review: {
+                            "@type": "Review",
+                            name: `${s.post.title} review`,
+                            url: `${BASE}/post/${s.post.slug}`,
+                            reviewBody: clean(s.post.excerpt, 300),
+                            author: { "@type": "Organization", name: "Stream & Scream" },
+                            publisher,
+                            reviewRating: {
+                              "@type": "Rating",
+                              ratingValue: s.post.rating,
+                              bestRating: 10,
+                              worstRating: 0,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
                 })),
               },
               {
                 "@type": "BreadcrumbList",
+                "@id": `${url}#breadcrumb`,
                 itemListElement: [
                   { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
-                  {
-                    "@type": "ListItem",
-                    position: 2,
-                    name: sectionLabel(post.section),
-                    item: post.section === "tv" ? `${BASE}/tv` : `${BASE}/true-crime`,
-                  },
+                  { "@type": "ListItem", position: 2, name: label, item: sectionUrl },
                   { "@type": "ListItem", position: 3, name: post.title, item: `${BASE}/post/${post.slug}` },
                   { "@type": "ListItem", position: 4, name: `Shows like ${post.title}`, item: url },
                 ],
               },
               {
                 "@type": "FAQPage",
-                mainEntity: [
-                  {
-                    "@type": "Question",
-                    name: `What should I watch after ${post.title}?`,
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text: `Start with ${top.join(" or ")}. Both land in the same corner of ${sectionLabel(post.section)} as ${post.title}, and we've reviewed every pick on this list.`,
-                    },
-                  },
-                  {
-                    "@type": "Question",
-                    name: `Is ${post.title} worth watching?`,
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text:
-                        post.rating != null
-                          ? `We gave ${post.title} ${post.rating}/10. ${post.excerpt}`
-                          : post.excerpt,
-                    },
-                  },
-                ],
+                "@id": `${url}#faq`,
+                mainEntity: faq.map(({ q, a }) => ({
+                  "@type": "Question",
+                  name: clean(q, 160),
+                  acceptedAnswer: { "@type": "Answer", text: clean(a, 500) },
+                })),
               },
             ],
           }),
         },
       ],
     };
+
   },
   errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
   notFoundComponent: () => (
