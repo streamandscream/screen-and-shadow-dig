@@ -1,9 +1,10 @@
 name: Deploy to Hostinger
 
+# Manual-only. Automatic push deploys were removed because every commit
+# re-uploaded the whole site over Hostinger FTP; a failed or timed-out run
+# left public_html incomplete and the live domain returned 403.
+# Deploy from GitHub: Actions -> "Deploy to Hostinger" -> Run workflow.
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
