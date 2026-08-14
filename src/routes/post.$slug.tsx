@@ -218,7 +218,7 @@ function Page() {
           <figure className="mt-6">
             <img
               src={post.cover_url}
-              alt={post.title}
+              alt={post.cover_alt || `${post.title} poster art`}
               className="block max-h-[70vh] w-auto max-w-full h-auto object-contain"
             />
             <figcaption className="mt-1 text-[10px] text-muted-foreground">Image courtesy of TMDB. Used under license.</figcaption>
