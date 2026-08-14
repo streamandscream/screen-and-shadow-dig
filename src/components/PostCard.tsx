@@ -9,6 +9,7 @@ export type PostCardData = {
   title: string;
   excerpt: string;
   cover_url: string | null;
+  cover_alt?: string | null;
   streamer: string | null;
   rating: number | null;
   tags: string[];
@@ -53,7 +54,7 @@ export function FeatureCard({ post }: { post: PostCardData }) {
       <div>
         <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3] md:aspect-[3/4]">
           {post.cover_url && (
-            <img src={post.cover_url} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
+            <img src={post.cover_url} alt={post.cover_alt || `${post.title} poster art`} className="w-full h-full object-cover object-top" loading="lazy" />
           )}
         </Link>
         {post.cover_url && <p className="card-credit mt-1">Image courtesy of TMDB. Used under license.</p>}
@@ -78,7 +79,7 @@ export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData
     <article className="flex flex-col">
       <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
         {post.cover_url && (
-          <img src={post.cover_url} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
+          <img src={post.cover_url} alt={post.cover_alt || `${post.title} poster art`} className="w-full h-full object-cover object-top" loading="lazy" />
         )}
       </Link>
       {post.cover_url && <p className="card-credit mt-1">Image courtesy of TMDB. Used under license.</p>}
@@ -100,7 +101,7 @@ export function HorizontalPostCard({ post, showWhereToWatch = true }: { post: Po
       <div>
         <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
           {post.cover_url && (
-            <img src={post.cover_url} alt={post.title} className="w-full h-full object-cover object-top" loading="lazy" />
+            <img src={post.cover_url} alt={post.cover_alt || `${post.title} poster art`} className="w-full h-full object-cover object-top" loading="lazy" />
           )}
         </Link>
         {post.cover_url && <p className="card-credit mt-1">Image courtesy of TMDB. Used under license.</p>}

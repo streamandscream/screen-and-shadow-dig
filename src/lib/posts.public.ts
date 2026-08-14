@@ -9,7 +9,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export const POST_COLS =
-  "id, slug, section, title, excerpt, body, cover_url, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe, publish_at, meta_description";
+  "id, slug, section, title, excerpt, body, cover_url, cover_alt, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe, publish_at, meta_description";
 
 export type PublicPost = {
   id: string;
@@ -19,6 +19,7 @@ export type PublicPost = {
   excerpt: string;
   body: string;
   cover_url: string | null;
+  cover_alt: string | null;
   streamer: string | null;
   rating: number | null;
   tags: string[];
