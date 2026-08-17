@@ -11,10 +11,15 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      # This Hostinger FTP account is scoped directly to the domain's
-      # public_html directory, so FTP / is the live website root.
-      DEPLOY_DIR: /
-      REMOTE_INDEX: /index.html
+      # Which directory on the FTP server is the live web root depends on the
+      # Hostinger account used:
+      #   - dedicated FTP account (u467883492.streamnscream22) -> scoped to
+      #     public_html, so the web root is "/"
+      #   - main account (u467883492) -> logs into the home dir, so the web
+      #     root is /domains/streamandscream.com/public_html/
+      # Set the optional FTP_REMOTE_DIR secret to override; default is "/".
+      DEPLOY_DIR: ${{ secrets.FTP_REMOTE_DIR || '/' }}
+      REMOTE_INDEX: ${{ secrets.FTP_REMOTE_DIR || '/' }}index.html
 
     steps:
       - name: Checkout
