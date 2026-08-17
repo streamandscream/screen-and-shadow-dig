@@ -147,23 +147,39 @@ jobs:
           echo "DEPLOYING HOMEPAGE:"
           echo "dist/client/index.html -> FTP ROOT/index.html"
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          # Hostinger requires explicit FTPS (FTP over TLS) on port 21.
-          # Plain FTP gets dropped by the firewall -> "Timeout (control socket)".
-          protocol: ftps
-          port: 21
-          timeout: 120000
-          local-dir: dist/client/
-          server-dir: ${{ env.DEPLOY_DIR }}
-          # dangerous-clean-slate is intentionally OFF: if a later step fails
-          # mid-run it would leave the web root empty and the site 403.
-          dangerous-clean-slate: false
-          log-level: verbose
+      # Full recursive upload with lftp. The previous FTP-Deploy-Action run
+      # left the web root with only index.html: its remote sync-state file made
+      # it skip every asset, so the live site had no JS/CSS and no sub-pages.
+      # lftp mirrors the whole tree every run (--ignore-time --only-newer off),
+      # so a partial state can never silently skip files again.
+      - name: Deploy via FTPS (lftp mirror)
+        shell: bash
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lftp
+          # Drop the stale sync state so nothing is treated as "already uploaded"
+          rm -f dist/client/.ftp-deploy-sync-state.json
+          lftp -c "
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate no;
+            set ftp:passive-mode true;
+            set net:timeout 20;
+            set net:max-retries 3;
+            set mirror:parallel-transfer-count 4;
+            open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
+            rm -f '${DEPLOY_DIR}.ftp-deploy-sync-state.json' || true;
+            mirror --reverse --continue --ignore-time --verbose=1 \
+              --exclude-glob .ftp-deploy-sync-state.json \
+              dist/client/ '${DEPLOY_DIR}';
+            bye;
+          "
+
 
       # FTP-Deploy-Action tracks files in .ftp-deploy-sync-state.json. If a
       # remote file is removed outside the action, that state can incorrectly
