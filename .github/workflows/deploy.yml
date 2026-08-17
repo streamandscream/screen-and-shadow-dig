@@ -308,3 +308,20 @@ jobs:
 
           echo "SUCCESS: ${SITE_URL%/}/ serves the expected Stream & Scream homepage."
 
+
+      - name: Verify assets and a post page are live
+        shell: bash
+        env:
+          SITE_URL: https://streamandscream.com
+        run: |
+          set -euo pipefail
+          ASSET="$(grep -o '/assets/[A-Za-z0-9._-]*\.css' dist/client/index.html | head -1)"
+          echo "Checking asset: ${ASSET}"
+          code=$(curl -s -o /dev/null -w '%{http_code}' "${SITE_URL}${ASSET}")
+          echo "asset status: ${code}"
+          [ "${code}" = "200" ] || { echo "ERROR: built assets are missing on the server — the upload was incomplete." >&2; exit 1; }
+          for p in /spa.html /sitemap.xml; do
+            c=$(curl -s -o /dev/null -w '%{http_code}' "${SITE_URL}${p}")
+            echo "${p} -> ${c}"
+            [ "${c}" = "200" ] || { echo "ERROR: ${p} missing on the server." >&2; exit 1; }
+          done
