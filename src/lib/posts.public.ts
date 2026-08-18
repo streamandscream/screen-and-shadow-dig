@@ -100,6 +100,13 @@ export async function getPostBySlug(args: { data: { slug: string } }): Promise<P
   return (row ?? null) as unknown as PublicPost | null;
 }
 
+const normalizeTitle = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
 export async function getPostsByTitles(args: { data: { titles: string[] } }) {
   const titles = args.data.titles ?? [];
   if (titles.length === 0) return [] as { title: string; slug: string }[];
@@ -108,15 +115,28 @@ export async function getPostsByTitles(args: { data: { titles: string[] } }) {
     .select("title, slug")
     .eq("published", true);
   if (error) throw new Error(error.message);
+  const published = (rows ?? []).map((r) => ({ ...r, norm: normalizeTitle(r.title) }));
   const lookup = new Map<string, string>();
-  for (const r of rows ?? []) lookup.set(r.title.toLowerCase().trim(), r.slug);
+  for (const r of published) lookup.set(r.norm, r.slug);
   const out: { title: string; slug: string }[] = [];
   for (const t of titles) {
-    const slug = lookup.get(t.toLowerCase().trim());
+    const norm = normalizeTitle(t);
+    let slug = lookup.get(norm);
+    if (!slug) {
+      // tolerate subtitle differences, e.g. "The Pike County Murders" vs
+      // "The Pike County Murders: A Family Massacre" (and the reverse)
+      const partial = published.find(
+        (r) =>
+          (r.norm.startsWith(norm + " ") || norm.startsWith(r.norm + " ")) &&
+          norm.length > 6,
+      );
+      slug = partial?.slug;
+    }
     if (slug) out.push({ title: t, slug });
   }
   return out;
 }
+
 
 export async function searchPosts(args: {
   data: { q?: string; tag?: string; streamer?: string };
