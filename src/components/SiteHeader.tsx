@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, X, Search } from "lucide-react";
+import { Menu, X, Search, ArrowUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { searchPosts } from "@/lib/posts.public";
@@ -146,18 +146,41 @@ export function SiteHeader() {
 }
 
 export function SiteFooter() {
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 300);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
   return (
-    <footer className="mt-24 border-t-2 border-foreground bg-paper">
-      <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row justify-between gap-4 text-sm items-center">
-        <p className="font-display text-lg lowercase">stream & scream</p>
-        <nav className="flex flex-wrap justify-center gap-6 uppercase tracking-widest font-display text-xs">
-          <Link to="/">Home</Link>
-          <Link to="/tv">The Stream</Link>
-          <Link to="/true-crime">The Scream</Link>
-          <Link to="/tv-news">TV News</Link>
-        </nav>
-        <p className="text-muted-foreground lowercase">© {new Date().getFullYear()} stream & scream</p>
-      </div>
-    </footer>
+    <>
+      <footer className="mt-24 border-t-2 border-foreground bg-paper">
+        <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row justify-between gap-4 text-sm items-center">
+          <p className="font-display text-lg lowercase">stream & scream</p>
+          <nav className="flex flex-wrap justify-center gap-6 uppercase tracking-widest font-display text-xs">
+            <Link to="/">Home</Link>
+            <Link to="/tv">The Stream</Link>
+            <Link to="/true-crime">The Scream</Link>
+            <Link to="/tv-news">TV News</Link>
+          </nav>
+          <p className="text-muted-foreground lowercase">© {new Date().getFullYear()} stream & scream</p>
+        </div>
+      </footer>
+      <button
+        onClick={scrollToTop}
+        aria-label="Back to top"
+        className={`fixed bottom-6 right-6 z-40 flex items-center justify-center gap-2 border-2 border-foreground bg-background px-4 py-3 shadow-lg transition-transform duration-300 font-display uppercase tracking-widest text-xs hover:bg-foreground hover:text-primary-foreground ${
+          showBackToTop ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0 pointer-events-none"
+        }`}
+      >
+        <ArrowUp size={16} strokeWidth={2.5} />
+        <span className="hidden sm:inline">Top</span>
+      </button>
+    </>
   );
 }
