@@ -53,10 +53,3 @@ DirectorySlash Off
   ExpiresByType image/png "access plus 1 month"
   ExpiresByType image/webp "access plus 1 month"
 </IfModule>
-
-# Force HTTPS
-<IfModule mod_rewrite.c>
-  RewriteCond %{HTTPS} !=on
-  RewriteCond %{HTTP:X-Forwarded-Proto} !https
-  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-</IfModule>
