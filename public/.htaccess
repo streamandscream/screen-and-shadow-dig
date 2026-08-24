@@ -3,23 +3,34 @@
 
 Options -Indexes
 DirectoryIndex index.html
+# Never 301 /post/x -> /post/x/ just because a prerendered folder exists.
+# Google reported those redirects as "Page with redirect" for sitemap URLs.
+DirectorySlash Off
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # Serve existing files and directories as-is (assets, prerendered folders, sitemap, robots)
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
+  # Force HTTPS and the canonical apex host first (single hop)
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://streamandscream.com%{REQUEST_URI} [L,R=301]
+
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteRule ^ https://streamandscream.com%{REQUEST_URI} [L,R=301]
+
+  # Serve existing files as-is (assets, sitemap, robots)
+  RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
 
-  # Prefer the prerendered HTML for a route, if it exists
+  # Serve the prerendered HTML for a route without adding a trailing slash
   RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
   RewriteRule ^(.*?)/?$ /$1/index.html [L]
 
   # Everything else falls back to the SPA shell
   RewriteRule ^ /spa.html [L]
 </IfModule>
+
 
 <IfModule mod_mime.c>
   AddType application/javascript .js .mjs
