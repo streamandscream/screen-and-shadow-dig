@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import { DomainHealthAlert } from "@/components/DomainHealthAlert";
 import { listMyPosts, deletePost } from "@/lib/posts.admin";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -68,6 +69,8 @@ function Admin() {
             </button>
           </div>
         </div>
+
+        <DomainHealthAlert />
 
         {isLoading ? (
           <p className="mt-8 text-muted-foreground">Loading…</p>
