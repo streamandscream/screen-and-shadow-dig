@@ -70,6 +70,8 @@ function Admin() {
           </div>
         </div>
 
+        <DomainHealthAlert />
+
         {isLoading ? (
           <p className="mt-8 text-muted-foreground">Loading…</p>
         ) : !posts || posts.length === 0 ? (
