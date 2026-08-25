@@ -86,7 +86,7 @@ function Admin() {
                 <tr key={p.id} className="border-b border-foreground/30">
                   <td className="py-3">{p.title}</td>
                   <td>{p.section === "tv" ? "The Stream" : "The Scream"}</td>
-                  <td>{p.published ? "Published" : p.publish_at ? `Scheduled · ${new Date(p.publish_at).toLocaleString()}` : "Draft"}</td>
+                  <td>{p.published ? (p.published_at ? `Published · ${new Date(p.published_at).toLocaleDateString()}` : "Published") : p.publish_at ? `Scheduled · ${new Date(p.publish_at).toLocaleString()}` : "Draft"}</td>
                   <td className="text-right">
                     <Link to="/admin/$id/edit" params={{ id: p.id }} className="underline mr-4">Edit</Link>
                     <button
