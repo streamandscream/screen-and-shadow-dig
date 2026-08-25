@@ -117,6 +117,7 @@ export type Database = {
           next_binge: string[]
           publish_at: string | null
           published: boolean
+          published_at: string | null
           rating: number | null
           section: Database["public"]["Enums"]["post_section"]
           slug: string
@@ -141,6 +142,7 @@ export type Database = {
           next_binge?: string[]
           publish_at?: string | null
           published?: boolean
+          published_at?: string | null
           rating?: number | null
           section: Database["public"]["Enums"]["post_section"]
           slug: string
@@ -165,6 +167,7 @@ export type Database = {
           next_binge?: string[]
           publish_at?: string | null
           published?: boolean
+          published_at?: string | null
           rating?: number | null
           section?: Database["public"]["Enums"]["post_section"]
           slug?: string
