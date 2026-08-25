@@ -19,7 +19,7 @@ async function getPublishedSlugs(): Promise<string[]> {
   if (!url || !key) return [];
   try {
     const res = await fetch(
-      `${url}/rest/v1/posts?select=slug&published=eq.true&order=created_at.desc&limit=1000`,
+      `${url}/rest/v1/posts?select=slug&published=eq.true&order=published_at.desc.nullslast,created_at.desc&limit=1000`,
       { headers: { apikey: key, Accept: "application/json" } },
     );
     if (!res.ok) return [];

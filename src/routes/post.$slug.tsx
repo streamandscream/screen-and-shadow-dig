@@ -87,7 +87,7 @@ export const Route = createFileRoute("/post/$slug")({
 
             "url": url,
             ...(image ? { "image": image, "thumbnailUrl": image } : {}),
-            "datePublished": loaderData.created_at,
+            "datePublished": (loaderData as any).published_at ?? loaderData.created_at,
             "dateModified": (loaderData as any).updated_at ?? loaderData.created_at,
             "inLanguage": "en",
             "author": {
@@ -143,7 +143,7 @@ export const Route = createFileRoute("/post/$slug")({
             "description": description,
             "url": url,
             ...(image ? { "image": image } : {}),
-            "datePublished": loaderData.created_at,
+            "datePublished": (loaderData as any).published_at ?? loaderData.created_at,
             "dateModified": (loaderData as any).updated_at ?? loaderData.created_at,
             "inLanguage": "en-GB",
             "author": {
@@ -206,7 +206,7 @@ function Page() {
   if (!post) return null;
   const sectionLabel = post.section === "tv" ? "The Stream" : "The Scream";
   const sectionTo = post.section === "tv" ? "/tv" : "/true-crime";
-  const date = new Date(post.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  const date = new Date(post.published_at ?? post.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
   return (
     <div className="min-h-screen flex flex-col">

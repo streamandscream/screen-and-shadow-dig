@@ -9,7 +9,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export const POST_COLS =
-  "id, slug, section, title, excerpt, body, cover_url, cover_alt, streamer, rating, tags, published, author_id, created_at, updated_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe, publish_at, meta_description";
+  "id, slug, section, title, excerpt, body, cover_url, cover_alt, streamer, rating, tags, published, author_id, created_at, updated_at, published_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe, publish_at, meta_description";
 
 export type PublicPost = {
   id: string;
@@ -26,6 +26,7 @@ export type PublicPost = {
   published: boolean;
   author_id: string | null;
   created_at: string;
+  published_at: string | null;
   updated_at: string | null;
   justwatch_slug: string | null;
   justwatch_type: string | null;
@@ -62,11 +63,11 @@ export async function listPublishedPosts(args?: { data?: ListArgs }): Promise<Pu
   const data = args?.data ?? {};
   let q = supabase.from("posts").select(POST_COLS).eq("published", true);
   if (data.sort === "highest_score") {
-    q = q.order("rating", { ascending: false }).order("created_at", { ascending: false });
+    q = q.order("rating", { ascending: false }).order("published_at", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false });
   } else if (data.sort === "lowest_score") {
-    q = q.order("rating", { ascending: true }).order("created_at", { ascending: false });
+    q = q.order("rating", { ascending: true }).order("published_at", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false });
   } else {
-    q = q.order("created_at", { ascending: false });
+    q = q.order("published_at", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false });
   }
   if (data.sections && data.sections.length > 0) q = q.in("section", data.sections);
   else if (data.section) q = q.eq("section", data.section);
@@ -84,6 +85,7 @@ export async function listPostsByTag(args: { data: { tag: string } }): Promise<P
     .select(POST_COLS)
     .eq("published", true)
     .contains("tags", [args.data.tag])
+    .order("published_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   return (rows ?? []) as unknown as PublicPost[];
@@ -146,6 +148,7 @@ export async function searchPosts(args: {
     .from("posts")
     .select(POST_COLS)
     .eq("published", true)
+    .order("published_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   return ((rows ?? []) as unknown as PublicPost[]).filter((p) => {
