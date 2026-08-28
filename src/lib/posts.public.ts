@@ -263,7 +263,7 @@ function toneFromTags(tags: string[]) {
   return tags.length ? titleCaseTag(tags[0]).toLowerCase() : "worth a look";
 }
 
-export function buildQuickAnswers(post: PublicPost, similarSlugs: string[] = []): QuickAnswer[] {
+export function buildQuickAnswers(post: PublicPost): QuickAnswer[] {
   const title = post.title;
   const rating = post.rating;
   const excerpt = post.excerpt?.trim();
