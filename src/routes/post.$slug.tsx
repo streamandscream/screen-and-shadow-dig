@@ -265,18 +265,6 @@ function Page() {
               </div>
             ))}
           </dl>
-          <div className="mt-6 flex flex-wrap gap-3">
-            {post.tags?.map((t) => (
-              <Link
-                key={t}
-                to="/tag/$tag"
-                params={{ tag: t }}
-                className="inline-block border border-foreground px-3 py-1 text-sm hover:bg-foreground hover:text-background transition-colors"
-              >
-                #{t}
-              </Link>
-            ))}
-          </div>
         </section>
 
         {post.rating != null && (
