@@ -339,7 +339,7 @@ function Page() {
   );
 }
 
-function renderAfterAnswer(answer: string, nextBinge: string[], linkMap: Map<string, string>) {
+function renderAfterAnswer(answer: string, nextBinge: string[], linkMap: Map<string, string>, postSlug: string) {
   if (!nextBinge.length) return answer;
   return (
     <>
