@@ -295,10 +295,10 @@ export function buildQuickAnswers(post: PublicPost, similarSlugs: string[] = [])
     answers.push({ question: `What kind of show is ${title}?`, answer: `A ${tone} ${post.section === "tv" ? "series" : "documentary"}${tags.slice(0, 2).length ? ` tagged ${tags.slice(0, 2).map((t) => `#${t}`).join(" and ")}` : ""}.` });
   }
 
-  if (similarSlugs.length > 0 || post.next_binge.length > 0) {
+  if (post.next_binge.length > 0) {
     answers.push({
       question: `What should I watch after ${title}?`,
-      answer: `Try ${post.next_binge.slice(0, 3).join(", ") || "similar picks from our reviews"}. See our full "shows like ${title}" list for more recommendations.`,
+      answer: `Try ${post.next_binge.slice(0, 3).join(", ")}. See our full "shows like ${title}" list for more recommendations.`,
     });
   }
 
