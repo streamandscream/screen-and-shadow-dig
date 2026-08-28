@@ -360,7 +360,7 @@ function renderAfterAnswer(answer: string, nextBinge: string[], linkMap: Map<str
           </span>
         );
       })}.
-      {" "}See <Link to="/shows-like/$slug" params={{ slug: "dummy" }} className="underline hover:text-accent-red transition-colors">more recommendations</Link>.
+      {" "}See <Link to="/shows-like/$slug" params={{ slug: postSlug }} className="underline hover:text-accent-red transition-colors">more shows like this</Link>.
     </>
   );
 }
