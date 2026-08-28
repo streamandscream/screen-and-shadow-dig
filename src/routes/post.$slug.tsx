@@ -221,7 +221,6 @@ function Page() {
   if (!post) return null;
   const sectionLabel = post.section === "tv" ? "The Stream" : "The Scream";
   const sectionTo = post.section === "tv" ? "/tv" : "/true-crime";
-  const date = new Date(post.published_at ?? post.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
   const quickAnswers = buildQuickAnswers(post as any);
 
   return (
