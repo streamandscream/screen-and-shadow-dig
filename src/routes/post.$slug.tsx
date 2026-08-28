@@ -256,8 +256,8 @@ function Page() {
               <div key={qa.question}>
                 <dt><h3 className="font-display text-lg md:text-xl">{qa.question}</h3></dt>
                 <dd className="font-sans text-[17px] leading-snug mt-2 text-muted-foreground">
-                  {qa.question.startsWith("What should I watch after")
-                    ? renderAfterAnswer(qa.answer, post.next_binge, linkMap)
+                {qa.question.startsWith("What should I watch after")
+                    ? renderAfterAnswer(qa.answer, post.next_binge, linkMap, post.slug)
                     : qa.question.startsWith("Where can I watch")
                       ? renderWatchAnswer(qa.answer, post as any)
                       : qa.answer}
