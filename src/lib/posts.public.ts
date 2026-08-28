@@ -9,7 +9,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export const POST_COLS =
-  "id, slug, section, title, excerpt, body, cover_url, cover_alt, streamer, rating, tags, published, author_id, created_at, updated_at, published_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe, publish_at, meta_description";
+  "id, slug, section, title, excerpt, body, cover_url, cover_alt, streamer, rating, tags, published, author_id, created_at, updated_at, published_at, justwatch_slug, justwatch_type, justwatch_country, next_binge, vibe, publish_at, meta_description, quick_take, what_is_it_about";
 
 export type PublicPost = {
   id: string;
@@ -35,6 +35,8 @@ export type PublicPost = {
   vibe: string | null;
   publish_at: string | null;
   meta_description: string | null;
+  quick_take: string | null;
+  what_is_it_about: string | null;
 };
 
 type ListArgs = {
@@ -229,4 +231,76 @@ export function buildSimilarPosts(
   }
 
   return Array.from(picked.values()).slice(0, limit);
+}
+
+export type QuickAnswer = { question: string; answer: string };
+
+function titleCaseTag(tag: string) {
+  return tag.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function toneFromTags(tags: string[]) {
+  const map: Record<string, string> = {
+    comedy: "funny",
+    funny: "funny",
+    drama: "dramatic",
+    thriller: "tense",
+    horror: "scary",
+    mystery: "mysterious",
+    crime: "gritty",
+    documentary: "real-life",
+    feelgood: "feel-good",
+    "feel-good": "feel-good",
+    cosy: "cozy",
+    cozy: "cozy",
+    dark: "dark",
+    sad: "moving",
+  };
+  for (const t of tags) {
+    const low = t.toLowerCase();
+    if (map[low]) return map[low];
+  }
+  return tags.length ? titleCaseTag(tags[0]).toLowerCase() : "worth a look";
+}
+
+export function buildQuickAnswers(post: PublicPost): QuickAnswer[] {
+  const title = post.title;
+  const rating = post.rating;
+  const excerpt = post.excerpt?.trim();
+  const vibe = post.vibe?.trim();
+  const streamer = post.streamer?.trim();
+  const tags = post.tags ?? [];
+
+  const worthAnswer = post.quick_take?.trim()
+    ? post.quick_take.trim()
+    : rating != null
+      ? `Yes — we gave it ${rating}/10. ${vibe || excerpt || "It's a strong watch."}`
+      : vibe || excerpt || "It's a solid pick from our watch list.";
+
+  const aboutAnswer = post.what_is_it_about?.trim()
+    ? post.what_is_it_about.trim()
+    : excerpt || vibe || `Everything you need to know before watching ${title}.`;
+
+  const answers: QuickAnswer[] = [
+    { question: `Is ${title} worth watching?`, answer: worthAnswer },
+    { question: `What is ${title} about?`, answer: aboutAnswer },
+  ];
+
+  if (streamer) {
+    answers.push({ question: `Where can I watch ${title} in the UK?`, answer: `It's available on ${streamer}. Use the "Where to watch" link on this page to find the cheapest option.` });
+  }
+
+  if (tags.length > 0) {
+    const tone = toneFromTags(tags);
+    answers.push({ question: `What kind of show is ${title}?`, answer: `A ${tone} ${post.section === "tv" ? "series" : "documentary"}${tags.slice(0, 2).length ? ` tagged ${tags.slice(0, 2).map((t) => `#${t}`).join(" and ")}` : ""}.` });
+  }
+
+  if (post.next_binge.length > 0) {
+    answers.push({
+      question: `What should I watch after ${title}?`,
+      answer: `Try ${post.next_binge.slice(0, 3).join(", ")}. See our full "shows like ${title}" list for more recommendations.`,
+    });
+  }
+
+  return answers;
 }

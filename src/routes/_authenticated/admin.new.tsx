@@ -15,6 +15,7 @@ function NewPost() {
     streamer: "", rating: null, tags: [], published: false,
     justwatch_slug: "", justwatch_type: "tv-show", justwatch_country: "us",
     next_binge: [], vibe: "", publish_at: null, meta_description: "",
+    quick_take: "", what_is_it_about: "",
   });
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);

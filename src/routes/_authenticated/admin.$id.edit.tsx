@@ -44,11 +44,12 @@ function EditPost() {
         justwatch_slug: form.justwatch_slug || null,
         justwatch_type: form.justwatch_type || "tv-show",
         justwatch_country: form.justwatch_country || "us",
-
         next_binge: form.next_binge || [],
         vibe: form.vibe || null,
         publish_at: scheduled ? publishAtIso : null,
         meta_description: form.meta_description?.trim() ? form.meta_description.trim() : null,
+        quick_take: form.quick_take?.trim() ? form.quick_take.trim() : null,
+        what_is_it_about: form.what_is_it_about?.trim() ? form.what_is_it_about.trim() : null,
       } });
       navigate({ to: "/admin" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Failed"); }
@@ -118,6 +119,25 @@ function Editor({ form, setForm, save, saving, err }: any) {
             />
           </Field>
           <Field label="The Vibe (one-line tagline)"><input placeholder="Cozy whodunit with bite." maxLength={160} className="w-full border border-foreground bg-background p-3" value={form.vibe || ""} onChange={(e) => setForm({ ...form, vibe: e.target.value })} /></Field>
+          <Field label={`Quick take: is it worth watching? (${(form.quick_take || "").length}/160 — auto-generated if blank)`}>
+            <input
+              placeholder="Yes — a warm, witty comedy about starting over in your 70s."
+              maxLength={160}
+              className="w-full border border-foreground bg-background p-3"
+              value={form.quick_take || ""}
+              onChange={(e) => setForm({ ...form, quick_take: e.target.value })}
+            />
+          </Field>
+          <Field label={`What is it about? (${(form.what_is_it_about || "").length}/200 — auto-generated if blank)`}>
+            <textarea
+              className="w-full border border-foreground bg-background p-3"
+              rows={2}
+              maxLength={200}
+              placeholder="Spoiler-free one-liner summarising the premise."
+              value={form.what_is_it_about || ""}
+              onChange={(e) => setForm({ ...form, what_is_it_about: e.target.value })}
+            />
+          </Field>
           <div className="border border-foreground/30 p-4 space-y-3">
             <div className="flex items-center justify-between">
               <p className="eyebrow">Cover image</p>
