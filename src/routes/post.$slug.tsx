@@ -3,7 +3,7 @@ import { queryOptions, useSuspenseQuery, useQuery } from "@tanstack/react-query"
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostBody } from "@/components/PostBody";
 import { WhereToWatchLink } from "@/components/PostCard";
-import { getPostBySlug, getPostsByTitles } from "@/lib/posts.public";
+import { getPostBySlug, getPostsByTitles, buildQuickAnswers } from "@/lib/posts.public";
 
 const postQuery = (slug: string) => queryOptions({
   queryKey: ["post", slug],
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/post/$slug")({
       return { meta: [{ title: "Not found — Stream & Scream" }, { name: "robots", content: "noindex" }] };
     }
     const image = loaderData.cover_url;
-    const description = (loaderData as any).meta_description?.trim() || loaderData.excerpt;
+    const description = (loaderData as any).meta_description?.trim() || `${loaderData.excerpt} Read our spoiler-free review and find shows like it.`;
     // Structured data must be plain text: strip markdown syntax from the body.
     const plainBody = loaderData.body
       .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
@@ -44,9 +44,9 @@ export const Route = createFileRoute("/post/$slug")({
     const ratingText = loaderData.rating != null
       ? ` (${String(loaderData.rating).replace(/\.0$/, "")}/10)`
       : "";
-    const seoTitle = /review/i.test(loaderData.title)
-      ? `${loaderData.title}${ratingText} — Stream & Scream`
-      : `${loaderData.title} Review${ratingText} — Stream & Scream`;
+    const baseTitle = /review/i.test(loaderData.title) ? loaderData.title : `${loaderData.title} Review`;
+    const withQuestion = `${baseTitle}: Is It Worth Watching?${ratingText} — Stream & Scream`;
+    const seoTitle = withQuestion.length <= 60 ? withQuestion : `${baseTitle}${ratingText} — Stream & Scream`;
     const socialTitle = /review/i.test(loaderData.title)
       ? `${loaderData.title}${ratingText}`
       : `${loaderData.title} Review${ratingText}`;
@@ -179,6 +179,21 @@ export const Route = createFileRoute("/post/$slug")({
             ],
           }),
         },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": buildQuickAnswers(loaderData as any).map((qa) => ({
+              "@type": "Question",
+              "name": qa.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": qa.answer,
+              },
+            })),
+          }),
+        },
       ],
     };
   },
@@ -207,6 +222,7 @@ function Page() {
   const sectionLabel = post.section === "tv" ? "The Stream" : "The Scream";
   const sectionTo = post.section === "tv" ? "/tv" : "/true-crime";
   const date = new Date(post.published_at ?? post.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  const quickAnswers = buildQuickAnswers(post as any);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -233,6 +249,37 @@ function Page() {
         <div className="mt-8">
           <PostBody>{post.body}</PostBody>
         </div>
+
+        <section className="mt-10 border-t-2 border-foreground pt-6" aria-labelledby="quick-answers-heading">
+          <h2 id="quick-answers-heading" className="eyebrow text-accent-red m-0">What to know before you watch</h2>
+          <dl className="mt-6 space-y-6">
+            {quickAnswers.map((qa) => (
+              <div key={qa.question}>
+                <dt><h3 className="font-display text-lg md:text-xl">{qa.question}</h3></dt>
+                <dd className="font-sans text-[17px] leading-snug mt-2 text-muted-foreground">
+                  {qa.question.startsWith("What should I watch after")
+                    ? renderAfterAnswer(qa.answer, post.next_binge, linkMap)
+                    : qa.question.startsWith("Where can I watch")
+                      ? renderWatchAnswer(qa.answer, post as any)
+                      : qa.answer}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <div className="mt-6 flex flex-wrap gap-3">
+            {post.tags?.map((t) => (
+              <Link
+                key={t}
+                to="/tag/$tag"
+                params={{ tag: t }}
+                className="inline-block border border-foreground px-3 py-1 text-sm hover:bg-foreground hover:text-background transition-colors"
+              >
+                #{t}
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {post.rating != null && (
           <div className="mt-10 border-t-2 border-foreground pt-6">
             <h2 className="eyebrow text-accent-red m-0">The verdict</h2>
@@ -259,12 +306,13 @@ function Page() {
         {post.next_binge && post.next_binge.length > 0 ? (
           <aside className="mt-12 border-t-2 border-foreground pt-6">
             <h2 className="eyebrow text-accent-red m-0">More like this</h2>
-            <ul className="mt-4 space-y-3 md:space-y-2">
-              {post.next_binge.map((title: string) => {
+            <p className="font-sans text-[17px] leading-snug mt-2">
+              If you loved {post.title}, try{" "}
+              {post.next_binge.map((title: string, i: number) => {
                 const matchSlug = linkMap.get(title.toLowerCase().trim());
+                const isLast = i === post.next_binge.length - 1;
                 return (
-                  <li key={title} className="font-sans text-[17px] leading-snug flex gap-3">
-                    <span className="text-accent-red shrink-0" aria-hidden>→</span>
+                  <span key={title}>
                     {matchSlug ? (
                       <Link to="/post/$slug" params={{ slug: matchSlug }} className="underline underline-offset-4 decoration-foreground/30 hover:decoration-accent-red hover:text-accent-red transition-colors">
                         {title}
@@ -272,14 +320,14 @@ function Page() {
                     ) : (
                       <span>{title}</span>
                     )}
-                  </li>
+                    {post.next_binge.length > 1 && i === post.next_binge.length - 2 ? " and " : isLast ? "" : ", "}
+                  </span>
                 );
-              })}
-            </ul>
+              })}.
+              See <Link to="/shows-like/$slug" params={{ slug: post.slug }} className="underline hover:text-accent-red transition-colors">more shows like {post.title}</Link>.
+            </p>
           </aside>
         ) : null}
-
-
 
         <div className="mt-12 border-t-2 border-foreground pt-6">
           <Link to={sectionTo} className="eyebrow text-accent-red hover:underline">
@@ -289,6 +337,41 @@ function Page() {
       </main>
       <SiteFooter />
     </div>
+  );
+}
+
+function renderAfterAnswer(answer: string, nextBinge: string[], linkMap: Map<string, string>) {
+  if (!nextBinge.length) return answer;
+  return (
+    <>
+      Try{" "}
+      {nextBinge.map((title: string, i: number) => {
+        const matchSlug = linkMap.get(title.toLowerCase().trim());
+        const isLast = i === nextBinge.length - 1;
+        return (
+          <span key={title}>
+            {matchSlug ? (
+              <Link to="/post/$slug" params={{ slug: matchSlug }} className="underline underline-offset-4 decoration-foreground/30 hover:decoration-accent-red hover:text-accent-red transition-colors">
+                {title}
+              </Link>
+            ) : (
+              <span>{title}</span>
+            )}
+            {nextBinge.length > 1 && i === nextBinge.length - 2 ? " and " : isLast ? "" : ", "}
+          </span>
+        );
+      })}.
+      {" "}See <Link to="/shows-like/$slug" params={{ slug: "dummy" }} className="underline hover:text-accent-red transition-colors">more recommendations</Link>.
+    </>
+  );
+}
+
+function renderWatchAnswer(answer: string, post: any) {
+  return (
+    <>
+      {answer}{" "}
+      <WhereToWatchLink post={post} className="underline hover:text-accent-red transition-colors" />
+    </>
   );
 }
 

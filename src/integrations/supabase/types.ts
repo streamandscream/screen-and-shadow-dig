@@ -118,6 +118,7 @@ export type Database = {
           publish_at: string | null
           published: boolean
           published_at: string | null
+          quick_take: string | null
           rating: number | null
           section: Database["public"]["Enums"]["post_section"]
           slug: string
@@ -126,6 +127,7 @@ export type Database = {
           title: string
           updated_at: string
           vibe: string | null
+          what_is_it_about: string | null
         }
         Insert: {
           author_id?: string | null
@@ -143,6 +145,7 @@ export type Database = {
           publish_at?: string | null
           published?: boolean
           published_at?: string | null
+          quick_take?: string | null
           rating?: number | null
           section: Database["public"]["Enums"]["post_section"]
           slug: string
@@ -151,6 +154,7 @@ export type Database = {
           title: string
           updated_at?: string
           vibe?: string | null
+          what_is_it_about?: string | null
         }
         Update: {
           author_id?: string | null
@@ -168,6 +172,7 @@ export type Database = {
           publish_at?: string | null
           published?: boolean
           published_at?: string | null
+          quick_take?: string | null
           rating?: number | null
           section?: Database["public"]["Enums"]["post_section"]
           slug?: string
@@ -176,6 +181,7 @@ export type Database = {
           title?: string
           updated_at?: string
           vibe?: string | null
+          what_is_it_about?: string | null
         }
         Relationships: []
       }
