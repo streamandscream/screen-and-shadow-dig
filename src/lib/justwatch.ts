@@ -9,8 +9,9 @@ export function buildJustWatchUrl(
   affiliateTemplate?: string | null,
 ): string | null {
   if (!post.justwatch_slug) return null;
-  const country = (post.justwatch_country || "us").toLowerCase();
-  const type = post.justwatch_type || "tv-show";
+  const country = (post.justwatch_country || "us").toLowerCase().trim();
+  const rawType = (post.justwatch_type || "tv-show").toLowerCase().trim();
+  const type = ["movie", "film"].includes(rawType) ? "movie" : "tv-show";
   const url = `https://www.justwatch.com/${country}/${type}/${post.justwatch_slug}`;
   if (affiliateTemplate && affiliateTemplate.includes("{url}")) {
     return affiliateTemplate.replace("{url}", encodeURIComponent(url));
