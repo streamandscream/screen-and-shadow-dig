@@ -282,25 +282,28 @@ jobs:
           echo "Local normalized SHA256: ${LOCAL_HASH}"
 
           fetch_ftp_file() {
-            local remote_path="$1"
-            local output_file="$2"
+            local output_file="$1"
 
-            curl \
-              --fail \
-              --silent \
-              --show-error \
-              --ftp-pasv \
-              --ssl-reqd \
-              -k \
-              --connect-timeout 20 \
-              --max-time 120 \
-              --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
-              --output "${output_file}" \
-              "ftp://${FTP_SERVER}${remote_path}"
+            # Verify through the same FTP client and working directory used by
+            # activation. Hostinger chroots some accounts, so curl can reject
+            # an otherwise valid absolute path with "failed to change directory".
+            lftp -c "
+              set cmd:fail-exit true;
+              set ftp:ssl-force true;
+              set ftp:ssl-protect-data true;
+              set ssl:verify-certificate no;
+              set ftp:passive-mode true;
+              set net:timeout 20;
+              set net:max-retries 8;
+              open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
+              cd '${DEPLOY_DIR}';
+              get 'index.html' -o '${output_file}';
+              bye;
+            "
           }
 
           echo "Checking deployed path: ${REMOTE_INDEX}"
-          if fetch_ftp_file "${REMOTE_INDEX}" "${CHECK_DIR}/remote-index.html"; then
+          if fetch_ftp_file "${CHECK_DIR}/remote-index.html"; then
             tr -d '\r' < "${CHECK_DIR}/remote-index.html" > "${CHECK_DIR}/remote-index.normalized.html"
             REMOTE_HASH="$(sha256sum "${CHECK_DIR}/remote-index.normalized.html" | awk '{print $1}')"
             echo "FTP ${REMOTE_INDEX} normalized SHA256: ${REMOTE_HASH}"
