@@ -147,6 +147,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          case "${DEPLOY_DIR}" in
+            */) ;;
+            *)
+              echo "ERROR: FTP_REMOTE_DIR must end with a slash (for example /domains/streamandscream.com/public_html/)." >&2
+              exit 1
+              ;;
+          esac
           echo "Hostinger FTP account root: public_html"
           echo "Deploy directory: ${DEPLOY_DIR}"
           echo "DEPLOYING HOMEPAGE:"
@@ -205,13 +212,27 @@ jobs:
               "ftp://${FTP_SERVER}$2"
           }
 
-          echo 'uploading ".htaccess"'
-          ftp_put dist/client/.htaccess "${DEPLOY_DIR}.htaccess"
+          # Upload to temporary names first. FTP rename is atomic on Hostinger,
+          # unlike writing directly to files currently being served.
+          ftp_put dist/client/.htaccess "${DEPLOY_DIR}.htaccess.new"
+          ftp_put dist/client/index.html "${REMOTE_INDEX}.new"
 
-          # index.html is the activation file and must always be written last.
-          echo 'activating "index.html"'
-          echo "dist/client/index.html -> FTP ${REMOTE_INDEX}"
-          ftp_put dist/client/index.html "${REMOTE_INDEX}"
+          lftp -c "
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate no;
+            set ftp:passive-mode true;
+            set net:timeout 20;
+            set net:max-retries 3;
+            open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
+            mv '${DEPLOY_DIR}.htaccess.new' '${DEPLOY_DIR}.htaccess';
+            chmod 644 '${DEPLOY_DIR}.htaccess';
+            mv '${REMOTE_INDEX}.new' '${REMOTE_INDEX}';
+            chmod 644 '${REMOTE_INDEX}';
+            bye;
+          "
+
+          echo "Activated ${REMOTE_INDEX} after all supporting files completed."
 
 
       - name: Verify Hostinger web-root target
