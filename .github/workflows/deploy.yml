@@ -1,11 +1,16 @@
 name: Deploy to Hostinger
 
-# Manual-only. Automatic push deploys were removed because every commit
-# re-uploaded the whole site over Hostinger FTP; a failed or timed-out run
-# left public_html incomplete and the live domain returned 403.
-# Deploy from GitHub: Actions -> "Deploy to Hostinger" -> Run workflow.
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
+
+# Never let two uploads write to public_html at the same time. A newer push
+# waits for the active deployment instead of cancelling it halfway through.
+concurrency:
+  group: hostinger-production
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
@@ -147,12 +152,10 @@ jobs:
           echo "DEPLOYING HOMEPAGE:"
           echo "dist/client/index.html -> FTP ROOT/index.html"
 
-      # Full recursive upload with lftp. The previous FTP-Deploy-Action run
-      # left the web root with only index.html: its remote sync-state file made
-      # it skip every asset, so the live site had no JS/CSS and no sub-pages.
-      # lftp mirrors the whole tree every run (--ignore-time --only-newer off),
-      # so a partial state can never silently skip files again.
-      - name: Deploy via FTPS (lftp mirror)
+      # Upload supporting files first and the homepage last. The existing
+      # index.html remains live throughout the transfer, so an interrupted
+      # upload cannot leave Apache without a directory index.
+      - name: Upload website files via FTPS
         shell: bash
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
@@ -175,17 +178,15 @@ jobs:
             open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
             rm -f '${DEPLOY_DIR}.ftp-deploy-sync-state.json' || true;
             mirror --reverse --continue --ignore-time --verbose=1 \
+              --exclude-glob index.html \
+              --exclude-glob .htaccess \
               --exclude-glob .ftp-deploy-sync-state.json \
               dist/client/ '${DEPLOY_DIR}';
             bye;
           "
 
 
-      # FTP-Deploy-Action tracks files in .ftp-deploy-sync-state.json. If a
-      # remote file is removed outside the action, that state can incorrectly
-      # report index.html as unchanged and omit its STOR line. Upload the
-      # critical entry files explicitly so every run is deterministic.
-      - name: Force upload homepage and .htaccess
+      - name: Activate the new website
         shell: bash
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
@@ -204,15 +205,13 @@ jobs:
               "ftp://${FTP_SERVER}$2"
           }
 
-          echo 'uploading "index.html"'
-          echo "dist/client/index.html -> FTP ${REMOTE_INDEX}"
-          ftp_put dist/client/index.html "${REMOTE_INDEX}"
-
           echo 'uploading ".htaccess"'
           ftp_put dist/client/.htaccess "${DEPLOY_DIR}.htaccess"
 
-          echo 'uploading "spa.html"'
-          ftp_put dist/client/spa.html "${DEPLOY_DIR}spa.html"
+          # index.html is the activation file and must always be written last.
+          echo 'activating "index.html"'
+          echo "dist/client/index.html -> FTP ${REMOTE_INDEX}"
+          ftp_put dist/client/index.html "${REMOTE_INDEX}"
 
 
       - name: Verify Hostinger web-root target
