@@ -1,11 +1,16 @@
 name: Deploy to Hostinger
 
-# Manual-only. Automatic push deploys were removed because every commit
-# re-uploaded the whole site over Hostinger FTP; a failed or timed-out run
-# left public_html incomplete and the live domain returned 403.
-# Deploy from GitHub: Actions -> "Deploy to Hostinger" -> Run workflow.
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
+
+# Never let two uploads write to public_html at the same time. A newer push
+# waits for the active deployment instead of cancelling it halfway through.
+concurrency:
+  group: hostinger-production
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
@@ -17,9 +22,10 @@ jobs:
       #     public_html, so the web root is "/"
       #   - main account (u467883492) -> logs into the home dir, so the web
       #     root is /domains/streamandscream.com/public_html/
-      # Set the optional FTP_REMOTE_DIR secret to override; default is "/".
-      DEPLOY_DIR: ${{ secrets.FTP_REMOTE_DIR || '/' }}
-      REMOTE_INDEX: ${{ secrets.FTP_REMOTE_DIR || '/' }}index.html
+      # FTP_REMOTE_DIR is required so changing FTP accounts can never silently
+      # send a successful deployment outside the domain's document root.
+      DEPLOY_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+      REMOTE_INDEX: ${{ secrets.FTP_REMOTE_DIR }}index.html
 
     steps:
       - name: Checkout
@@ -142,17 +148,27 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if [ -z "${DEPLOY_DIR}" ]; then
+            echo "ERROR: FTP_REMOTE_DIR is required." >&2
+            echo "Use / for a domain-scoped FTP account, or /domains/streamandscream.com/public_html/ for the main Hostinger account." >&2
+            exit 1
+          fi
+          case "${DEPLOY_DIR}" in
+            */) ;;
+            *)
+              echo "ERROR: FTP_REMOTE_DIR must end with a slash (for example /domains/streamandscream.com/public_html/)." >&2
+              exit 1
+              ;;
+          esac
           echo "Hostinger FTP account root: public_html"
           echo "Deploy directory: ${DEPLOY_DIR}"
           echo "DEPLOYING HOMEPAGE:"
           echo "dist/client/index.html -> FTP ROOT/index.html"
 
-      # Full recursive upload with lftp. The previous FTP-Deploy-Action run
-      # left the web root with only index.html: its remote sync-state file made
-      # it skip every asset, so the live site had no JS/CSS and no sub-pages.
-      # lftp mirrors the whole tree every run (--ignore-time --only-newer off),
-      # so a partial state can never silently skip files again.
-      - name: Deploy via FTPS (lftp mirror)
+      # Upload supporting files first and the homepage last. The existing
+      # index.html remains live throughout the transfer, so an interrupted
+      # upload cannot leave Apache without a directory index.
+      - name: Upload website files via FTPS
         shell: bash
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
@@ -175,17 +191,14 @@ jobs:
             open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
             rm -f '${DEPLOY_DIR}.ftp-deploy-sync-state.json' || true;
             mirror --reverse --continue --ignore-time --verbose=1 \
+              --exclude-glob index.html \
+              --exclude-glob .htaccess \
               --exclude-glob .ftp-deploy-sync-state.json \
               dist/client/ '${DEPLOY_DIR}';
             bye;
           "
 
-
-      # FTP-Deploy-Action tracks files in .ftp-deploy-sync-state.json. If a
-      # remote file is removed outside the action, that state can incorrectly
-      # report index.html as unchanged and omit its STOR line. Upload the
-      # critical entry files explicitly so every run is deterministic.
-      - name: Force upload homepage and .htaccess
+      - name: Activate the new website
         shell: bash
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
@@ -204,16 +217,27 @@ jobs:
               "ftp://${FTP_SERVER}$2"
           }
 
-          echo 'uploading "index.html"'
-          echo "dist/client/index.html -> FTP ${REMOTE_INDEX}"
-          ftp_put dist/client/index.html "${REMOTE_INDEX}"
+          # Upload to temporary names first. FTP rename is atomic on Hostinger,
+          # unlike writing directly to files currently being served.
+          ftp_put dist/client/.htaccess "${DEPLOY_DIR}.htaccess.new"
+          ftp_put dist/client/index.html "${REMOTE_INDEX}.new"
 
-          echo 'uploading ".htaccess"'
-          ftp_put dist/client/.htaccess "${DEPLOY_DIR}.htaccess"
+          lftp -c "
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate no;
+            set ftp:passive-mode true;
+            set net:timeout 20;
+            set net:max-retries 3;
+            open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
+            mv '${DEPLOY_DIR}.htaccess.new' '${DEPLOY_DIR}.htaccess';
+            chmod 644 '${DEPLOY_DIR}.htaccess';
+            mv '${REMOTE_INDEX}.new' '${REMOTE_INDEX}';
+            chmod 644 '${REMOTE_INDEX}';
+            bye;
+          "
 
-          echo 'uploading "spa.html"'
-          ftp_put dist/client/spa.html "${DEPLOY_DIR}spa.html"
-
+          echo "Activated ${REMOTE_INDEX} after all supporting files completed."
 
       - name: Verify Hostinger web-root target
         shell: bash
@@ -307,7 +331,6 @@ jobs:
           fi
 
           echo "SUCCESS: ${SITE_URL%/}/ serves the expected Stream & Scream homepage."
-
 
       - name: Verify assets and a post page are live
         shell: bash
