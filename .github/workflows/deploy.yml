@@ -198,7 +198,6 @@ jobs:
             bye;
           "
 
-
       - name: Activate the new website
         shell: bash
         env:
@@ -239,7 +238,6 @@ jobs:
           "
 
           echo "Activated ${REMOTE_INDEX} after all supporting files completed."
-
 
       - name: Verify Hostinger web-root target
         shell: bash
@@ -333,7 +331,6 @@ jobs:
           fi
 
           echo "SUCCESS: ${SITE_URL%/}/ serves the expected Stream & Scream homepage."
-
 
       - name: Verify assets and a post page are live
         shell: bash
