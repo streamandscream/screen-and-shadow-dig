@@ -22,9 +22,10 @@ jobs:
       #     public_html, so the web root is "/"
       #   - main account (u467883492) -> logs into the home dir, so the web
       #     root is /domains/streamandscream.com/public_html/
-      # Set the optional FTP_REMOTE_DIR secret to override; default is "/".
-      DEPLOY_DIR: ${{ secrets.FTP_REMOTE_DIR || '/' }}
-      REMOTE_INDEX: ${{ secrets.FTP_REMOTE_DIR || '/' }}index.html
+      # FTP_REMOTE_DIR is required so changing FTP accounts can never silently
+      # send a successful deployment outside the domain's document root.
+      DEPLOY_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+      REMOTE_INDEX: ${{ secrets.FTP_REMOTE_DIR }}index.html
 
     steps:
       - name: Checkout
@@ -147,6 +148,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if [ -z "${DEPLOY_DIR}" ]; then
+            echo "ERROR: FTP_REMOTE_DIR is required." >&2
+            echo "Use / for a domain-scoped FTP account, or /domains/streamandscream.com/public_html/ for the main Hostinger account." >&2
+            exit 1
+          fi
           case "${DEPLOY_DIR}" in
             */) ;;
             *)
