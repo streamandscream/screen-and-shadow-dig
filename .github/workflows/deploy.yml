@@ -180,14 +180,22 @@ jobs:
           sudo apt-get install -y -qq lftp
           # Drop the stale sync state so nothing is treated as "already uploaded"
           rm -f dist/client/.ftp-deploy-sync-state.json
-          lftp -c "
+          # Shared-hosting FTP servers commonly throttle or drop parallel data
+          # connections. Use one transfer at a time and retry the whole mirror
+          # so a temporary Hostinger timeout cannot leave the deployment stuck.
+          upload_attempt=1
+          until lftp -c "
+            set cmd:fail-exit true;
             set ftp:ssl-force true;
             set ftp:ssl-protect-data true;
             set ssl:verify-certificate no;
             set ftp:passive-mode true;
-            set net:timeout 20;
-            set net:max-retries 3;
-            set mirror:parallel-transfer-count 4;
+            set ftp:sync-mode false;
+            set net:timeout 60;
+            set net:max-retries 8;
+            set net:reconnect-interval-base 5;
+            set net:reconnect-interval-max 30;
+            set mirror:parallel-transfer-count 1;
             open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
             rm -f '${DEPLOY_DIR}.ftp-deploy-sync-state.json' || true;
             mirror --reverse --continue --ignore-time --verbose=1 \
@@ -196,7 +204,15 @@ jobs:
               --exclude-glob .ftp-deploy-sync-state.json \
               dist/client/ '${DEPLOY_DIR}';
             bye;
-          "
+          "; do
+            if [ "${upload_attempt}" -ge 3 ]; then
+              echo "ERROR: Hostinger FTP upload failed after ${upload_attempt} attempts." >&2
+              exit 1
+            fi
+            echo "FTP upload attempt ${upload_attempt} failed; reconnecting in 15 seconds..."
+            upload_attempt=$((upload_attempt + 1))
+            sleep 15
+          done
 
       - name: Activate the new website
         shell: bash
