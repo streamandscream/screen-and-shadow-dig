@@ -222,34 +222,27 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           set -euo pipefail
-          # --ssl-reqd forces explicit FTPS (AUTH TLS), which Hostinger requires.
-          # -k because Hostinger FTP certs often do not match the hostname.
-          ftp_put() {
-            curl --fail --silent --show-error --ftp-pasv --ssl-reqd -k \
-              --connect-timeout 20 --max-time 120 \
-              --ftp-create-dirs \
-              --user "${FTP_USERNAME}:${FTP_PASSWORD}" \
-              --upload-file "$1" \
-              "ftp://${FTP_SERVER}$2"
-          }
-
-          # Upload to temporary names first. FTP rename is atomic on Hostinger,
-          # unlike writing directly to files currently being served.
-          ftp_put dist/client/.htaccess "${DEPLOY_DIR}.htaccess.new"
-          ftp_put dist/client/index.html "${REMOTE_INDEX}.new"
-
+          # Upload and rename in one FTP session. curl and lftp interpret FTP
+          # paths differently on chrooted Hostinger accounts, which previously
+          # put the temporary files somewhere the rename step could not see.
           lftp -c "
+            set cmd:fail-exit true;
             set ftp:ssl-force true;
             set ftp:ssl-protect-data true;
             set ssl:verify-certificate no;
             set ftp:passive-mode true;
             set net:timeout 20;
-            set net:max-retries 3;
+            set net:max-retries 8;
+            set net:reconnect-interval-base 5;
+            set net:reconnect-interval-max 30;
             open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
-            mv '${DEPLOY_DIR}.htaccess.new' '${DEPLOY_DIR}.htaccess';
-            chmod 644 '${DEPLOY_DIR}.htaccess';
-            mv '${REMOTE_INDEX}.new' '${REMOTE_INDEX}';
-            chmod 644 '${REMOTE_INDEX}';
+            cd '${DEPLOY_DIR}';
+            put -c -o '.htaccess.new' 'dist/client/.htaccess';
+            put -c -o 'index.html.new' 'dist/client/index.html';
+            mv '.htaccess.new' '.htaccess';
+            chmod 644 '.htaccess';
+            mv 'index.html.new' 'index.html';
+            chmod 644 'index.html';
             bye;
           "
 
