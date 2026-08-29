@@ -237,8 +237,8 @@ jobs:
             set net:reconnect-interval-max 30;
             open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
             cd '${DEPLOY_DIR}';
-            put -c -o '.htaccess.new' 'dist/client/.htaccess';
-            put -c -o 'index.html.new' 'dist/client/index.html';
+            put -c 'dist/client/.htaccess' -o '.htaccess.new';
+            put -c 'dist/client/index.html' -o 'index.html.new';
             mv '.htaccess.new' '.htaccess';
             chmod 644 '.htaccess';
             mv 'index.html.new' 'index.html';
