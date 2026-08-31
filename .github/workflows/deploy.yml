@@ -198,7 +198,10 @@ jobs:
             set mirror:parallel-transfer-count 1;
             open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
             rm -f '${DEPLOY_DIR}.ftp-deploy-sync-state.json' || true;
-            mirror --reverse --continue --ignore-time --verbose=1 \
+            # --delete removes anything on the server that is not in
+            # dist/client/ (e.g. a repo accidentally uploaded to the web
+            # root), so public_html always matches the built site exactly.
+            mirror --reverse --continue --ignore-time --delete --verbose=1 \
               --exclude-glob index.html \
               --exclude-glob .htaccess \
               --exclude-glob .ftp-deploy-sync-state.json \
