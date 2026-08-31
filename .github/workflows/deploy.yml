@@ -24,8 +24,10 @@ jobs:
       #     root is /domains/streamandscream.com/public_html/
       # FTP_REMOTE_DIR is required so changing FTP accounts can never silently
       # send a successful deployment outside the domain's document root.
-      DEPLOY_DIR: ${{ secrets.FTP_REMOTE_DIR }}
-      REMOTE_INDEX: ${{ secrets.FTP_REMOTE_DIR }}index.html
+      # This Hostinger FTP account is already scoped to the domain's
+      # public_html directory, so its login root is the live web root.
+      DEPLOY_DIR: /
+      REMOTE_INDEX: /index.html
 
     steps:
       - name: Checkout
