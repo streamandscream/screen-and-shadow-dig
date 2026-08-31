@@ -16,16 +16,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      # Which directory on the FTP server is the live web root depends on the
-      # Hostinger account used:
-      #   - dedicated FTP account (u467883492.streamnscream22) -> scoped to
-      #     public_html, so the web root is "/"
-      #   - main account (u467883492) -> logs into the home dir, so the web
-      #     root is /domains/streamandscream.com/public_html/
-      # FTP_REMOTE_DIR is required so changing FTP accounts can never silently
-      # send a successful deployment outside the domain's document root.
-      DEPLOY_DIR: ${{ secrets.FTP_REMOTE_DIR }}
-      REMOTE_INDEX: ${{ secrets.FTP_REMOTE_DIR }}index.html
+      # This Hostinger FTP account is already scoped to the domain's
+      # public_html directory, so its login root is the live web root.
+      DEPLOY_DIR: /
+      REMOTE_INDEX: /index.html
 
     steps:
       - name: Checkout
@@ -148,18 +142,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${DEPLOY_DIR}" ]; then
-            echo "ERROR: FTP_REMOTE_DIR is required." >&2
-            echo "Use / for a domain-scoped FTP account, or /domains/streamandscream.com/public_html/ for the main Hostinger account." >&2
-            exit 1
-          fi
-          case "${DEPLOY_DIR}" in
-            */) ;;
-            *)
-              echo "ERROR: FTP_REMOTE_DIR must end with a slash (for example /domains/streamandscream.com/public_html/)." >&2
-              exit 1
-              ;;
-          esac
           echo "Hostinger FTP account root: public_html"
           echo "Deploy directory: ${DEPLOY_DIR}"
           echo "DEPLOYING HOMEPAGE:"
