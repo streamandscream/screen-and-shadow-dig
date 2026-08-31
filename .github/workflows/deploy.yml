@@ -16,10 +16,12 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      # This Hostinger FTP account is already scoped to the domain's
-      # public_html directory, so its login root is the live web root.
-      DEPLOY_DIR: /
-      REMOTE_INDEX: /index.html
+      # Main Hostinger FTP accounts log in at the home directory
+      # (/home/u467883492), not the web root. Deploy into the domain's
+      # document root with the absolute path Hostinger confirmed:
+      # /home/u467883492/domains/streamandscream.com/public_html
+      DEPLOY_DIR: /domains/streamandscream.com/public_html/
+      REMOTE_INDEX: /domains/streamandscream.com/public_html/index.html
 
     steps:
       - name: Checkout
