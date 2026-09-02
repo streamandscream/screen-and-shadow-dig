@@ -16,12 +16,13 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      # Main Hostinger FTP accounts log in at the home directory
-      # (/home/u467883492), not the web root. Deploy into the domain's
-      # document root with the absolute path Hostinger confirmed:
-      # /home/u467883492/domains/streamandscream.com/public_html
-      DEPLOY_DIR: /domains/streamandscream.com/public_html/
-      REMOTE_INDEX: /domains/streamandscream.com/public_html/index.html
+      # This FTP account is chrooted: its login root IS the web root
+      # (public_html). Deploying to an absolute path like
+      # /domains/streamandscream.com/public_html/ creates that folder tree
+      # INSIDE public_html (site 403s at / but responds at
+      # /domains/streamandscream.com/public_html/index.html). Deploy at "/".
+      DEPLOY_DIR: /
+      REMOTE_INDEX: /index.html
 
     steps:
       - name: Checkout
