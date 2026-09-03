@@ -163,7 +163,9 @@ jobs:
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq lftp
-          # Drop the stale sync state so nothing is treated as "already uploaded"
+          # Drop the stale sync state so nothing is treated as "already uploaded".
+          # Never delete the live web root here: if Hostinger drops the FTP
+          # connection mid-deploy, the currently working index.html must remain.
           rm -f dist/client/.ftp-deploy-sync-state.json
           # Shared-hosting FTP servers commonly throttle or drop parallel data
           # connections. Use one transfer at a time and retry the whole mirror
@@ -183,10 +185,10 @@ jobs:
             set mirror:parallel-transfer-count 1;
             open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
             rm -f '${DEPLOY_DIR}.ftp-deploy-sync-state.json' || true;
-            # --delete removes anything on the server that is not in
-            # dist/client/ (e.g. a repo accidentally uploaded to the web
-            # root), so public_html always matches the built site exactly.
-            mirror --reverse --continue --ignore-time --delete --verbose=1 \
+            # Upload supporting files without --delete. Hashed assets can safely
+            # coexist across releases, while deleting first can leave the live
+            # site without index.html whenever an FTP transfer is interrupted.
+            mirror --reverse --continue --ignore-time --verbose=1 \
               --exclude-glob index.html \
               --exclude-glob .htaccess \
               --exclude-glob .ftp-deploy-sync-state.json \
@@ -225,8 +227,10 @@ jobs:
             set net:reconnect-interval-max 30;
             open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
             cd '${DEPLOY_DIR}';
-            put -c 'dist/client/.htaccess' -o '.htaccess.new';
-            put -c 'dist/client/index.html' -o 'index.html.new';
+            rm -f '.htaccess.new' || true;
+            rm -f 'index.html.new' || true;
+            put 'dist/client/.htaccess' -o '.htaccess.new';
+            put 'dist/client/index.html' -o 'index.html.new';
             mv '.htaccess.new' '.htaccess';
             chmod 644 '.htaccess';
             mv 'index.html.new' 'index.html';
