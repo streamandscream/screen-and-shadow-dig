@@ -188,10 +188,15 @@ jobs:
             # Upload supporting files without --delete. Hashed assets can safely
             # coexist across releases, while deleting first can leave the live
             # site without index.html whenever an FTP transfer is interrupted.
+            # Anchor the exclusions to the top level only. A bare
+            # --exclude-glob index.html matches EVERY nested index.html, which
+            # silently skipped all prerendered pages (/tv/, /post/*/) and made
+            # Google see 403/404 on those URLs.
             mirror --reverse --continue --ignore-time --verbose=1 \
-              --exclude-glob index.html \
-              --exclude-glob .htaccess \
-              --exclude-glob .ftp-deploy-sync-state.json \
+              --exclude '^index\.html$' \
+              --exclude '^\.htaccess$' \
+              --exclude '^\.ftp-deploy-sync-state\.json$' \
+
               dist/client/ '${DEPLOY_DIR}';
             bye;
           "; do
