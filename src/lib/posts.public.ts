@@ -268,8 +268,6 @@ export function buildQuickAnswers(post: PublicPost): QuickAnswer[] {
   const rating = post.rating;
   const excerpt = post.excerpt?.trim();
   const vibe = post.vibe?.trim();
-  const streamer = post.streamer?.trim();
-  const tags = post.tags ?? [];
 
   const worthAnswer = post.quick_take?.trim()
     ? post.quick_take.trim()
