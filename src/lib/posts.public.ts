@@ -286,15 +286,6 @@ export function buildQuickAnswers(post: PublicPost): QuickAnswer[] {
     { question: `What is ${title} about?`, answer: aboutAnswer },
   ];
 
-  if (streamer) {
-    answers.push({ question: `Where can I watch ${title} in the UK?`, answer: `It's available on ${streamer}. Use the "Where to watch" link on this page to find the cheapest option.` });
-  }
-
-  if (tags.length > 0) {
-    const tone = toneFromTags(tags);
-    answers.push({ question: `What kind of show is ${title}?`, answer: `A ${tone} ${post.section === "tv" ? "series" : "documentary"}${tags.slice(0, 2).length ? ` tagged ${tags.slice(0, 2).map((t) => `#${t}`).join(" and ")}` : ""}.` });
-  }
-
   if (post.next_binge.length > 0) {
     answers.push({
       question: `What should I watch after ${title}?`,
