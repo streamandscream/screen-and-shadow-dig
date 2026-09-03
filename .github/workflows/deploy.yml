@@ -357,3 +357,14 @@ jobs:
             echo "${p} -> ${c}"
             [ "${c}" = "200" ] || { echo "ERROR: ${p} missing on the server." >&2; exit 1; }
           done
+
+          # Prerendered section and post pages must be reachable without a
+          # redirect. Google reports these as "Blocked due to access forbidden
+          # (403)" when the nested index.html files did not upload.
+          SLUG="$(ls dist/client/post | head -1)"
+          for p in "/tv" "/post/${SLUG}"; do
+            c=$(curl -s -o /dev/null -w '%{http_code}' "${SITE_URL}${p}")
+            echo "${p} -> ${c}"
+            [ "${c}" = "200" ] || { echo "ERROR: ${p} returned ${c} — prerendered pages are missing or .htaccess is not active." >&2; exit 1; }
+          done
+
