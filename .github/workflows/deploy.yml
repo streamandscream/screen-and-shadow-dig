@@ -10,11 +10,12 @@ on:
 # waits for the active deployment instead of cancelling it halfway through.
 concurrency:
   group: hostinger-production
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       # This FTP account is chrooted: its login root IS the web root
       # (public_html). Deploying to an absolute path like
@@ -192,12 +193,7 @@ jobs:
             # --exclude-glob index.html matches EVERY nested index.html, which
             # silently skipped all prerendered pages (/tv/, /post/*/) and made
             # Google see 403/404 on those URLs.
-            mirror --reverse --continue --ignore-time --verbose=1 \
-              --exclude '^index\.html$' \
-              --exclude '^\.htaccess$' \
-              --exclude '^\.ftp-deploy-sync-state\.json$' \
-
-              dist/client/ '${DEPLOY_DIR}';
+            mirror --reverse --continue --ignore-time --verbose=1 --exclude '^index\.html$' --exclude '^\.htaccess$' --exclude '^\.ftp-deploy-sync-state\.json$' --exclude '^node_modules/' --exclude '^\.git/' dist/client/ '${DEPLOY_DIR}';
             bye;
           "; do
             if [ "${upload_attempt}" -ge 3 ]; then
