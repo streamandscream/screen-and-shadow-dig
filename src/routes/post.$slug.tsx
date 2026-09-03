@@ -305,7 +305,7 @@ function renderAfterAnswer(answer: string, nextBinge: string[], linkMap: Map<str
   if (!nextBinge.length) return answer;
   return (
     <>
-      <ul className="list-disc pl-6 space-y-1">
+      <ul className="list-disc pl-6 space-y-1 mb-4">
         {nextBinge.map((title: string) => {
           const matchSlug = linkMap.get(title.toLowerCase().trim());
           return (
