@@ -235,41 +235,11 @@ export function buildSimilarPosts(
 
 export type QuickAnswer = { question: string; answer: string };
 
-function titleCaseTag(tag: string) {
-  return tag.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function toneFromTags(tags: string[]) {
-  const map: Record<string, string> = {
-    comedy: "funny",
-    funny: "funny",
-    drama: "dramatic",
-    thriller: "tense",
-    horror: "scary",
-    mystery: "mysterious",
-    crime: "gritty",
-    documentary: "real-life",
-    feelgood: "feel-good",
-    "feel-good": "feel-good",
-    cosy: "cozy",
-    cozy: "cozy",
-    dark: "dark",
-    sad: "moving",
-  };
-  for (const t of tags) {
-    const low = t.toLowerCase();
-    if (map[low]) return map[low];
-  }
-  return tags.length ? titleCaseTag(tags[0]).toLowerCase() : "worth a look";
-}
-
 export function buildQuickAnswers(post: PublicPost): QuickAnswer[] {
   const title = post.title;
   const rating = post.rating;
   const excerpt = post.excerpt?.trim();
   const vibe = post.vibe?.trim();
-  const streamer = post.streamer?.trim();
-  const tags = post.tags ?? [];
 
   const worthAnswer = post.quick_take?.trim()
     ? post.quick_take.trim()
@@ -285,15 +255,6 @@ export function buildQuickAnswers(post: PublicPost): QuickAnswer[] {
     { question: `Is ${title} worth watching?`, answer: worthAnswer },
     { question: `What is ${title} about?`, answer: aboutAnswer },
   ];
-
-  if (streamer) {
-    answers.push({ question: `Where can I watch ${title} in the UK?`, answer: `It's available on ${streamer}. Use the "Where to watch" link on this page to find the cheapest option.` });
-  }
-
-  if (tags.length > 0) {
-    const tone = toneFromTags(tags);
-    answers.push({ question: `What kind of show is ${title}?`, answer: `A ${tone} ${post.section === "tv" ? "series" : "documentary"}${tags.slice(0, 2).length ? ` tagged ${tags.slice(0, 2).map((t) => `#${t}`).join(" and ")}` : ""}.` });
-  }
 
   if (post.next_binge.length > 0) {
     answers.push({
