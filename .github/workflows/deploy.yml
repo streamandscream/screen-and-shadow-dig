@@ -10,11 +10,12 @@ on:
 # waits for the active deployment instead of cancelling it halfway through.
 concurrency:
   group: hostinger-production
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       # This FTP account is chrooted: its login root IS the web root
       # (public_html). Deploying to an absolute path like
