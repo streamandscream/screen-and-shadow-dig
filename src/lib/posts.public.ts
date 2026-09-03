@@ -235,34 +235,6 @@ export function buildSimilarPosts(
 
 export type QuickAnswer = { question: string; answer: string };
 
-function titleCaseTag(tag: string) {
-  return tag.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function toneFromTags(tags: string[]) {
-  const map: Record<string, string> = {
-    comedy: "funny",
-    funny: "funny",
-    drama: "dramatic",
-    thriller: "tense",
-    horror: "scary",
-    mystery: "mysterious",
-    crime: "gritty",
-    documentary: "real-life",
-    feelgood: "feel-good",
-    "feel-good": "feel-good",
-    cosy: "cozy",
-    cozy: "cozy",
-    dark: "dark",
-    sad: "moving",
-  };
-  for (const t of tags) {
-    const low = t.toLowerCase();
-    if (map[low]) return map[low];
-  }
-  return tags.length ? titleCaseTag(tags[0]).toLowerCase() : "worth a look";
-}
-
 export function buildQuickAnswers(post: PublicPost): QuickAnswer[] {
   const title = post.title;
   const rating = post.rating;
