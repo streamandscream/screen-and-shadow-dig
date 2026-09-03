@@ -288,7 +288,7 @@ function Page() {
             </p>
           </div>
         )}
-        {post.next_binge && post.next_binge.length > 0 ? null : null}
+        
 
         <div className="mt-12 border-t-2 border-foreground pt-6">
           <Link to={sectionTo} className="eyebrow text-accent-red hover:underline">
@@ -305,33 +305,23 @@ function renderAfterAnswer(answer: string, nextBinge: string[], linkMap: Map<str
   if (!nextBinge.length) return answer;
   return (
     <>
-      Try{" "}
-      {nextBinge.map((title: string, i: number) => {
-        const matchSlug = linkMap.get(title.toLowerCase().trim());
-        const isLast = i === nextBinge.length - 1;
-        return (
-          <span key={title}>
-            {matchSlug ? (
-              <Link to="/post/$slug" params={{ slug: matchSlug }} className="underline underline-offset-4 decoration-foreground/30 hover:decoration-accent-red hover:text-accent-red transition-colors">
-                {title}
-              </Link>
-            ) : (
-              <span>{title}</span>
-            )}
-            {nextBinge.length > 1 && i === nextBinge.length - 2 ? " and " : isLast ? "" : ", "}
-          </span>
-        );
-      })}.
-      {" "}See <Link to="/shows-like/$slug" params={{ slug: postSlug }} className="underline hover:text-accent-red transition-colors">more shows like this</Link>.
-    </>
-  );
-}
-
-function renderWatchAnswer(answer: string, post: any) {
-  return (
-    <>
-      {answer}{" "}
-      <WhereToWatchLink post={post} className="underline hover:text-accent-red transition-colors" />
+      <ul className="list-disc pl-6 space-y-1">
+        {nextBinge.map((title: string) => {
+          const matchSlug = linkMap.get(title.toLowerCase().trim());
+          return (
+            <li key={title}>
+              {matchSlug ? (
+                <Link to="/post/$slug" params={{ slug: matchSlug }} className="underline underline-offset-4 decoration-foreground/30 hover:decoration-accent-red hover:text-accent-red transition-colors">
+                  {title}
+                </Link>
+              ) : (
+                <span>{title}</span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+      See <Link to="/shows-like/$slug" params={{ slug: postSlug }} className="underline hover:text-accent-red transition-colors">more shows like this</Link>.
     </>
   );
 }
