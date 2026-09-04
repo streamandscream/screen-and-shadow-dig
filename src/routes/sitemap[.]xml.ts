@@ -75,7 +75,9 @@ export const Route = createFileRoute("/sitemap.xml")({
         const urls = entries.map((e) =>
           [
             "  <url>",
-            `    <loc>${escapeXml(BASE_URL + e.path)}</loc>`,
+            // Hostinger canonicalizes to trailing-slash URLs; match that so
+            // sitemap entries don't show up as redirects in Search Console.
+            `    <loc>${escapeXml(BASE_URL + (e.path === "/" ? "/" : `${e.path}/`))}</loc>`,
             e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
             e.priority ? `    <priority>${e.priority}</priority>` : null,
             "  </url>",
