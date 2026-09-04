@@ -52,6 +52,9 @@ if (sitemap) {
   // <lastmod> (today's date). That is not a page-specific timestamp, so strip
   // it per the sitemap lastmod policy rather than ship a misleading value.
   cleaned = cleaned.replace(/\s*<lastmod>[^<]*<\/lastmod>/g, "");
+  // Apache/Hostinger canonicalizes every page to a trailing-slash URL, so
+  // sitemap entries must match or Google reports them all as redirects.
+  cleaned = cleaned.replace(/<loc>(https:\/\/[^<]*[^/</])<\/loc>/g, "<loc>$1/</loc>");
   await writeFile(sitemapPath, cleaned);
 }
 
