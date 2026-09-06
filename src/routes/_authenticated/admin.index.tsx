@@ -106,8 +106,9 @@ function Admin() {
         )}
 
         <p className="mt-16 border-t-2 border-foreground pt-8 text-sm text-muted-foreground">
-          Note: this site is served as a static build. After adding or editing posts, redeploy
-          (or re-run the build) so the sitemap and pre-rendered pages pick up the changes.
+          Note: your live site is a static copy. After publishing or editing a post, hit
+          “Publish live” above — it rebuilds the site and pushes it to your host, usually within
+          a few minutes.
         </p>
       </main>
       <SiteFooter />
