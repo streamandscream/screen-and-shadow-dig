@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { upsertPost } from "@/lib/posts.admin";
+import { deployAfterPublish } from "@/lib/deploy-after-publish";
 import { Editor } from "./admin.$id.edit";
 
 export const Route = createFileRoute("/_authenticated/admin/new")({
@@ -26,6 +27,7 @@ function NewPost() {
       const payload: any = { ...form, cover_url: form.cover_url || null, streamer: form.streamer || null, justwatch_slug: form.justwatch_slug || null, vibe: form.vibe || null };
       delete payload.id;
       await saveFn({ data: payload });
+      if (payload.published) await deployAfterPublish();
       navigate({ to: "/admin" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Failed"); }
     finally { setSaving(false); }
