@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { getJustWatchAffiliate, setJustWatchAffiliate } from "@/lib/settings.public";
+import { getDeployStatus, saveDeployConfig } from "@/lib/deploy.admin";
+import { DeployButton } from "@/components/DeployButton";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: SettingsPage,
