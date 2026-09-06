@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      deploy_config: {
+        Row: {
+          git_ref: string
+          github_owner: string
+          github_repo: string
+          github_token: string
+          id: boolean
+          last_triggered_at: string | null
+          updated_at: string
+          workflow_file: string
+        }
+        Insert: {
+          git_ref?: string
+          github_owner: string
+          github_repo: string
+          github_token: string
+          id?: boolean
+          last_triggered_at?: string | null
+          updated_at?: string
+          workflow_file?: string
+        }
+        Update: {
+          git_ref?: string
+          github_owner?: string
+          github_repo?: string
+          github_token?: string
+          id?: boolean
+          last_triggered_at?: string | null
+          updated_at?: string
+          workflow_file?: string
+        }
+        Relationships: []
+      }
       ingestion_runs: {
         Row: {
           classify_errors: number
@@ -341,6 +374,17 @@ export type Database = {
     }
     Functions: {
       delete_tag: { Args: { _name: string }; Returns: undefined }
+      deploy_config_status: {
+        Args: never
+        Returns: {
+          configured: boolean
+          git_ref: string
+          github_owner: string
+          github_repo: string
+          last_triggered_at: string
+          workflow_file: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -349,6 +393,7 @@ export type Database = {
         Returns: boolean
       }
       rename_tag: { Args: { _new: string; _old: string }; Returns: undefined }
+      trigger_site_deploy: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "author"
