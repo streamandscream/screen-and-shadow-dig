@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { DomainHealthAlert } from "@/components/DomainHealthAlert";
+import { DeployButton } from "@/components/DeployButton";
 import { listMyPosts, deletePost } from "@/lib/posts.admin";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -49,7 +50,8 @@ function Admin() {
         <div className="flex items-center justify-between border-b-2 border-foreground pb-4">
           <h1 className="font-display text-4xl">Editor Dashboard</h1>
           <div className="flex gap-3 flex-wrap">
-            <Link to="/admin/new" className="bg-foreground text-background px-4 py-2 font-display uppercase tracking-widest text-sm">
+            <DeployButton />
+            <Link to="/admin/new" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               New post
             </Link>
             <Link to="/admin/stream" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
@@ -104,8 +106,9 @@ function Admin() {
         )}
 
         <p className="mt-16 border-t-2 border-foreground pt-8 text-sm text-muted-foreground">
-          Note: this site is served as a static build. After adding or editing posts, redeploy
-          (or re-run the build) so the sitemap and pre-rendered pages pick up the changes.
+          Note: your live site is a static copy. After publishing or editing a post, hit
+          “Publish live” above — it rebuilds the site and pushes it to your host, usually within
+          a few minutes.
         </p>
       </main>
       <SiteFooter />
