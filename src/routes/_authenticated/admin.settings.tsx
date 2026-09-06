@@ -76,8 +76,90 @@ function SettingsPage() {
             </div>
           )}
         </section>
+
+        <DeploySettings />
       </main>
       <SiteFooter />
     </div>
+  );
+}
+
+function DeploySettings() {
+  const { data, refetch } = useQuery({ queryKey: ["deploy-status"], queryFn: () => getDeployStatus() });
+  const [owner, setOwner] = useState("");
+  const [repo, setRepo] = useState("");
+  const [workflow, setWorkflow] = useState("deploy.yml");
+  const [ref, setRef] = useState("main");
+  const [token, setToken] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!data?.configured) return;
+    setOwner(data.github_owner ?? "");
+    setRepo(data.github_repo ?? "");
+    setWorkflow(data.workflow_file ?? "deploy.yml");
+    setRef(data.git_ref ?? "main");
+  }, [data]);
+
+  async function save() {
+    setSaving(true); setStatus(null);
+    try {
+      if (!token.trim()) throw new Error("Paste your GitHub access token to save.");
+      await saveDeployConfig({
+        github_owner: owner.trim(),
+        github_repo: repo.trim(),
+        workflow_file: workflow.trim() || "deploy.yml",
+        git_ref: ref.trim() || "main",
+        github_token: token.trim(),
+      });
+      setToken("");
+      setStatus("Saved.");
+      refetch();
+    } catch (e) {
+      setStatus(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <section className="mt-16 border-t-2 border-foreground pt-8">
+      <h2 className="font-display text-2xl">Publishing to your live site</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Your live site is a static copy that gets rebuilt by GitHub. Enter your details once, and
+        the “Publish live” button (and publishing a review) will start that rebuild for you.
+      </p>
+      <p className="mt-2 text-xs text-muted-foreground">
+        The token needs the <strong>Actions: read and write</strong> permission on this one
+        repository. It is stored privately and never shown again.
+      </p>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <input className="border border-foreground bg-background p-3 text-base" placeholder="GitHub username or org" value={owner} onChange={(e) => setOwner(e.target.value)} />
+        <input className="border border-foreground bg-background p-3 text-base" placeholder="Repository name" value={repo} onChange={(e) => setRepo(e.target.value)} />
+        <input className="border border-foreground bg-background p-3 text-base" placeholder="deploy.yml" value={workflow} onChange={(e) => setWorkflow(e.target.value)} />
+        <input className="border border-foreground bg-background p-3 text-base" placeholder="main" value={ref} onChange={(e) => setRef(e.target.value)} />
+        <input className="border border-foreground bg-background p-3 text-base sm:col-span-2" type="password" placeholder={data?.configured ? "Paste a new token to replace the saved one" : "GitHub access token"} value={token} onChange={(e) => setToken(e.target.value)} />
+      </div>
+
+      <div className="mt-4 flex items-center gap-3 flex-wrap">
+        <button
+          disabled={saving}
+          onClick={save}
+          className="bg-foreground text-background py-3 px-6 font-display uppercase tracking-widest disabled:opacity-50"
+        >
+          {saving ? "Saving…" : "Save"}
+        </button>
+        {data?.configured && <DeployButton className="py-3 px-6" />}
+        {status && <span className="text-sm text-muted-foreground">{status}</span>}
+      </div>
+
+      {data?.last_triggered_at && (
+        <p className="mt-3 text-xs text-muted-foreground">
+          Last update started {new Date(data.last_triggered_at).toLocaleString()}.
+        </p>
+      )}
+    </section>
   );
 }
