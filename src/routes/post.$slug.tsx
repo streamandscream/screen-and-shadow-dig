@@ -3,6 +3,7 @@ import { queryOptions, useSuspenseQuery, useQuery } from "@tanstack/react-query"
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostBody } from "@/components/PostBody";
 import { WhereToWatchLink } from "@/components/PostCard";
+import { ShareButton } from "@/components/ShareButton";
 import { getPostBySlug, getPostsByTitles, buildQuickAnswers } from "@/lib/posts.public";
 
 const postQuery = (slug: string) => queryOptions({
@@ -244,7 +245,15 @@ function Page() {
             <p className="font-display text-[28px] md:text-4xl italic leading-tight">“{(post as any).vibe}”</p>
           </blockquote>
         )}
-        <WhereToWatchLink post={post as any} className="mt-8 inline-block border border-foreground px-5 py-3 font-display uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors" />
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <WhereToWatchLink post={post as any} className="inline-block border border-foreground px-5 py-3 font-display uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors" />
+          <ShareButton
+            title={post.title}
+            description={(post as any).meta_description ?? post.excerpt}
+            url={`https://streamandscream.com/post/${post.slug}/`}
+            image={post.cover_url}
+          />
+        </div>
         <div className="mt-8">
           <PostBody>{post.body}</PostBody>
         </div>
@@ -290,10 +299,17 @@ function Page() {
         )}
         
 
-        <div className="mt-12 border-t-2 border-foreground pt-6">
+        <div className="mt-12 border-t-2 border-foreground pt-6 flex flex-wrap items-center justify-between gap-4">
           <Link to={sectionTo} className="eyebrow text-accent-red hover:underline">
             ← Back to {sectionLabel}
           </Link>
+          <ShareButton
+            title={post.title}
+            description={(post as any).meta_description ?? post.excerpt}
+            url={`https://streamandscream.com/post/${post.slug}/`}
+            image={post.cover_url}
+            className="[&>button]:!px-3 [&>button]:!py-2 [&>button]:!text-xs"
+          />
         </div>
       </main>
       <SiteFooter />
