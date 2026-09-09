@@ -344,6 +344,13 @@ jobs:
 
           echo "SUCCESS: ${SITE_URL%/}/ serves the expected Stream & Scream homepage."
 
+          STRAY=$(curl -s -o /dev/null -w '%{http_code}' "${SITE_URL%/}/dist/client/index.html")
+          echo "stray /dist/client/index.html -> ${STRAY}"
+          if [ "${STRAY}" = "200" ]; then
+            echo "ERROR: the site files were uploaded into a dist/client folder inside the web root." >&2
+            exit 1
+          fi
+
       - name: Verify assets and a post page are live
         shell: bash
         env:
