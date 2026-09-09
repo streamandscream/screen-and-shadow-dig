@@ -186,14 +186,21 @@ jobs:
             set mirror:parallel-transfer-count 1;
             open -u '${FTP_USERNAME}','${FTP_PASSWORD}' -p 21 '${FTP_SERVER}';
             rm -f '${DEPLOY_DIR}.ftp-deploy-sync-state.json' || true;
+            # Remove a stray dist/ tree from an earlier bad deploy: when the
+            # mirror source was given as a path, lftp recreated dist/client
+            # INSIDE the web root and the site 403'd at /.
+            rm -rf '${DEPLOY_DIR}dist' || true;
             # Upload supporting files without --delete. Hashed assets can safely
             # coexist across releases, while deleting first can leave the live
             # site without index.html whenever an FTP transfer is interrupted.
+            # lcd + '.' as the source is required: passing 'dist/client/' makes
+            # lftp create that folder inside the target directory.
             # Anchor the exclusions to the top level only. A bare
             # --exclude-glob index.html matches EVERY nested index.html, which
             # silently skipped all prerendered pages (/tv/, /post/*/) and made
             # Google see 403/404 on those URLs.
-            mirror --reverse --continue --ignore-time --verbose=1 --exclude '^index\.html$' --exclude '^\.htaccess$' --exclude '^\.ftp-deploy-sync-state\.json$' --exclude '^node_modules/' --exclude '^\.git/' dist/client/ '${DEPLOY_DIR}';
+            lcd dist/client;
+            mirror --reverse --continue --ignore-time --verbose=1 --exclude '^index\.html$' --exclude '^\.htaccess$' --exclude '^\.ftp-deploy-sync-state\.json$' --exclude '^node_modules/' --exclude '^\.git/' . '${DEPLOY_DIR}';
             bye;
           "; do
             if [ "${upload_attempt}" -ge 3 ]; then
@@ -336,6 +343,13 @@ jobs:
           fi
 
           echo "SUCCESS: ${SITE_URL%/}/ serves the expected Stream & Scream homepage."
+
+          STRAY=$(curl -s -o /dev/null -w '%{http_code}' "${SITE_URL%/}/dist/client/index.html")
+          echo "stray /dist/client/index.html -> ${STRAY}"
+          if [ "${STRAY}" = "200" ]; then
+            echo "ERROR: the site files were uploaded into a dist/client folder inside the web root." >&2
+            exit 1
+          fi
 
       - name: Verify assets and a post page are live
         shell: bash
