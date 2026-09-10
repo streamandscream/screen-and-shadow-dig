@@ -385,6 +385,7 @@ export type Database = {
           workflow_file: string
         }[]
       }
+      deploy_site_internal: { Args: never; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -392,6 +393,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      publish_due_posts: { Args: never; Returns: undefined }
       rename_tag: { Args: { _new: string; _old: string }; Returns: undefined }
       trigger_site_deploy: { Args: never; Returns: Json }
     }
