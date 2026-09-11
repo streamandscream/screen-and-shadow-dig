@@ -250,7 +250,7 @@ function Page() {
   if (!data) return null;
   const { post, similar } = data;
   const label = sectionLabel(post.section);
-  const sectionTo = post.section === "tv" ? "/tv" : "/true-crime";
+  const sectionTo = post.section === "tv" ? "/tv/" : "/true-crime/";
   const rated = similar.filter((s) => s.post.rating != null);
   const best = rated.length
     ? rated.reduce((a, b) => ((b.post.rating ?? 0) > (a.post.rating ?? 0) ? b : a))
@@ -267,7 +267,7 @@ function Page() {
         <Link to={sectionTo} className="eyebrow text-accent-red">{label}</Link>
         <h1 className="font-display text-[30px] md:text-[50px] mt-3">Shows Like {post.title}</h1>
         <p className="mt-5 text-[17px] leading-relaxed">
-          If <Link to="/post/$slug" params={{ slug: post.slug }} className="underline underline-offset-4 decoration-foreground/30 hover:text-accent-red">{post.title}</Link>
+          If <Link to="/post/$slug/" params={{ slug: post.slug }} className="underline underline-offset-4 decoration-foreground/30 hover:text-accent-red">{post.title}</Link>
           {post.rating != null ? ` (our verdict: ${post.rating}/10)` : ""} left you scrolling for something similar,
           these {similar.length} picks scratch the same itch. Every one has been watched and reviewed by us — no
           algorithm filler, just what actually comes next.
@@ -286,7 +286,7 @@ function Page() {
               className="grid grid-cols-1 sm:grid-cols-[10rem_minmax(0,1fr)] gap-6 border-b border-foreground/20 pb-8"
             >
               <div>
-                <Link to="/post/$slug" params={{ slug: s.post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
+                <Link to="/post/$slug/" params={{ slug: s.post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
                   {s.post.cover_url && (
                     <img src={s.post.cover_url} alt={s.post.title} className="w-full h-full object-cover object-top" loading="lazy" />
                   )}
@@ -295,7 +295,7 @@ function Page() {
               </div>
               <div className="min-w-0">
                 <span className="card-eyebrow">{i + 1}. {sectionLabel(s.post.section)}</span>
-                <Link to="/post/$slug" params={{ slug: s.post.slug }}>
+                <Link to="/post/$slug/" params={{ slug: s.post.slug }}>
                   <h2 className="card-title-lg mt-2">{s.post.title}</h2>
                 </Link>
                 <p className="card-meta mt-2">
@@ -307,7 +307,7 @@ function Page() {
                 </p>
                 <p className="card-excerpt-sm mt-2">{s.post.excerpt}</p>
                 <Link
-                  to="/post/$slug"
+                  to="/post/$slug/"
                   params={{ slug: s.post.slug }}
                   className="eyebrow text-accent-red hover:underline mt-3 inline-block"
                 >
@@ -355,7 +355,7 @@ function Page() {
 
 
         <div className="mt-12 border-t-2 border-foreground pt-6 flex flex-col gap-2">
-          <Link to="/post/$slug" params={{ slug: post.slug }} className="eyebrow text-accent-red hover:underline">
+          <Link to="/post/$slug/" params={{ slug: post.slug }} className="eyebrow text-accent-red hover:underline">
             ← Read our {post.title} review
           </Link>
           <Link to={sectionTo} className="eyebrow text-accent-red hover:underline">

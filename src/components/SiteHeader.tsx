@@ -33,10 +33,10 @@ export function SiteHeader() {
 
   const navLinks = [
     { to: "/", label: "Home", exact: true },
-    { to: "/tv", label: "The Stream" },
-    { to: "/true-crime", label: "The Scream" },
-    { to: "/tv-news", label: "TV News" },
-    ...(signedIn ? [{ to: "/admin" as const, label: "Admin" }] : []),
+    { to: "/tv/", label: "The Stream" },
+    { to: "/true-crime/", label: "The Scream" },
+    { to: "/tv-news/", label: "TV News" },
+    ...(signedIn ? [{ to: "/admin/" as const, label: "Admin" }] : []),
     
   ];
 
@@ -49,7 +49,7 @@ export function SiteHeader() {
     e.preventDefault();
     const q = query.trim();
     if (!q) return;
-    navigate({ to: "/search", search: { q, tag: "", streamer: "" } });
+    navigate({ to: "/search/", search: { q, tag: "", streamer: "" } });
     closeMenu();
   };
 
@@ -93,7 +93,7 @@ export function SiteHeader() {
                           {topResults.map((p: { id: string; slug: string; title: string }) => (
                             <li key={p.id}>
                               <Link
-                                to="/post/$slug"
+                                to="/post/$slug/"
                                 params={{ slug: p.slug }}
                                 onClick={closeMenu}
                                 className="block py-1.5 text-xs normal-case tracking-normal font-sans text-foreground hover:text-accent-red"
@@ -164,9 +164,9 @@ export function SiteFooter() {
           <p className="font-display text-lg lowercase">stream & scream</p>
           <nav className="flex flex-wrap justify-center gap-6 uppercase tracking-widest font-display text-xs">
             <Link to="/">Home</Link>
-            <Link to="/tv">The Stream</Link>
-            <Link to="/true-crime">The Scream</Link>
-            <Link to="/tv-news">TV News</Link>
+            <Link to="/tv/">The Stream</Link>
+            <Link to="/true-crime/">The Scream</Link>
+            <Link to="/tv-news/">TV News</Link>
           </nav>
           <p className="text-muted-foreground lowercase">© {new Date().getFullYear()} stream & scream</p>
         </div>
