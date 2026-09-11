@@ -14,7 +14,7 @@ export const Route = createFileRoute("/auth")({
   }),
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
-    if (data.user) throw redirect({ to: "/admin" });
+    if (data.user) throw redirect({ to: "/admin/" });
   },
   component: AuthPage,
 });
@@ -29,7 +29,7 @@ function AuthPage() {
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-      if (s) navigate({ to: "/admin" });
+      if (s) navigate({ to: "/admin/" });
     });
     return () => sub.subscription.unsubscribe();
   }, [navigate]);
@@ -44,7 +44,7 @@ function AuthPage() {
       } else {
         const { error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: window.location.origin + "/admin" },
+          options: { emailRedirectTo: window.location.origin + "/admin/" },
         });
         if (error) throw error;
       }

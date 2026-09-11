@@ -98,8 +98,8 @@ function formatDate(iso: string) {
 }
 
 function TvNewsPage() {
-  const { status } = useSearch({ from: "/tv-news" });
-  const navigate = useNavigate({ from: "/tv-news" });
+  const { status } = useSearch({ from: "/tv-news/" });
+  const navigate = useNavigate({ from: "/tv-news/" });
   const { data: items } = useSuspenseQuery(newsQuery(status));
 
   return (

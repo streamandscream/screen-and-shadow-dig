@@ -28,7 +28,7 @@ function NewPost() {
       delete payload.id;
       await saveFn({ data: payload });
       if (payload.published) await deployAfterPublish();
-      navigate({ to: "/admin" });
+      navigate({ to: "/admin/" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Failed"); }
     finally { setSaving(false); }
   }

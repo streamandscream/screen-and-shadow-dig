@@ -94,7 +94,7 @@ function TagsAdmin() {
             </p>
           </div>
           <Link
-            to="/admin"
+            to="/admin/"
             className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm"
           >
             Back to dashboard

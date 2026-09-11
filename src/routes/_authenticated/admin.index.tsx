@@ -51,19 +51,19 @@ function Admin() {
           <h1 className="font-display text-4xl">Editor Dashboard</h1>
           <div className="flex gap-3 flex-wrap">
             <DeployButton />
-            <Link to="/admin/new" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
+            <Link to="/admin/new/" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               New post
             </Link>
-            <Link to="/admin/stream" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
+            <Link to="/admin/stream/" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Manage Stream
             </Link>
-            <Link to="/admin/recommendations" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
+            <Link to="/admin/recommendations/" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Recommendations
             </Link>
-            <Link to="/admin/tags" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
+            <Link to="/admin/tags/" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Tags
             </Link>
-            <Link to="/admin/settings" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
+            <Link to="/admin/settings/" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Settings
             </Link>
             <button onClick={signOut} className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
@@ -90,7 +90,7 @@ function Admin() {
                   <td>{p.section === "tv" ? "The Stream" : "The Scream"}</td>
                   <td>{p.published ? (p.published_at ? `Published · ${new Date(p.published_at).toLocaleDateString()}` : "Published") : p.publish_at ? `Scheduled · ${new Date(p.publish_at).toLocaleString()}` : "Draft"}</td>
                   <td className="text-right">
-                    <Link to="/admin/$id/edit" params={{ id: p.id }} className="underline mr-4">Edit</Link>
+                    <Link to="/admin/$id/edit/" params={{ id: p.id }} className="underline mr-4">Edit</Link>
                     <button
                       onClick={() => remove(p.id)}
                       disabled={deletingId === p.id}

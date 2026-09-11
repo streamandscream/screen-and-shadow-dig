@@ -221,7 +221,7 @@ function Page() {
   const linkMap = new Map((bingeLinks ?? []).map((b) => [b.title.toLowerCase().trim(), b.slug]));
   if (!post) return null;
   const sectionLabel = post.section === "tv" ? "The Stream" : "The Scream";
-  const sectionTo = post.section === "tv" ? "/tv" : "/true-crime";
+  const sectionTo = post.section === "tv" ? "/tv/" : "/true-crime/";
   const quickAnswers = buildQuickAnswers(post as any);
 
   return (
@@ -289,7 +289,7 @@ function Page() {
               {post.tags.map((t: string, i: number) => (
                 <span key={t}>
                   {i > 0 && " "}
-                  <Link to="/tag/$tag" params={{ tag: t }} className="hover:underline hover:text-accent-red active:text-accent-red transition-colors">
+                  <Link to="/tag/$tag/" params={{ tag: t }} className="hover:underline hover:text-accent-red active:text-accent-red transition-colors">
                     #{t}
                   </Link>
                 </span>
@@ -327,7 +327,7 @@ function renderAfterAnswer(answer: string, nextBinge: string[], linkMap: Map<str
           return (
             <li key={title}>
               {matchSlug ? (
-                <Link to="/post/$slug" params={{ slug: matchSlug }} className="underline underline-offset-4 decoration-foreground/30 hover:decoration-accent-red hover:text-accent-red transition-colors">
+                <Link to="/post/$slug/" params={{ slug: matchSlug }} className="underline underline-offset-4 decoration-foreground/30 hover:decoration-accent-red hover:text-accent-red transition-colors">
                   {title}
                 </Link>
               ) : (
@@ -337,7 +337,7 @@ function renderAfterAnswer(answer: string, nextBinge: string[], linkMap: Map<str
           );
         })}
       </ul>
-      See <Link to="/shows-like/$slug" params={{ slug: postSlug }} className="underline hover:text-accent-red transition-colors">more shows like this</Link>.
+      See <Link to="/shows-like/$slug/" params={{ slug: postSlug }} className="underline hover:text-accent-red transition-colors">more shows like this</Link>.
     </>
   );
 }

@@ -53,7 +53,7 @@ function EditPost() {
         what_is_it_about: form.what_is_it_about?.trim() ? form.what_is_it_about.trim() : null,
       } });
       if (!scheduled && form.published) await deployAfterPublish();
-      navigate({ to: "/admin" });
+      navigate({ to: "/admin/" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Failed"); }
     finally { setSaving(false); }
   }

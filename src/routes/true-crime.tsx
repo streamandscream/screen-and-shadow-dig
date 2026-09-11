@@ -115,8 +115,8 @@ export const Route = createFileRoute("/true-crime")({
 });
 
 function Page() {
-  const { sort } = useSearch({ from: "/true-crime" });
-  const navigate = useNavigate({ from: "/true-crime" });
+  const { sort } = useSearch({ from: "/true-crime/" });
+  const navigate = useNavigate({ from: "/true-crime/" });
   const { data } = useSuspenseQuery(postsQuery(sort));
 
   const updateSort = (value: "newest" | "highest_score" | "lowest_score" | "") => {

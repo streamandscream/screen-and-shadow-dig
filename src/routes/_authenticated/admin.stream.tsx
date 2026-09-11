@@ -54,7 +54,7 @@ function StreamAdmin() {
             </p>
           </div>
           <Link
-            to="/admin"
+            to="/admin/"
             className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm"
           >
             Back to dashboard
@@ -95,7 +95,7 @@ function StreamAdmin() {
                   <td className="pr-4">{p.published ? "Published" : "Draft"}</td>
                   <td className="text-right py-3">
                     <Link
-                      to="/admin/$id/edit"
+                      to="/admin/$id/edit/"
                       params={{ id: p.id }}
                       className="underline mr-4"
                     >

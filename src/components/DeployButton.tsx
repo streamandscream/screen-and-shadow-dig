@@ -28,7 +28,7 @@ export function DeployButton({ className = "" }: { className?: string }) {
   if (data && !data.configured) {
     return (
       <Link
-        to="/admin/settings"
+        to="/admin/settings/"
         className={`border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm ${className}`}
       >
         Set up publishing

@@ -24,7 +24,7 @@ function RecommendationsEditor() {
       <main className="mx-auto max-w-5xl px-6 py-12 w-full flex-1">
         <div className="flex items-center justify-between border-b-2 border-foreground pb-4">
           <h1 className="font-display text-4xl">Edit Recommendations</h1>
-          <Link to="/admin" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
+          <Link to="/admin/" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
             Back to dashboard
           </Link>
         </div>
@@ -75,7 +75,7 @@ function PostRecommendationsCard({ post, saveFn, onSaved }: { post: any; saveFn:
     <div className="border border-foreground/30 p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xl">{post.title}</h2>
-        <Link to="/admin/$id/edit" params={{ id: post.id }} className="text-sm underline text-muted-foreground">
+        <Link to="/admin/$id/edit/" params={{ id: post.id }} className="text-sm underline text-muted-foreground">
           Full edit
         </Link>
       </div>

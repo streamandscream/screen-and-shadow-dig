@@ -52,7 +52,7 @@ export function FeatureCard({ post }: { post: PostCardData }) {
   return (
     <article className="grid md:grid-cols-2 gap-8 border-b-2 border-foreground pb-10">
       <div>
-        <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3] md:aspect-[3/4]">
+        <Link to="/post/$slug/" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3] md:aspect-[3/4]">
           {post.cover_url && (
             <img src={post.cover_url} alt={post.cover_alt || `${post.title} poster art`} className="w-full h-full object-cover object-top" loading="lazy" />
           )}
@@ -61,7 +61,7 @@ export function FeatureCard({ post }: { post: PostCardData }) {
       </div>
       <div className="flex flex-col justify-center">
         <span className="card-eyebrow">{label(post.section)}</span>
-        <Link to="/post/$slug" params={{ slug: post.slug }}>
+        <Link to="/post/$slug/" params={{ slug: post.slug }}>
           <h2 className="card-title-lg mt-3">{post.title}</h2>
         </Link>
         <p className="card-excerpt-lg mt-4">{post.excerpt}</p>
@@ -77,14 +77,14 @@ export function FeatureCard({ post }: { post: PostCardData }) {
 export function PostCard({ post, showWhereToWatch = true }: { post: PostCardData; showWhereToWatch?: boolean }) {
   return (
     <article className="flex flex-col">
-      <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
+      <Link to="/post/$slug/" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
         {post.cover_url && (
           <img src={post.cover_url} alt={post.cover_alt || `${post.title} poster art`} className="w-full h-full object-cover object-top" loading="lazy" />
         )}
       </Link>
       {post.cover_url && <p className="card-credit mt-1">Image courtesy of TMDB. Used under license.</p>}
       <span className="card-eyebrow mt-3">{label(post.section)}</span>
-      <Link to="/post/$slug" params={{ slug: post.slug }}>
+      <Link to="/post/$slug/" params={{ slug: post.slug }}>
         <h2 className="card-title-sm mt-2">{post.title}</h2>
       </Link>
       <p className="card-excerpt-sm mt-2 line-clamp-3">{post.excerpt}</p>
@@ -99,7 +99,7 @@ export function HorizontalPostCard({ post, showWhereToWatch = true }: { post: Po
   return (
     <article className="grid grid-cols-1 sm:grid-cols-[12rem_minmax(0,1fr)] md:grid-cols-[14rem_minmax(0,1fr)] gap-6 border-b border-foreground/20 pb-8">
       <div>
-        <Link to="/post/$slug" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
+        <Link to="/post/$slug/" params={{ slug: post.slug }} className="block overflow-hidden bg-paper aspect-[2/3]">
           {post.cover_url && (
             <img src={post.cover_url} alt={post.cover_alt || `${post.title} poster art`} className="w-full h-full object-cover object-top" loading="lazy" />
           )}
@@ -108,7 +108,7 @@ export function HorizontalPostCard({ post, showWhereToWatch = true }: { post: Po
       </div>
       <div className="min-w-0 flex flex-col">
         <span className="card-eyebrow">{label(post.section)}</span>
-        <Link to="/post/$slug" params={{ slug: post.slug }}>
+        <Link to="/post/$slug/" params={{ slug: post.slug }}>
           <h2 className="card-title-lg mt-2">{post.title}</h2>
         </Link>
         <p className="card-excerpt-sm mt-3">{post.excerpt}</p>
