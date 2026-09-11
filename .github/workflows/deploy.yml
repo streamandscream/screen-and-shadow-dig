@@ -15,7 +15,10 @@ on:
 # waits for the active deployment instead of cancelling it halfway through.
 concurrency:
   group: hostinger-production
-  cancel-in-progress: true
+  # Never cancel an upload after it starts. Cancellation between the supporting
+  # file upload and homepage activation can leave Hostinger without index.html.
+  # New pushes and scheduled runs wait for the active deployment instead.
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
