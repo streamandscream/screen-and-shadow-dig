@@ -62,8 +62,8 @@ export const Route = createFileRoute("/search")({
 });
 
 function SearchPage() {
-  const { q, tag, streamer } = useSearch({ from: "/search/" });
-  const navigate = useNavigate({ from: "/search/" });
+  const { q, tag, streamer } = useSearch({ from: "/search" });
+  const navigate = useNavigate({ from: "/search" });
   const active = q || tag || streamer;
 
   const { data: results } = useSuspenseQuery(

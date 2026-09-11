@@ -84,8 +84,8 @@ export const Route = createFileRoute("/tv")({
 });
 
 function Page() {
-  const { minRating, maxRating, sort } = useSearch({ from: "/tv/" });
-  const navigate = useNavigate({ from: "/tv/" });
+  const { minRating, maxRating, sort } = useSearch({ from: "/tv" });
+  const navigate = useNavigate({ from: "/tv" });
   const { data } = useSuspenseQuery(postsQuery(minRating, maxRating, sort));
 
   const updateSort = (value: "newest" | "highest_score" | "lowest_score" | "") => {
