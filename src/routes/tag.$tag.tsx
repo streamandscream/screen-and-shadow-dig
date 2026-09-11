@@ -13,7 +13,7 @@ const tagQuery = (tag: string) =>
 export const Route = createFileRoute("/tag/$tag")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(tagQuery(params.tag)),
   head: ({ params, loaderData }: { params: { tag: string }; loaderData?: any }) => {
-    const url = `https://streamandscream.com/tag/${encodeURIComponent(params.tag)}`;
+    const url = `https://streamandscream.com/tag/${encodeURIComponent(params.tag)}/`;
     const image = "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png";
     return {
       meta: [
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/tag/$tag")({
               "itemListElement": (loaderData ?? []).slice(0, 50).map((p: any, i: number) => ({
                 "@type": "ListItem",
                 "position": i + 1,
-                "url": `https://streamandscream.com/post/${p.slug}`,
+                "url": `https://streamandscream.com/post/${p.slug}/`,
                 "name": p.title,
               })),
             },

@@ -25,7 +25,7 @@ export const Route = createFileRoute("/post/$slug")({
     return post;
   },
   head: ({ params, loaderData }) => {
-    const url = `https://streamandscream.com/post/${params.slug}`;
+    const url = `https://streamandscream.com/post/${params.slug}/`;
     if (!loaderData) {
       return { meta: [{ title: "Not found — Stream & Scream" }, { name: "robots", content: "noindex" }] };
     }
@@ -174,7 +174,7 @@ export const Route = createFileRoute("/post/$slug")({
                 "@type": "ListItem",
                 "position": 2,
                 "name": loaderData.section === "tv" ? "The Stream" : "The Scream",
-                "item": loaderData.section === "tv" ? "https://streamandscream.com/tv" : "https://streamandscream.com/true-crime",
+                "item": loaderData.section === "tv" ? "https://streamandscream.com/tv/" : "https://streamandscream.com/true-crime/",
               },
               { "@type": "ListItem", "position": 3, "name": loaderData.title, "item": url },
             ],
