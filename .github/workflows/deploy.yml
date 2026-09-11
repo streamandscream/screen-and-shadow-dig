@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+  # Safety net for scheduled reviews: rebuilding regularly republishes the
+  # database-backed static pages and sitemap even if an admin dispatch was
+  # not configured or GitHub missed it.
+  schedule:
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 # Never let two uploads write to public_html at the same time. A newer push
@@ -371,16 +376,20 @@ jobs:
             [ "${c}" = "200" ] || { echo "ERROR: ${p} missing on the server." >&2; exit 1; }
           done
 
-          # Hostinger's directory handling canonicalizes prerendered folders
-          # such as /tv to /tv/. Follow that single canonical redirect and
-          # verify the final response. Missing nested index.html files still
-          # finish as 403/404 and correctly fail this deployment.
+          # Verify the canonical trailing-slash URLs directly. These are the
+          # exact URLs emitted in metadata and sitemap.xml, so Google should
+          # not need to pass through a redirect before reaching the page.
           SLUG="$(ls dist/client/post | head -1)"
-          for p in "/tv" "/post/${SLUG}"; do
-            result=$(curl -sS -L --max-redirs 2 -o /dev/null -w '%{http_code} %{url_effective}' "${SITE_URL}${p}")
-            c="${result%% *}"
-            final_url="${result#* }"
-            echo "${p} -> ${c} (${final_url})"
-            [ "${c}" = "200" ] || { echo "ERROR: ${p} finished with ${c} — prerendered pages are missing or inaccessible." >&2; exit 1; }
+          for p in "/tv/" "/post/${SLUG}/"; do
+            c=$(curl -sS -o /dev/null -w '%{http_code}' "${SITE_URL}${p}")
+            echo "${p} -> ${c}"
+            [ "${c}" = "200" ] || { echo "ERROR: canonical page ${p} returned ${c}." >&2; exit 1; }
           done
+
+          SITEMAP="$(curl -sS --fail "${SITE_URL}/sitemap.xml")"
+          printf '%s' "${SITEMAP}" | grep -Fq "<loc>${SITE_URL}/post/${SLUG}/</loc>" || {
+            echo "ERROR: the deployed sitemap does not contain the verified post /post/${SLUG}/." >&2
+            exit 1
+          }
+          echo "SUCCESS: canonical post page is live and listed in sitemap.xml."
 
