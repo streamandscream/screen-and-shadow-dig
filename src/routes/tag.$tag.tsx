@@ -45,7 +45,7 @@ export const Route = createFileRoute("/tag/$tag")({
               "itemListElement": (loaderData ?? []).slice(0, 50).map((p: any, i: number) => ({
                 "@type": "ListItem",
                 "position": i + 1,
-                "url": `https://streamandscream.com/post/${p.slug}`,
+                "url": `https://streamandscream.com/post/${p.slug}/`,
                 "name": p.title,
               })),
             },

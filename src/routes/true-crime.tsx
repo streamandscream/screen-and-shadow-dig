@@ -53,7 +53,7 @@ export const Route = createFileRoute("/true-crime")({
             "itemListElement": (loaderData ?? []).slice(0, 30).map((p: any, i: number) => ({
               "@type": "ListItem",
               "position": i + 1,
-              "url": `https://streamandscream.com/post/${p.slug}`,
+              "url": `https://streamandscream.com/post/${p.slug}/`,
               "name": p.title,
             })),
           },
@@ -86,7 +86,7 @@ export const Route = createFileRoute("/true-crime")({
               "name": "What shows are like A Toxic Love Story?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "If you're looking for shows like A Toxic Love Story, try Mr & Mrs Murder, The Trial of Karen Read, and Unknown Number: The High School Catfish — all reviewed on The Scream. Read our full A Toxic Love Story verdict at https://streamandscream.com/post/a-toxic-love-story.",
+                "text": "If you're looking for shows like A Toxic Love Story, try Mr & Mrs Murder, The Trial of Karen Read, and Unknown Number: The High School Catfish — all reviewed on The Scream. Read our full A Toxic Love Story verdict at https://streamandscream.com/post/a-toxic-love-story/.",
               },
             },
           ],

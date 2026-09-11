@@ -64,7 +64,7 @@ export const Route = createFileRoute("/shows-like/$slug")({
     const description = `Loved ${post.title}? Here are ${count} similar shows worth your time, including ${top.join(" and ")} — with verdicts and where to watch.`;
     const image = post.cover_url;
     const label = sectionLabel(post.section);
-    const sectionUrl = post.section === "tv" ? `${BASE}/tv` : `${BASE}/true-crime`;
+    const sectionUrl = post.section === "tv" ? `${BASE}/tv/` : `${BASE}/true-crime/`;
     const rated = similar.filter((s) => s.post.rating != null);
     const best = rated.length
       ? rated.reduce((a, b) => ((b.post.rating ?? 0) > (a.post.rating ?? 0) ? b : a))
@@ -146,7 +146,7 @@ export const Route = createFileRoute("/shows-like/$slug")({
                 about: {
                   "@type": "TVSeries",
                   name: post.title,
-                  url: `${BASE}/post/${post.slug}`,
+                  url: `${BASE}/post/${post.slug}/`,
                   ...(post.cover_url ? { image: post.cover_url } : {}),
                 },
                 mainEntity: { "@id": `${url}#itemlist` },
@@ -163,13 +163,13 @@ export const Route = createFileRoute("/shows-like/$slug")({
                 itemListElement: similar.map((s, i) => ({
                   "@type": "ListItem",
                   position: i + 1,
-                  url: `${BASE}/post/${s.post.slug}`,
+                  url: `${BASE}/post/${s.post.slug}/`,
                   name: s.post.title,
                   item: {
                     "@type": "TVSeries",
                     "@id": `${BASE}/post/${s.post.slug}#show`,
                     name: s.post.title,
-                    url: `${BASE}/post/${s.post.slug}`,
+                    url: `${BASE}/post/${s.post.slug}/`,
                     description: clean(s.post.excerpt, 300),
                     ...(s.post.cover_url ? { image: s.post.cover_url } : {}),
                     ...(s.post.tags?.length ? { genre: s.post.tags.slice(0, 5) } : {}),
@@ -177,7 +177,7 @@ export const Route = createFileRoute("/shows-like/$slug")({
                       ? {
                           potentialAction: {
                             "@type": "WatchAction",
-                            target: `${BASE}/post/${s.post.slug}`,
+                            target: `${BASE}/post/${s.post.slug}/`,
                             name: `Watch on ${s.post.streamer}`,
                           },
                         }
@@ -187,7 +187,7 @@ export const Route = createFileRoute("/shows-like/$slug")({
                           review: {
                             "@type": "Review",
                             name: `${s.post.title} review`,
-                            url: `${BASE}/post/${s.post.slug}`,
+                            url: `${BASE}/post/${s.post.slug}/`,
                             reviewBody: clean(s.post.excerpt, 300),
                             author: { "@type": "Organization", name: "Stream & Scream" },
                             publisher,
@@ -209,7 +209,7 @@ export const Route = createFileRoute("/shows-like/$slug")({
                 itemListElement: [
                   { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
                   { "@type": "ListItem", position: 2, name: label, item: sectionUrl },
-                  { "@type": "ListItem", position: 3, name: post.title, item: `${BASE}/post/${post.slug}` },
+                  { "@type": "ListItem", position: 3, name: post.title, item: `${BASE}/post/${post.slug}/` },
                   { "@type": "ListItem", position: 4, name: `Shows like ${post.title}`, item: url },
                 ],
               },
