@@ -29,14 +29,14 @@ export const Route = createFileRoute("/true-crime")({
       { property: "og:title", content: "Best True Crime 2026 — Reviews & Picks | The Scream" },
       { property: "og:description", content: "The best true crime of 2026 — honest reviews of the docs and series everyone's talking about, including true crime like The Crash. Updated weekly." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://streamandscream.com/true-crime" },
+      { property: "og:url", content: "https://streamandscream.com/true-crime/" },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Best True Crime 2026 — Reviews & Picks | The Scream" },
       { name: "twitter:description", content: "The best true crime of 2026 — honest reviews of the docs and series everyone's talking about, including true crime like The Crash." },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
     ],
-    links: [{ rel: "canonical", href: "https://streamandscream.com/true-crime" }],
+    links: [{ rel: "canonical", href: "https://streamandscream.com/true-crime/" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/true-crime")({
           "@context": "https://schema.org",
           "@type": "CollectionPage",
           "name": "Best True Crime 2026 — Reviews & Picks",
-          "url": "https://streamandscream.com/true-crime",
+          "url": "https://streamandscream.com/true-crime/",
           "description": "The best true crime of 2026 — honest reviews of the docs and series everyone's talking about, including true crime like The Crash.",
           "mainEntity": {
             "@type": "ItemList",
@@ -99,7 +99,7 @@ export const Route = createFileRoute("/true-crime")({
           "@type": "BreadcrumbList",
           "itemListElement": [
             { "@type": "ListItem", position: 1, name: "Home", item: "https://streamandscream.com/" },
-            { "@type": "ListItem", position: 2, name: "The Scream", item: "https://streamandscream.com/true-crime" },
+            { "@type": "ListItem", position: 2, name: "The Scream", item: "https://streamandscream.com/true-crime/" },
           ],
         }),
       },

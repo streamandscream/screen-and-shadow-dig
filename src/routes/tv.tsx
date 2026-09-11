@@ -29,14 +29,14 @@ export const Route = createFileRoute("/tv")({
       { property: "og:title", content: "The Stream — Prestige TV Reviews & Recommendations" },
       { property: "og:description", content: "Honest reviews of prestige TV: dramas, thrillers, and new-adult favourites." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://streamandscream.com/tv" },
+      { property: "og:url", content: "https://streamandscream.com/tv/" },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "The Stream — Prestige TV Reviews & Recommendations" },
       { name: "twitter:description", content: "Honest reviews of prestige TV: dramas, thrillers, and new-adult favourites." },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
     ],
-    links: [{ rel: "canonical", href: "https://streamandscream.com/tv" }],
+    links: [{ rel: "canonical", href: "https://streamandscream.com/tv/" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/tv")({
           "@context": "https://schema.org",
           "@type": "CollectionPage",
           "name": "The Stream — Prestige TV Reviews",
-          "url": "https://streamandscream.com/tv",
+          "url": "https://streamandscream.com/tv/",
           "description": "Honest reviews of prestige TV: dramas, thrillers, and new-adult favourites.",
           "mainEntity": {
             "@type": "ItemList",
@@ -66,7 +66,7 @@ export const Route = createFileRoute("/tv")({
           "@type": "BreadcrumbList",
           "itemListElement": [
             { "@type": "ListItem", position: 1, name: "Home", item: "https://streamandscream.com/" },
-            { "@type": "ListItem", position: 2, name: "The Stream", item: "https://streamandscream.com/tv" },
+            { "@type": "ListItem", position: 2, name: "The Stream", item: "https://streamandscream.com/tv/" },
           ],
         }),
       },

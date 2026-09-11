@@ -48,7 +48,7 @@ export const Route = createFileRoute("/shows-like/$slug")({
     return data as LoaderData;
   },
   head: ({ params, loaderData }) => {
-    const url = `${BASE}/shows-like/${params.slug}`;
+    const url = `${BASE}/shows-like/${params.slug}/`;
     if (!loaderData) {
       return {
         meta: [

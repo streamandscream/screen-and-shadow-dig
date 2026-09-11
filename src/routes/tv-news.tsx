@@ -28,14 +28,14 @@ export const Route = createFileRoute("/tv-news")({
       { property: "og:title", content: "TV News — Which Shows Were Renewed or Cancelled" },
       { property: "og:description", content: "The latest renewal and cancellation news across every network and streamer." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://streamandscream.com/tv-news" },
+      { property: "og:url", content: "https://streamandscream.com/tv-news/" },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "TV News — Renewed or Cancelled" },
       { name: "twitter:description", content: "The latest renewal and cancellation news across every network and streamer." },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b0139682-870e-420a-b74e-01fbe6391786/id-preview-4d192517--dad7afb7-252d-48b3-bcc7-2f67eb212463.lovable.app-1784689894793.png" },
     ],
-    links: [{ rel: "canonical", href: "https://streamandscream.com/tv-news" }],
+    links: [{ rel: "canonical", href: "https://streamandscream.com/tv-news/" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/tv-news")({
           "@context": "https://schema.org",
           "@type": "ItemList",
           name: "TV News: Cancelled & Renewed",
-          url: "https://streamandscream.com/tv-news",
+          url: "https://streamandscream.com/tv-news/",
           itemListElement: (loaderData ?? []).slice(0, 20).map((item, i) => ({
             "@type": "ListItem",
             position: i + 1,
@@ -73,7 +73,7 @@ export const Route = createFileRoute("/tv-news")({
           "@type": "BreadcrumbList",
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Home", item: "https://streamandscream.com/" },
-            { "@type": "ListItem", position: 2, name: "TV News", item: "https://streamandscream.com/tv-news" },
+            { "@type": "ListItem", position: 2, name: "TV News", item: "https://streamandscream.com/tv-news/" },
           ],
         }),
       },
