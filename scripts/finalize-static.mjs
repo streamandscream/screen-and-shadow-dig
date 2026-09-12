@@ -6,6 +6,7 @@ import { cp, readFile, writeFile, access, rm, stat } from "node:fs/promises";
 import { join } from "node:path";
 
 const OUT = "dist/client";
+const MANIFEST = ".static-post-manifest.json";
 
 // The SPA shell is prerendered at /shell (see vite.config.ts spa.maskPath).
 const shell =
@@ -58,11 +59,48 @@ if (sitemap) {
   await writeFile(sitemapPath, cleaned);
 }
 
+// Refuse to deploy a partial build. Every published database slug captured
+// before prerendering must have both static pages and canonical sitemap URLs.
+const manifest = await readFile(MANIFEST, "utf8").catch(() => null);
+if (!manifest) {
+  console.error("[static] Published-post manifest is missing.");
+  process.exit(1);
+}
+const publishedSlugs = JSON.parse(manifest);
+if (!Array.isArray(publishedSlugs)) {
+  console.error("[static] Published-post manifest is invalid.");
+  process.exit(1);
+}
+const finalSitemap = await readFile(sitemapPath, "utf8").catch(() => null);
+if (!finalSitemap) {
+  console.error("[static] sitemap.xml is missing.");
+  process.exit(1);
+}
+
+const missing = [];
+for (const slug of publishedSlugs) {
+  const postPage = join(OUT, "post", slug, "index.html");
+  const similarPage = join(OUT, "shows-like", slug, "index.html");
+  const postUrl = `https://streamandscream.com/post/${slug}/`;
+  const similarUrl = `https://streamandscream.com/shows-like/${slug}/`;
+  const postSize = await stat(postPage).then((value) => value.size).catch(() => 0);
+  const similarSize = await stat(similarPage).then((value) => value.size).catch(() => 0);
+  if (postSize === 0) missing.push(`post page: ${slug}`);
+  if (similarSize === 0) missing.push(`shows-like page: ${slug}`);
+  if (!finalSitemap.includes(`<loc>${postUrl}</loc>`)) missing.push(`sitemap post: ${slug}`);
+  if (!finalSitemap.includes(`<loc>${similarUrl}</loc>`)) missing.push(`sitemap shows-like: ${slug}`);
+}
+if (missing.length > 0) {
+  console.error(`[static] Incomplete published output:\n${missing.join("\n")}`);
+  process.exit(1);
+}
+await rm(MANIFEST, { force: true });
+
 // Don't ship prerendered editor pages
 await rm(join(OUT, "admin"), { recursive: true, force: true });
 await rm(join(OUT, "auth"), { recursive: true, force: true });
 
 const { size } = await stat(homePath);
 console.log(
-  `[static] Output ready in ${OUT} — real homepage at index.html (${size} bytes), spa.html fallback, sitemap cleaned.`,
+  `[static] Output ready in ${OUT} — ${publishedSlugs.length} published reviews and recommendation pages verified. Homepage: ${size} bytes.`,
 );
