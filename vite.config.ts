@@ -5,6 +5,7 @@
 //     error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { writeFile } from "node:fs/promises";
 
 // Static (Hostinger / Apache shared hosting) build:
 //   STATIC_BUILD=1 vite build
@@ -16,22 +17,31 @@ const SITE_URL = process.env["SITE_URL"] || "https://streamandscream.com";
 async function getPostPages(): Promise<{ path: string }[]> {
   const url = process.env["VITE_SUPABASE_URL"];
   const key = process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
-  if (!url || !key) return [];
-  try {
-    const res = await fetch(
-      `${url}/rest/v1/posts?select=slug&published=eq.true&order=created_at.desc&limit=1000`,
-      { headers: { apikey: key, Accept: "application/json" } },
-    );
-    if (!res.ok) return [];
-    const rows = (await res.json()) as { slug: string }[];
-    const slugs = rows.filter((r) => r.slug).map((r) => r.slug);
-    return [
-      ...slugs.map((slug) => ({ path: `/post/${slug}` })),
-      ...slugs.map((slug) => ({ path: `/shows-like/${slug}` })),
-    ];
-  } catch {
-    return [];
+  if (!url || !key) {
+    throw new Error("Static build requires the public database URL and key to load published posts.");
   }
+
+  const res = await fetch(
+    `${url}/rest/v1/posts?select=slug&published=eq.true&order=created_at.desc&limit=1000`,
+    { headers: { apikey: key, Accept: "application/json" } },
+  );
+  if (!res.ok) {
+    throw new Error(`Could not load published posts for the static build [${res.status}]: ${await res.text()}`);
+  }
+
+  const rows = (await res.json()) as { slug?: unknown }[];
+  const slugs = rows.map((row) => row.slug).filter((slug): slug is string => typeof slug === "string" && slug.length > 0);
+  if (slugs.length !== rows.length) throw new Error("A published post has a missing or invalid slug.");
+  if (new Set(slugs).size !== slugs.length) throw new Error("Published post slugs must be unique.");
+
+  // The post-build check uses this exact source-of-truth list. If even one
+  // page or sitemap entry is absent, the build fails before Hostinger upload.
+  await writeFile(".static-post-manifest.json", JSON.stringify(slugs));
+
+  return [
+    ...slugs.map((slug) => ({ path: `/post/${slug}` })),
+    ...slugs.map((slug) => ({ path: `/shows-like/${slug}` })),
+  ];
 }
 
 const staticPages = STATIC ? await getPostPages() : [];

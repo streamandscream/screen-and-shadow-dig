@@ -148,6 +148,16 @@ jobs:
             fi
           done
 
+          POST_COUNT="$(find dist/client/post -mindepth 2 -maxdepth 2 -type f -name index.html | wc -l | tr -d ' ')"
+          SHOWS_LIKE_COUNT="$(find dist/client/shows-like -mindepth 2 -maxdepth 2 -type f -name index.html | wc -l | tr -d ' ')"
+          SITEMAP_POST_COUNT="$(grep -ao '<loc>https://streamandscream.com/post/[^<]*/</loc>' dist/client/sitemap.xml | wc -l | tr -d ' ')"
+          SITEMAP_SHOWS_LIKE_COUNT="$(grep -ao '<loc>https://streamandscream.com/shows-like/[^<]*/</loc>' dist/client/sitemap.xml | wc -l | tr -d ' ')"
+          echo "Published output: ${POST_COUNT} reviews, ${SHOWS_LIKE_COUNT} recommendation pages"
+          if [ "${POST_COUNT}" -eq 0 ] || [ "${POST_COUNT}" != "${SHOWS_LIKE_COUNT}" ] || [ "${POST_COUNT}" != "${SITEMAP_POST_COUNT}" ] || [ "${POST_COUNT}" != "${SITEMAP_SHOWS_LIKE_COUNT}" ]; then
+            echo "ERROR: static pages and sitemap entries do not match; refusing to upload an incomplete site." >&2
+            exit 1
+          fi
+
           echo "SUCCESS: dist/client/index.html is the real homepage ($(wc -c < dist/client/index.html) bytes)"
 
       - name: Confirm FTP deployment target
@@ -394,5 +404,19 @@ jobs:
             echo "ERROR: the deployed sitemap does not contain the verified post /post/${SLUG}/." >&2
             exit 1
           }
-          echo "SUCCESS: canonical post page is live and listed in sitemap.xml."
+          LIVE_POST_COUNT=0
+          while IFS= read -r POST_URL; do
+            [ -n "${POST_URL}" ] || continue
+            c=$(curl -sS -o /dev/null -w '%{http_code}' "${POST_URL}")
+            if [ "${c}" != "200" ]; then
+              echo "ERROR: published review ${POST_URL} returned ${c}." >&2
+              exit 1
+            fi
+            LIVE_POST_COUNT=$((LIVE_POST_COUNT + 1))
+          done < <(printf '%s' "${SITEMAP}" | grep -ao '<loc>https://streamandscream.com/post/[^<]*/</loc>' | sed -e 's#<loc>##' -e 's#</loc>##')
+          if [ "${LIVE_POST_COUNT}" -eq 0 ]; then
+            echo "ERROR: the live sitemap contains no review pages." >&2
+            exit 1
+          fi
+          echo "SUCCESS: all ${LIVE_POST_COUNT} canonical review pages are live and listed in sitemap.xml."
 
