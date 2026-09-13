@@ -130,7 +130,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           ],
         }),
       },
-      { src: "https://s.skimresources.com/js/306364X1794609.skimlinks.js", type: "text/javascript" },
       ...(GA_ID
         ? [
             {
@@ -160,6 +159,7 @@ function RootShell({ children }: { children: ReactNode }) {
         {children}
         <Scripts />
         <script
+          async
           type="text/javascript"
           src="https://s.skimresources.com/js/309234X1797573.skimlinks.js"
         />
