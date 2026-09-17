@@ -6,4 +6,5 @@
 - [x] Fail static builds when any published review page or sitemap entry is missing.
 - [x] Verify every published review after each Hostinger deployment.
 - [x] Consolidate duplicate slashless review URLs onto sitemap canonical URLs.
-- [ ] Publish the canonical redirect and resubmit the live sitemap to Google.
+- [x] Resubmit the live sitemap to Google after the canonical redirect change.
+- [ ] Publish the canonical redirect to Hostinger (blocked until Publishing settings are configured).
