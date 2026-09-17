@@ -5,3 +5,5 @@
 - [x] Verify live sitemap coverage and direct page responses.
 - [x] Fail static builds when any published review page or sitemap entry is missing.
 - [x] Verify every published review after each Hostinger deployment.
+- [x] Consolidate duplicate slashless review URLs onto sitemap canonical URLs.
+- [ ] Publish the canonical redirect and resubmit the live sitemap to Google.
