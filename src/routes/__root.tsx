@@ -158,11 +158,6 @@ function RootShell({ children }: { children: ReactNode }) {
       <body>
         {children}
         <Scripts />
-        <script
-          async
-          type="text/javascript"
-          src="https://s.skimresources.com/js/309234X1797573.skimlinks.js"
-        />
       </body>
     </html>
   );
