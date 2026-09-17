@@ -3,8 +3,8 @@
 
 Options -Indexes
 DirectoryIndex index.html
-# Never 301 /post/x -> /post/x/ just because a prerendered folder exists.
-# Google reported those redirects as "Page with redirect" for sitemap URLs.
+# Apache must not add an extra redirect itself; the canonical redirect below
+# handles extensionless prerendered routes in one predictable hop.
 DirectorySlash Off
 
 <IfModule mod_rewrite.c>
@@ -18,6 +18,12 @@ DirectorySlash Off
 
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteRule ^ https://streamandscream.com%{REQUEST_URI} [L,R=301]
+
+  # Consolidate duplicate review URLs. Sitemap and canonical tags use the
+  # trailing slash, so redirect /post/x to /post/x/ before serving HTML.
+  RewriteCond %{REQUEST_URI} !/$
+  RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
+  RewriteRule ^(.+)$ https://streamandscream.com/$1/ [L,R=301]
 
   # Serve existing files as-is (assets, sitemap, robots)
   RewriteCond %{REQUEST_FILENAME} -f
