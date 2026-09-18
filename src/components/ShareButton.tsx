@@ -1,4 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { Instagram } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type ShareButtonProps = {
   title: string;
@@ -10,47 +13,10 @@ type ShareButtonProps = {
 };
 
 export function ShareButton({ title, description, url, image, className }: ShareButtonProps) {
-  const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
 
   const text = description?.trim() || title;
-
-  const canNativeShare = () =>
-    typeof navigator !== "undefined" &&
-    typeof navigator.share === "function" &&
-    (!navigator.canShare || navigator.canShare({ title, text, url }));
-
-  const handleClick = async () => {
-    if (canNativeShare()) {
-      try {
-        await navigator.share({ title, text, url });
-        return;
-      } catch {
-        // User dismissed the sheet or it failed — fall through to menu only on real failure
-        return;
-      }
-    }
-    setOpen((v) => !v);
-  };
-
-  const copyLink = async () => {
+  const copyLink = async (): Promise<void> => {
     try {
       await navigator.clipboard.writeText(url);
     } catch {
@@ -62,75 +28,68 @@ export function ShareButton({ title, description, url, image, className }: Share
       ta.remove();
     }
     setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-      setOpen(false);
-    }, 1200);
+    window.setTimeout(() => setCopied(false), 1800);
   };
 
   const enc = encodeURIComponent;
-  const links: { label: string; href: string }[] = [
+  const links: { label: string; href: string; className: string; icon: string }[] = [
     {
       label: "Pinterest",
       href: `https://pinterest.com/pin/create/button/?url=${enc(url)}${image ? `&media=${enc(image)}` : ""}&description=${enc(`${title} — ${text}`)}`,
-    },
-    {
-      label: "Email",
-      href: `mailto:?subject=${enc(title)}&body=${enc(`${text}\n\n${url}`)}`,
-    },
-    {
-      label: "Facebook",
-      href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`,
+      className: "social-share-pinterest",
+      icon: "P",
     },
     {
       label: "X",
       href: `https://twitter.com/intent/tweet?url=${enc(url)}&text=${enc(title)}`,
+      className: "social-share-x",
+      icon: "𝕏",
     },
     {
-      label: "WhatsApp",
-      href: `https://wa.me/?text=${enc(`${title} ${url}`)}`,
+      label: "Facebook",
+      href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`,
+      className: "social-share-facebook",
+      icon: "f",
     },
   ];
 
+  const shareToInstagram = async () => {
+    const instagramWindow = window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+    await copyLink();
+    if (!instagramWindow) window.location.assign("https://www.instagram.com/");
+  };
+
   return (
-    <div ref={wrapRef} className={`relative inline-block ${className ?? ""}`}>
-      <button
-        type="button"
-        onClick={handleClick}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        className="border border-foreground px-5 py-3 font-display uppercase tracking-widest text-sm hover:bg-foreground hover:text-background transition-colors"
-      >
-        Share
-      </button>
-      {open && (
-        <div
-          role="menu"
-          className="absolute left-0 z-20 mt-2 w-48 border border-foreground bg-background shadow-lg"
-        >
-          <button
-            type="button"
-            role="menuitem"
-            onClick={copyLink}
-            className="block w-full px-4 py-2.5 text-left font-display uppercase tracking-widest text-xs hover:bg-foreground hover:text-background transition-colors"
+    <div className={cn("social-share", className)} aria-label="Share this review">
+      <p className="eyebrow text-muted-foreground">Share this review</p>
+      <div className="mt-3 flex items-center gap-3">
+        {links.map((link) => (
+          <a
+            key={link.label}
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Share on ${link.label}`}
+            title={`Share on ${link.label}`}
+            className={cn("social-share-icon", link.className)}
           >
-            {copied ? "Link copied" : "Copy link"}
-          </button>
-          {links.map((l) => (
-            <a
-              key={l.label}
-              role="menuitem"
-              href={l.href}
-              target={l.label === "Email" ? undefined : "_blank"}
-              rel="noopener noreferrer"
-              onClick={() => setOpen(false)}
-              className="block px-4 py-2.5 font-display uppercase tracking-widest text-xs hover:bg-foreground hover:text-background transition-colors"
-            >
-              {l.label}
-            </a>
-          ))}
-        </div>
-      )}
+            <span aria-hidden="true">{link.icon}</span>
+          </a>
+        ))}
+        <Button
+          type="button"
+          size="icon"
+          onClick={shareToInstagram}
+          aria-label="Copy link and open Instagram"
+          title="Copy link and open Instagram"
+          className="social-share-icon social-share-instagram"
+        >
+          <Instagram aria-hidden="true" />
+        </Button>
+      </div>
+      <p aria-live="polite" className="mt-2 min-h-5 text-sm text-muted-foreground">
+        {copied ? "Link copied — paste it into Instagram" : ""}
+      </p>
     </div>
   );
 }

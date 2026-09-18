@@ -49,6 +49,11 @@
   --rule: oklch(0.55 0 0);
   --accent-red: oklch(0.52 0.18 28);         /* editorial red */
   --status-renewed: oklch(0.45 0.1 165);      /* deep teal-green */
+  --social-facebook: oklch(0.48 0.13 258);
+  --social-x: oklch(0.08 0 0);
+  --social-pinterest: oklch(0.52 0.22 26);
+  --social-instagram: linear-gradient(145deg, oklch(0.69 0.2 38), oklch(0.58 0.25 350) 52%, oklch(0.48 0.22 295));
+  --social-icon: oklch(0.99 0 0);
 
   --card: oklch(0.969 0.008 80);
   --card-foreground: var(--foreground);
@@ -199,4 +204,35 @@
   .prose-article a { text-decoration: underline; text-underline-offset: 3px; }
   .prose-article ul { list-style: disc; padding-left: 1.4rem; }
   .prose-article ol { list-style: decimal; padding-left: 1.4rem; }
+
+  .social-share-icon {
+    display: inline-flex;
+    width: 3.5rem;
+    height: 3.5rem;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 9999px;
+    color: var(--social-icon);
+    font-family: Arial, sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    box-shadow: none;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .social-share-icon:hover { transform: translateY(-2px); filter: brightness(1.08); }
+  .social-share-icon:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+  .social-share-icon svg { width: 1.9rem; height: 1.9rem; stroke-width: 2.25; }
+  .social-share-facebook { background: var(--social-facebook); font-family: Arial, sans-serif; font-size: 2.6rem; padding-top: 0.45rem; }
+  .social-share-x { background: var(--social-x); font-size: 2.05rem; font-weight: 400; }
+  .social-share-pinterest { background: var(--social-pinterest); font-family: Georgia, serif; font-size: 2.35rem; font-style: italic; }
+  .social-share-instagram { background: var(--social-instagram); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .social-share-icon { transition: none; }
+    .social-share-icon:hover { transform: none; }
+  }
 }
