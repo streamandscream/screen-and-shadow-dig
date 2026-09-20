@@ -82,7 +82,7 @@ export function ShareButton({ title, description, url, image, className }: Share
           onClick={shareToInstagram}
           aria-label="Copy link and open Instagram"
           title="Copy link and open Instagram"
-          className="social-share-icon social-share-instagram !h-14 !w-14 !rounded-full !p-0 !shadow-none"
+          className="social-share-icon social-share-instagram !h-10 !w-10 !rounded-full !p-0 !shadow-none"
         >
           <Instagram aria-hidden="true" />
         </Button>

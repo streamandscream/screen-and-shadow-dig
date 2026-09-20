@@ -207,8 +207,8 @@
 
   .social-share-icon {
     display: inline-flex;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
     flex: none;
     align-items: center;
     justify-content: center;
@@ -216,7 +216,7 @@
     border-radius: 9999px;
     color: var(--social-icon);
     font-family: Arial, sans-serif;
-    font-size: 2rem;
+    font-size: 1.4rem;
     font-weight: 700;
     line-height: 1;
     text-decoration: none;
@@ -225,10 +225,10 @@
   }
   .social-share-icon:hover { transform: translateY(-2px); filter: brightness(1.08); }
   .social-share-icon:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
-  .social-share-icon svg { width: 1.9rem; height: 1.9rem; stroke-width: 2.25; }
-  .social-share-facebook { background: var(--social-facebook); font-family: Arial, sans-serif; font-size: 2.6rem; padding-top: 0.45rem; }
-  .social-share-x { background: var(--social-x); font-size: 2.05rem; font-weight: 400; }
-  .social-share-pinterest { background: var(--social-pinterest); font-family: Georgia, serif; font-size: 2.35rem; font-style: italic; }
+  .social-share-icon svg { width: 1.4rem; height: 1.4rem; stroke-width: 2.25; }
+  .social-share-facebook { background: var(--social-facebook); font-family: Arial, sans-serif; font-size: 1.85rem; padding-top: 0.3rem; }
+  .social-share-x { background: var(--social-x); font-size: 1.45rem; font-weight: 400; }
+  .social-share-pinterest { background: var(--social-pinterest); font-family: Georgia, serif; font-size: 1.65rem; font-style: italic; }
   .social-share-instagram { background: var(--social-instagram); }
 
   @media (prefers-reduced-motion: reduce) {
