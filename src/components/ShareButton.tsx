@@ -62,7 +62,7 @@ export function ShareButton({ title, description, url, image, className }: Share
   return (
     <div className={cn("social-share", className)} aria-label="Share this review">
       <p className="eyebrow text-muted-foreground">Share this review</p>
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-3 flex items-center gap-2.5">
         {links.map((link) => (
           <a
             key={link.label}
