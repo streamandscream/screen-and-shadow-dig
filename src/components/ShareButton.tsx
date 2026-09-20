@@ -62,7 +62,7 @@ export function ShareButton({ title, description, url, image, className }: Share
   return (
     <div className={cn("social-share", className)} aria-label="Share this review">
       <p className="eyebrow text-muted-foreground">Share this review</p>
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-3 flex items-center gap-2.5">
         {links.map((link) => (
           <a
             key={link.label}
@@ -82,7 +82,7 @@ export function ShareButton({ title, description, url, image, className }: Share
           onClick={shareToInstagram}
           aria-label="Copy link and open Instagram"
           title="Copy link and open Instagram"
-          className="social-share-icon social-share-instagram !h-14 !w-14 !rounded-full !p-0 !shadow-none"
+          className="social-share-icon social-share-instagram !h-10 !w-10 !rounded-full !p-0 !shadow-none"
         >
           <Instagram aria-hidden="true" />
         </Button>
