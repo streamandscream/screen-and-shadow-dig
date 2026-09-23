@@ -1,5 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
+import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
@@ -15,6 +16,11 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
   });
+
+  // Ships the server/prerender query cache into the HTML so the first client
+  // render has the same data. Without this, useSuspenseQuery suspends during
+  // hydration and React throws away the prerendered markup (blank screen).
+  setupRouterSsrQueryIntegration({ router, queryClient });
 
   return router;
 };
