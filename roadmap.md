@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Add an unpublished Stream review for Memory of a Killer (6/10).
+- [x] Add an unpublished Stream review for Memory of a Killer (6/10).
 - [x] Make generated internal links match canonical trailing-slash URLs.
 - [x] Add an automatic deployment safety net for future scheduled posts.
 - [x] Verify live sitemap coverage and direct page responses.
