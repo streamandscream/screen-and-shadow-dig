@@ -9,66 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as SearchRouteImport } from './routes/search'
-import { Route as ShellRouteImport } from './routes/shell'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as TrueCrimeRouteImport } from './routes/true-crime'
-import { Route as TvRouteImport } from './routes/tv'
 import { Route as TvNewsRouteImport } from './routes/tv-news'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as PostSlugRouteImport } from './routes/post.$slug'
-import { Route as ShowsLikeSlugRouteImport } from './routes/shows-like.$slug'
+import { Route as TvRouteImport } from './routes/tv'
+import { Route as TrueCrimeRouteImport } from './routes/true-crime'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ShellRouteImport } from './routes/shell'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
+import { Route as ShowsLikeSlugRouteImport } from './routes/shows-like.$slug'
+import { Route as PostSlugRouteImport } from './routes/post.$slug'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as AuthenticatedAdminNewRouteImport } from './routes/_authenticated/admin.new'
-import { Route as AuthenticatedAdminRecommendationsRouteImport } from './routes/_authenticated/admin.recommendations'
-import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
-import { Route as AuthenticatedAdminStreamRouteImport } from './routes/_authenticated/admin.stream'
 import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin.tags'
-import { Route as AuthenticatedAdminIdEditRouteImport } from './routes/_authenticated/admin.$id.edit'
+import { Route as AuthenticatedAdminStreamRouteImport } from './routes/_authenticated/admin.stream'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminRecommendationsRouteImport } from './routes/_authenticated/admin.recommendations'
+import { Route as AuthenticatedAdminNewRouteImport } from './routes/_authenticated/admin.new'
 import { Route as ApiPublicHooksIngestTvNewsRouteImport } from './routes/api/public/hooks/ingest-tv-news'
+import { Route as AuthenticatedAdminIdEditRouteImport } from './routes/_authenticated/admin.$id.edit'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SearchRoute = SearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShellRoute = ShellRouteImport.update({
-  id: '/shell',
-  path: '/shell',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TrueCrimeRoute = TrueCrimeRouteImport.update({
-  id: '/true-crime',
-  path: '/true-crime',
+const TvNewsRoute = TvNewsRouteImport.update({
+  id: '/tv-news',
+  path: '/tv-news',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TvRoute = TvRouteImport.update({
@@ -76,24 +42,43 @@ const TvRoute = TvRouteImport.update({
   path: '/tv',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TvNewsRoute = TvNewsRouteImport.update({
-  id: '/tv-news',
-  path: '/tv-news',
+const TrueCrimeRoute = TrueCrimeRouteImport.update({
+  id: '/true-crime',
+  path: '/true-crime',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const PostSlugRoute = PostSlugRouteImport.update({
-  id: '/post/$slug',
-  path: '/post/$slug',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ShowsLikeSlugRoute = ShowsLikeSlugRouteImport.update({
-  id: '/shows-like/$slug',
-  path: '/shows-like/$slug',
+const ShellRoute = ShellRouteImport.update({
+  id: '/shell',
+  path: '/shell',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TagTagRoute = TagTagRouteImport.update({
@@ -101,20 +86,35 @@ const TagTagRoute = TagTagRouteImport.update({
   path: '/tag/$tag',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShowsLikeSlugRoute = ShowsLikeSlugRouteImport.update({
+  id: '/shows-like/$slug',
+  path: '/shows-like/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostSlugRoute = PostSlugRouteImport.update({
+  id: '/post/$slug',
+  path: '/post/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminNewRoute = AuthenticatedAdminNewRouteImport.update({
-  id: '/new',
-  path: '/new',
+const AuthenticatedAdminTagsRoute = AuthenticatedAdminTagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminRecommendationsRoute =
-  AuthenticatedAdminRecommendationsRouteImport.update({
-    id: '/recommendations',
-    path: '/recommendations',
+const AuthenticatedAdminStreamRoute =
+  AuthenticatedAdminStreamRouteImport.update({
+    id: '/stream',
+    path: '/stream',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminSettingsRoute =
@@ -123,28 +123,28 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminStreamRoute =
-  AuthenticatedAdminStreamRouteImport.update({
-    id: '/stream',
-    path: '/stream',
+const AuthenticatedAdminRecommendationsRoute =
+  AuthenticatedAdminRecommendationsRouteImport.update({
+    id: '/recommendations',
+    path: '/recommendations',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminTagsRoute = AuthenticatedAdminTagsRouteImport.update({
-  id: '/tags',
-  path: '/tags',
+const AuthenticatedAdminNewRoute = AuthenticatedAdminNewRouteImport.update({
+  id: '/new',
+  path: '/new',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminIdEditRoute =
-  AuthenticatedAdminIdEditRouteImport.update({
-    id: '/$id/edit',
-    path: '/$id/edit',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const ApiPublicHooksIngestTvNewsRoute =
   ApiPublicHooksIngestTvNewsRouteImport.update({
     id: '/api/public/hooks/ingest-tv-news',
     path: '/api/public/hooks/ingest-tv-news',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedAdminIdEditRoute =
+  AuthenticatedAdminIdEditRouteImport.update({
+    id: '/$id/edit',
+    path: '/$id/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -308,60 +308,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shell': {
-      id: '/shell'
-      path: '/shell'
-      fullPath: '/shell'
-      preLoaderRoute: typeof ShellRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/true-crime': {
-      id: '/true-crime'
-      path: '/true-crime'
-      fullPath: '/true-crime'
-      preLoaderRoute: typeof TrueCrimeRouteImport
+    '/tv-news': {
+      id: '/tv-news'
+      path: '/tv-news'
+      fullPath: '/tv-news'
+      preLoaderRoute: typeof TvNewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tv': {
@@ -371,32 +322,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TvRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tv-news': {
-      id: '/tv-news'
-      path: '/tv-news'
-      fullPath: '/tv-news'
-      preLoaderRoute: typeof TvNewsRouteImport
+    '/true-crime': {
+      id: '/true-crime'
+      path: '/true-crime'
+      fullPath: '/true-crime'
+      preLoaderRoute: typeof TrueCrimeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/post/$slug': {
-      id: '/post/$slug'
-      path: '/post/$slug'
-      fullPath: '/post/$slug'
-      preLoaderRoute: typeof PostSlugRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/shows-like/$slug': {
-      id: '/shows-like/$slug'
-      path: '/shows-like/$slug'
-      fullPath: '/shows-like/$slug'
-      preLoaderRoute: typeof ShowsLikeSlugRouteImport
+    '/shell': {
+      id: '/shell'
+      path: '/shell'
+      fullPath: '/shell'
+      preLoaderRoute: typeof ShellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tag/$tag': {
@@ -406,39 +385,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TagTagRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shows-like/$slug': {
+      id: '/shows-like/$slug'
+      path: '/shows-like/$slug'
+      fullPath: '/shows-like/$slug'
+      preLoaderRoute: typeof ShowsLikeSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/post/$slug': {
+      id: '/post/$slug'
+      path: '/post/$slug'
+      fullPath: '/post/$slug'
+      preLoaderRoute: typeof PostSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/new': {
-      id: '/_authenticated/admin/new'
-      path: '/new'
-      fullPath: '/admin/new'
-      preLoaderRoute: typeof AuthenticatedAdminNewRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/recommendations': {
-      id: '/_authenticated/admin/recommendations'
-      path: '/recommendations'
-      fullPath: '/admin/recommendations'
-      preLoaderRoute: typeof AuthenticatedAdminRecommendationsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/settings': {
-      id: '/_authenticated/admin/settings'
-      path: '/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/stream': {
-      id: '/_authenticated/admin/stream'
-      path: '/stream'
-      fullPath: '/admin/stream'
-      preLoaderRoute: typeof AuthenticatedAdminStreamRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/tags': {
@@ -448,11 +420,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminTagsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/$id/edit': {
-      id: '/_authenticated/admin/$id/edit'
-      path: '/$id/edit'
-      fullPath: '/admin/$id/edit'
-      preLoaderRoute: typeof AuthenticatedAdminIdEditRouteImport
+    '/_authenticated/admin/stream': {
+      id: '/_authenticated/admin/stream'
+      path: '/stream'
+      fullPath: '/admin/stream'
+      preLoaderRoute: typeof AuthenticatedAdminStreamRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/recommendations': {
+      id: '/_authenticated/admin/recommendations'
+      path: '/recommendations'
+      fullPath: '/admin/recommendations'
+      preLoaderRoute: typeof AuthenticatedAdminRecommendationsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/new': {
+      id: '/_authenticated/admin/new'
+      path: '/new'
+      fullPath: '/admin/new'
+      preLoaderRoute: typeof AuthenticatedAdminNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/api/public/hooks/ingest-tv-news': {
@@ -461,6 +454,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/hooks/ingest-tv-news'
       preLoaderRoute: typeof ApiPublicHooksIngestTvNewsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/$id/edit': {
+      id: '/_authenticated/admin/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/admin/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAdminIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
   }
 }
