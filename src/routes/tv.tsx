@@ -78,7 +78,7 @@ export const Route = createFileRoute("/tv")({
     sort: search.sort,
   }),
   loader: ({ context, deps }) => context.queryClient.ensureQueryData(postsQuery(deps.minRating, deps.maxRating, deps.sort)),
-  errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
+  errorComponent: ({ error }) => <p className="p-10">{error instanceof Error ? error.message : String(error)}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: Page,
 });

@@ -81,7 +81,7 @@ export const Route = createFileRoute("/tv-news")({
   }),
   loaderDeps: ({ search }) => ({ status: search.status }),
   loader: ({ context, deps }) => context.queryClient.ensureQueryData(newsQuery(deps.status)),
-  errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
+  errorComponent: ({ error }) => <p className="p-10">{error instanceof Error ? error.message : String(error)}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
   component: TvNewsPage,
 });

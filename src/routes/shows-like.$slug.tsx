@@ -229,7 +229,7 @@ export const Route = createFileRoute("/shows-like/$slug")({
     };
 
   },
-  errorComponent: ({ error }) => <p className="p-10">{error.message}</p>,
+  errorComponent: ({ error }) => <p className="p-10">{error instanceof Error ? error.message : String(error)}</p>,
   notFoundComponent: () => (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
