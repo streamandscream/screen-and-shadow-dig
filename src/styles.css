@@ -239,7 +239,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .social-share-icon, [aria-label$="poster"] { transition: none; }
+    .social-share-icon, .shortlist-poster { transition: none; }
     .social-share-icon:hover { transform: none; }
   }
 }

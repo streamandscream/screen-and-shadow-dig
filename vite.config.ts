@@ -14,7 +14,7 @@ import { writeFile } from "node:fs/promises";
 const STATIC = process.env["STATIC_BUILD"] === "1";
 const SITE_URL = process.env["SITE_URL"] || "https://streamandscream.com";
 
-async function getPostPages(): Promise<{ path: string }[]> {
+async function getContentPages(): Promise<{ path: string }[]> {
   const url = process.env["VITE_SUPABASE_URL"];
   const key = process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
   if (!url || !key) {
@@ -38,13 +38,24 @@ async function getPostPages(): Promise<{ path: string }[]> {
   // page or sitemap entry is absent, the build fails before Hostinger upload.
   await writeFile(".static-post-manifest.json", JSON.stringify(slugs));
 
+  const shortlistRes = await fetch(
+    `${url}/rest/v1/shortlists?select=slug&published=eq.true&order=published_at.desc.nullslast&limit=1000`,
+    { headers: { apikey: key, Accept: "application/json" } },
+  );
+  if (!shortlistRes.ok) throw new Error(`Could not load published shortlists for the static build [${shortlistRes.status}]: ${await shortlistRes.text()}`);
+  const shortlistRows = (await shortlistRes.json()) as { slug?: unknown }[];
+  const shortlistSlugs = shortlistRows.map((row) => row.slug).filter((slug): slug is string => typeof slug === "string" && slug.length > 0);
+  if (shortlistSlugs.length !== shortlistRows.length || new Set(shortlistSlugs).size !== shortlistSlugs.length) throw new Error("Published shortlist slugs must be present and unique.");
+  await writeFile(".static-shortlist-manifest.json", JSON.stringify(shortlistSlugs));
+
   return [
     ...slugs.map((slug) => ({ path: `/post/${slug}` })),
     ...slugs.map((slug) => ({ path: `/shows-like/${slug}` })),
+    ...shortlistSlugs.map((slug) => ({ path: `/shortlist/${slug}` })),
   ];
 }
 
-const staticPages = STATIC ? await getPostPages() : [];
+const staticPages = STATIC ? await getContentPages() : [];
 
 export default defineConfig({
   vite: {
@@ -95,6 +106,7 @@ export default defineConfig({
             { path: "/" },
             { path: "/tv" },
             { path: "/true-crime" },
+            { path: "/shortlist" },
             { path: "/tv-news" },
             { path: "/about" },
             ...staticPages,

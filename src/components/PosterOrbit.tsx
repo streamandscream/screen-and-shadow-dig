@@ -55,7 +55,7 @@ export function PosterOrbit({ title, anchor, picks, coverUrl, className, linked 
           poster={pick}
           linked={linked}
           className={cn(
-            "absolute z-10 aspect-[2/3] w-[24%] overflow-hidden border-2 border-background bg-paper shadow-lg transition-transform hover:z-30 hover:scale-105",
+            "shortlist-poster absolute z-10 aspect-[2/3] w-[24%] overflow-hidden border-2 border-background bg-paper shadow-lg transition-transform hover:z-30 hover:scale-105",
             positions[index],
           )}
         />
@@ -64,7 +64,7 @@ export function PosterOrbit({ title, anchor, picks, coverUrl, className, linked 
         <Poster
           poster={anchor}
           linked={linked}
-          className="absolute left-1/2 top-1/2 z-20 aspect-[2/3] w-[31%] -translate-x-1/2 -translate-y-1/2 overflow-hidden border-4 border-background bg-paper shadow-xl transition-transform hover:scale-[1.03]"
+          className="shortlist-poster absolute left-1/2 top-1/2 z-20 aspect-[2/3] w-[31%] -translate-x-1/2 -translate-y-1/2 overflow-hidden border-4 border-background bg-paper shadow-xl transition-transform hover:scale-[1.03]"
         />
       ) : (
         <div className="absolute left-1/2 top-1/2 z-20 flex aspect-square w-[36%] -translate-x-1/2 -translate-y-1/2 items-center justify-center border-4 border-background bg-accent-red p-4 text-center shadow-xl">
