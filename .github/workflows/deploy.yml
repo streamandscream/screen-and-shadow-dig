@@ -153,7 +153,7 @@ jobs:
           SITEMAP_POST_COUNT="$(grep -ao '<loc>https://streamandscream.com/post/[^<]*/</loc>' dist/client/sitemap.xml | wc -l | tr -d ' ')"
           SITEMAP_SHOWS_LIKE_COUNT="$(grep -ao '<loc>https://streamandscream.com/shows-like/[^<]*/</loc>' dist/client/sitemap.xml | wc -l | tr -d ' ')"
           SHORTLIST_COUNT="$(find dist/client/shortlist -mindepth 2 -maxdepth 2 -type f -name index.html 2>/dev/null | wc -l | tr -d ' ')"
-          SITEMAP_SHORTLIST_COUNT="$(grep -ao '<loc>https://streamandscream.com/shortlist/[^<]*/</loc>' dist/client/sitemap.xml | wc -l | tr -d ' ')"
+          SITEMAP_SHORTLIST_COUNT="$((grep -ao '<loc>https://streamandscream.com/shortlist/[^<]*/</loc>' dist/client/sitemap.xml || true) | wc -l | tr -d ' ')"
           echo "Published output: ${POST_COUNT} reviews, ${SHOWS_LIKE_COUNT} recommendation pages, ${SHORTLIST_COUNT} shortlists"
           if [ "${POST_COUNT}" -eq 0 ] || [ "${POST_COUNT}" != "${SHOWS_LIKE_COUNT}" ] || [ "${POST_COUNT}" != "${SITEMAP_POST_COUNT}" ] || [ "${POST_COUNT}" != "${SITEMAP_SHOWS_LIKE_COUNT}" ]; then
             echo "ERROR: static pages and sitemap entries do not match; refusing to upload an incomplete site." >&2
@@ -433,6 +433,6 @@ jobs:
               exit 1
             fi
             LIVE_SHORTLIST_COUNT=$((LIVE_SHORTLIST_COUNT + 1))
-          done < <(printf '%s' "${SITEMAP}" | grep -ao '<loc>https://streamandscream.com/shortlist/[^<]*/</loc>' | sed -e 's#<loc>##' -e 's#</loc>##')
+          done < <(printf '%s' "${SITEMAP}" | grep -ao '<loc>https://streamandscream.com/shortlist/[^<]*/</loc>' | sed -e 's#<loc>##' -e 's#</loc>##' || true)
           echo "SUCCESS: all ${LIVE_POST_COUNT} reviews and ${LIVE_SHORTLIST_COUNT} shortlists are live and listed in sitemap.xml."
 
