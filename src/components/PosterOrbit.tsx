@@ -12,6 +12,7 @@ type PosterOrbitProps = {
   anchor?: OrbitPoster | null;
   picks: OrbitPoster[];
   coverUrl?: string | null;
+  coverAlt?: string | null;
   className?: string;
   linked?: boolean;
 };
@@ -38,9 +39,9 @@ function Poster({ poster, className, linked }: { poster: OrbitPoster; className:
   ) : <div className={className}>{image}</div>;
 }
 
-export function PosterOrbit({ title, anchor, picks, coverUrl, className, linked = true }: PosterOrbitProps) {
+export function PosterOrbit({ title, anchor, picks, coverUrl, coverAlt, className, linked = true }: PosterOrbitProps) {
   if (coverUrl) {
-    return <img src={coverUrl} alt={`${title} cover`} className={cn("aspect-[16/10] w-full object-cover", className)} />;
+    return <img src={coverUrl} alt={coverAlt || `${title} cover`} className={cn("aspect-[16/10] w-full object-cover", className)} />;
   }
 
   return (

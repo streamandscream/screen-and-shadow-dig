@@ -63,7 +63,7 @@ function ShortlistDetail() {
         <Link to="/shortlist/" className="card-eyebrow">The Shortlist</Link>
         <h1 className="font-display text-[40px] md:text-[59px] mt-3">{list.title}</h1>
         <p className="mt-5 text-xl leading-relaxed text-muted-foreground">{list.excerpt}</p>
-        <PosterOrbit title={list.title} anchor={list.anchor} picks={list.items.map((item) => item.post)} coverUrl={list.cover_url} className="mt-8" />
+        <PosterOrbit title={list.title} anchor={list.anchor} picks={list.items.map((item) => item.post)} coverUrl={list.cover_url} coverAlt={list.cover_alt} className="mt-8" />
         <p className="card-credit mt-1">Poster artwork courtesy of TMDB. Used under license.</p>
         {list.body && <div className="mt-8"><PostBody>{list.body}</PostBody></div>}
         <section className="mt-12" aria-label="Top five recommendations">

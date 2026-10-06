@@ -158,7 +158,7 @@ export function ShortlistEditor({ form, setForm, posts, save, saving, error }: P
 
           <aside className="lg:sticky lg:top-6 lg:self-start">
             <p className="eyebrow mb-3">Poster Orbit preview</p>
-            <PosterOrbit title={form.title || "The Shortlist"} anchor={anchor} picks={picks} coverUrl={form.cover_url} linked={false} />
+            <PosterOrbit title={form.title || "The Shortlist"} anchor={anchor} picks={picks} coverUrl={form.cover_url} coverAlt={form.cover_alt} linked={false} />
           </aside>
         </div>
       </main>

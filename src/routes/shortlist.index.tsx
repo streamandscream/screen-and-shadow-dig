@@ -43,7 +43,7 @@ function ShortlistIndex() {
           {data.length ? data.map((list) => (
             <article key={list.id} className="border-b border-foreground/20 pb-10">
               <Link to="/shortlist/$slug/" params={{ slug: list.slug }} className="block">
-                <PosterOrbit title={list.title} anchor={list.anchor} picks={list.items.map((item) => item.post)} coverUrl={list.cover_url} linked={false} />
+                <PosterOrbit title={list.title} anchor={list.anchor} picks={list.items.map((item) => item.post)} coverUrl={list.cover_url} coverAlt={list.cover_alt} linked={false} />
                 <span className="card-eyebrow mt-4 block">The Shortlist · Top 5</span>
                 <h2 className="card-title-lg mt-2">{list.title}</h2>
               </Link>
