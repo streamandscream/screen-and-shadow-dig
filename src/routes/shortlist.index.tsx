@@ -18,6 +18,13 @@ export const Route = createFileRoute("/shortlist/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://streamandscream.com/shortlist/" }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "The Shortlist",
+      description: "Curated top-five TV and movie picks from Stream & Scream.",
+      url: "https://streamandscream.com/shortlist/",
+    }) }],
   }),
   errorComponent: ({ error }) => <p className="p-10">{error instanceof Error ? error.message : String(error)}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
@@ -36,7 +43,7 @@ function ShortlistIndex() {
           {data.length ? data.map((list) => (
             <article key={list.id} className="border-b border-foreground/20 pb-10">
               <Link to="/shortlist/$slug/" params={{ slug: list.slug }} className="block">
-                <PosterOrbit title={list.title} anchor={list.anchor} picks={list.items.map((item) => item.post)} coverUrl={list.cover_url} linked={false} />
+                <PosterOrbit title={list.title} anchor={list.anchor} picks={list.items.map((item) => item.post)} coverUrl={list.cover_url} coverAlt={list.cover_alt} linked={false} />
                 <span className="card-eyebrow mt-4 block">The Shortlist · Top 5</span>
                 <h2 className="card-title-lg mt-2">{list.title}</h2>
               </Link>

@@ -30,6 +30,18 @@ async function getPublishedSlugs(): Promise<string[]> {
   }
 }
 
+async function getPublishedShortlistSlugs(): Promise<string[]> {
+  const url = process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"];
+  const key = process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || process.env["VITE_SUPABASE_ANON_KEY"] || process.env["SUPABASE_ANON_KEY"];
+  if (!url || !key) return [];
+  try {
+    const res = await fetch(`${url}/rest/v1/shortlists?select=slug&published=eq.true&order=published_at.desc.nullslast&limit=1000`, { headers: { apikey: key, Accept: "application/json" } });
+    if (!res.ok) return [];
+    const rows = (await res.json()) as { slug: string }[];
+    return rows.filter((row) => row.slug).map((row) => row.slug);
+  } catch { return []; }
+}
+
 const AMP = String.fromCharCode(38) + "amp;"; // &
 const LT = String.fromCharCode(60) + "lt;"; // <
 const GT = String.fromCharCode(62) + "gt;"; // >
@@ -53,11 +65,12 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/", changefreq: "daily", priority: "1.0" },
           { path: "/tv", changefreq: "daily", priority: "0.9" },
           { path: "/true-crime", changefreq: "daily", priority: "0.9" },
+          { path: "/shortlist", changefreq: "weekly", priority: "0.8" },
           { path: "/tv-news", changefreq: "daily", priority: "0.8" },
           { path: "/about", changefreq: "monthly", priority: "0.5" },
         ];
 
-        const slugs = await getPublishedSlugs();
+        const [slugs, shortlistSlugs] = await Promise.all([getPublishedSlugs(), getPublishedShortlistSlugs()]);
         const postEntries: SitemapEntry[] = slugs.map((slug) => ({
           path: `/post/${slug}`,
           changefreq: "weekly",
@@ -70,7 +83,8 @@ export const Route = createFileRoute("/sitemap.xml")({
           priority: "0.6",
         }));
 
-        const entries = [...staticEntries, ...postEntries, ...showsLikeEntries];
+        const shortlistEntries: SitemapEntry[] = shortlistSlugs.map((slug) => ({ path: `/shortlist/${slug}`, changefreq: "monthly", priority: "0.7" }));
+        const entries = [...staticEntries, ...postEntries, ...showsLikeEntries, ...shortlistEntries];
 
         const urls = entries.map((e) =>
           [

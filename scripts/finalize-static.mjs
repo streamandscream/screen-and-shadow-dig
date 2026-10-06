@@ -7,6 +7,7 @@ import { join } from "node:path";
 
 const OUT = "dist/client";
 const MANIFEST = ".static-post-manifest.json";
+const SHORTLIST_MANIFEST = ".static-shortlist-manifest.json";
 
 // The SPA shell is prerendered at /shell (see vite.config.ts spa.maskPath).
 const shell =
@@ -71,6 +72,16 @@ if (!Array.isArray(publishedSlugs)) {
   console.error("[static] Published-post manifest is invalid.");
   process.exit(1);
 }
+const shortlistManifest = await readFile(SHORTLIST_MANIFEST, "utf8").catch(() => null);
+if (!shortlistManifest) {
+  console.error("[static] Published-shortlist manifest is missing.");
+  process.exit(1);
+}
+const publishedShortlistSlugs = JSON.parse(shortlistManifest);
+if (!Array.isArray(publishedShortlistSlugs)) {
+  console.error("[static] Published-shortlist manifest is invalid.");
+  process.exit(1);
+}
 const finalSitemap = await readFile(sitemapPath, "utf8").catch(() => null);
 if (!finalSitemap) {
   console.error("[static] sitemap.xml is missing.");
@@ -90,11 +101,19 @@ for (const slug of publishedSlugs) {
   if (!finalSitemap.includes(`<loc>${postUrl}</loc>`)) missing.push(`sitemap post: ${slug}`);
   if (!finalSitemap.includes(`<loc>${similarUrl}</loc>`)) missing.push(`sitemap shows-like: ${slug}`);
 }
+for (const slug of publishedShortlistSlugs) {
+  const shortlistPage = join(OUT, "shortlist", slug, "index.html");
+  const shortlistUrl = `https://streamandscream.com/shortlist/${slug}/`;
+  const shortlistSize = await stat(shortlistPage).then((value) => value.size).catch(() => 0);
+  if (shortlistSize === 0) missing.push(`shortlist page: ${slug}`);
+  if (!finalSitemap.includes(`<loc>${shortlistUrl}</loc>`)) missing.push(`sitemap shortlist: ${slug}`);
+}
 if (missing.length > 0) {
   console.error(`[static] Incomplete published output:\n${missing.join("\n")}`);
   process.exit(1);
 }
 await rm(MANIFEST, { force: true });
+await rm(SHORTLIST_MANIFEST, { force: true });
 
 // Don't ship prerendered editor pages
 await rm(join(OUT, "admin"), { recursive: true, force: true });
@@ -102,5 +121,5 @@ await rm(join(OUT, "auth"), { recursive: true, force: true });
 
 const { size } = await stat(homePath);
 console.log(
-  `[static] Output ready in ${OUT} — ${publishedSlugs.length} published reviews and recommendation pages verified. Homepage: ${size} bytes.`,
+  `[static] Output ready in ${OUT} — ${publishedSlugs.length} reviews and ${publishedShortlistSlugs.length} shortlists verified. Homepage: ${size} bytes.`,
 );

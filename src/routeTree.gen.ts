@@ -30,10 +30,14 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminNewRouteImport } from './routes/_authenticated/admin.new'
 import { Route as AuthenticatedAdminRecommendationsRouteImport } from './routes/_authenticated/admin.recommendations'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminShortlistsRouteImport } from './routes/_authenticated/admin.shortlists'
 import { Route as AuthenticatedAdminStreamRouteImport } from './routes/_authenticated/admin.stream'
 import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin.tags'
 import { Route as AuthenticatedAdminIdEditRouteImport } from './routes/_authenticated/admin.$id.edit'
+import { Route as AuthenticatedAdminShortlistsIndexRouteImport } from './routes/_authenticated/admin.shortlists.index'
+import { Route as AuthenticatedAdminShortlistsNewRouteImport } from './routes/_authenticated/admin.shortlists.new'
 import { Route as ApiPublicHooksIngestTvNewsRouteImport } from './routes/api/public/hooks/ingest-tv-news'
+import { Route as AuthenticatedAdminShortlistsIdEditRouteImport } from './routes/_authenticated/admin.shortlists.$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -141,6 +145,12 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminShortlistsRoute =
+  AuthenticatedAdminShortlistsRouteImport.update({
+    id: '/shortlists',
+    path: '/shortlists',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminStreamRoute =
   AuthenticatedAdminStreamRouteImport.update({
     id: '/stream',
@@ -158,11 +168,29 @@ const AuthenticatedAdminIdEditRoute =
     path: '/$id/edit',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminShortlistsIndexRoute =
+  AuthenticatedAdminShortlistsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAdminShortlistsRoute,
+  } as any)
+const AuthenticatedAdminShortlistsNewRoute =
+  AuthenticatedAdminShortlistsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminShortlistsRoute,
+  } as any)
 const ApiPublicHooksIngestTvNewsRoute =
   ApiPublicHooksIngestTvNewsRouteImport.update({
     id: '/api/public/hooks/ingest-tv-news',
     path: '/api/public/hooks/ingest-tv-news',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedAdminShortlistsIdEditRoute =
+  AuthenticatedAdminShortlistsIdEditRouteImport.update({
+    id: '/$id/edit',
+    path: '/$id/edit',
+    getParentRoute: () => AuthenticatedAdminShortlistsRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -185,11 +213,15 @@ export interface FileRoutesByFullPath {
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/shortlists': typeof AuthenticatedAdminShortlistsRouteWithChildren
   '/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
+  '/admin/shortlists/new': typeof AuthenticatedAdminShortlistsNewRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
+  '/admin/shortlists/': typeof AuthenticatedAdminShortlistsIndexRoute
+  '/admin/shortlists/$id/edit': typeof AuthenticatedAdminShortlistsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -213,7 +245,10 @@ export interface FileRoutesByTo {
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
+  '/admin/shortlists/new': typeof AuthenticatedAdminShortlistsNewRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
+  '/admin/shortlists': typeof AuthenticatedAdminShortlistsIndexRoute
+  '/admin/shortlists/$id/edit': typeof AuthenticatedAdminShortlistsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -237,11 +272,15 @@ export interface FileRoutesById {
   '/_authenticated/admin/new': typeof AuthenticatedAdminNewRoute
   '/_authenticated/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/shortlists': typeof AuthenticatedAdminShortlistsRouteWithChildren
   '/_authenticated/admin/stream': typeof AuthenticatedAdminStreamRoute
   '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/$id/edit': typeof AuthenticatedAdminIdEditRoute
+  '/_authenticated/admin/shortlists/new': typeof AuthenticatedAdminShortlistsNewRoute
   '/api/public/hooks/ingest-tv-news': typeof ApiPublicHooksIngestTvNewsRoute
+  '/_authenticated/admin/shortlists/': typeof AuthenticatedAdminShortlistsIndexRoute
+  '/_authenticated/admin/shortlists/$id/edit': typeof AuthenticatedAdminShortlistsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -265,11 +304,15 @@ export interface FileRouteTypes {
     | '/admin/new'
     | '/admin/recommendations'
     | '/admin/settings'
+    | '/admin/shortlists'
     | '/admin/stream'
     | '/admin/tags'
     | '/admin/'
     | '/admin/$id/edit'
+    | '/admin/shortlists/new'
     | '/api/public/hooks/ingest-tv-news'
+    | '/admin/shortlists/'
+    | '/admin/shortlists/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -293,7 +336,10 @@ export interface FileRouteTypes {
     | '/admin/tags'
     | '/admin'
     | '/admin/$id/edit'
+    | '/admin/shortlists/new'
     | '/api/public/hooks/ingest-tv-news'
+    | '/admin/shortlists'
+    | '/admin/shortlists/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -316,11 +362,15 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/new'
     | '/_authenticated/admin/recommendations'
     | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/shortlists'
     | '/_authenticated/admin/stream'
     | '/_authenticated/admin/tags'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/$id/edit'
+    | '/_authenticated/admin/shortlists/new'
     | '/api/public/hooks/ingest-tv-news'
+    | '/_authenticated/admin/shortlists/'
+    | '/_authenticated/admin/shortlists/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -490,6 +540,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/shortlists': {
+      id: '/_authenticated/admin/shortlists'
+      path: '/shortlists'
+      fullPath: '/admin/shortlists'
+      preLoaderRoute: typeof AuthenticatedAdminShortlistsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/stream': {
       id: '/_authenticated/admin/stream'
       path: '/stream'
@@ -511,6 +568,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIdEditRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/shortlists/': {
+      id: '/_authenticated/admin/shortlists/'
+      path: '/'
+      fullPath: '/admin/shortlists/'
+      preLoaderRoute: typeof AuthenticatedAdminShortlistsIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminShortlistsRoute
+    }
+    '/_authenticated/admin/shortlists/new': {
+      id: '/_authenticated/admin/shortlists/new'
+      path: '/new'
+      fullPath: '/admin/shortlists/new'
+      preLoaderRoute: typeof AuthenticatedAdminShortlistsNewRouteImport
+      parentRoute: typeof AuthenticatedAdminShortlistsRoute
+    }
     '/api/public/hooks/ingest-tv-news': {
       id: '/api/public/hooks/ingest-tv-news'
       path: '/api/public/hooks/ingest-tv-news'
@@ -518,13 +589,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksIngestTvNewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/shortlists/$id/edit': {
+      id: '/_authenticated/admin/shortlists/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/admin/shortlists/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAdminShortlistsIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminShortlistsRoute
+    }
   }
 }
+
+interface AuthenticatedAdminShortlistsRouteChildren {
+  AuthenticatedAdminShortlistsNewRoute: typeof AuthenticatedAdminShortlistsNewRoute
+  AuthenticatedAdminShortlistsIndexRoute: typeof AuthenticatedAdminShortlistsIndexRoute
+  AuthenticatedAdminShortlistsIdEditRoute: typeof AuthenticatedAdminShortlistsIdEditRoute
+}
+
+const AuthenticatedAdminShortlistsRouteChildren: AuthenticatedAdminShortlistsRouteChildren =
+  {
+    AuthenticatedAdminShortlistsNewRoute: AuthenticatedAdminShortlistsNewRoute,
+    AuthenticatedAdminShortlistsIndexRoute:
+      AuthenticatedAdminShortlistsIndexRoute,
+    AuthenticatedAdminShortlistsIdEditRoute:
+      AuthenticatedAdminShortlistsIdEditRoute,
+  }
+
+const AuthenticatedAdminShortlistsRouteWithChildren =
+  AuthenticatedAdminShortlistsRoute._addFileChildren(
+    AuthenticatedAdminShortlistsRouteChildren,
+  )
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminNewRoute: typeof AuthenticatedAdminNewRoute
   AuthenticatedAdminRecommendationsRoute: typeof AuthenticatedAdminRecommendationsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminShortlistsRoute: typeof AuthenticatedAdminShortlistsRouteWithChildren
   AuthenticatedAdminStreamRoute: typeof AuthenticatedAdminStreamRoute
   AuthenticatedAdminTagsRoute: typeof AuthenticatedAdminTagsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -536,6 +635,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminRecommendationsRoute:
     AuthenticatedAdminRecommendationsRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminShortlistsRoute:
+    AuthenticatedAdminShortlistsRouteWithChildren,
   AuthenticatedAdminStreamRoute: AuthenticatedAdminStreamRoute,
   AuthenticatedAdminTagsRoute: AuthenticatedAdminTagsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,

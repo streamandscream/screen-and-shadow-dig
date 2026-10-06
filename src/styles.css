@@ -231,8 +231,15 @@
   .social-share-pinterest { background: var(--social-pinterest); font-family: Georgia, serif; font-size: 1.65rem; font-style: italic; }
   .social-share-instagram { background: var(--social-instagram); }
 
+  .shortlist-grid {
+    background-image:
+      linear-gradient(to right, var(--rule) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+    background-size: 2rem 2rem;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .social-share-icon { transition: none; }
+    .social-share-icon, .shortlist-poster { transition: none; }
     .social-share-icon:hover { transform: none; }
   }
 }

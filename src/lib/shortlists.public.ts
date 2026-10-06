@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { PublicPost } from "./posts.public";
+import { POST_COLS, type PublicPost } from "./posts.public";
 
 export type ShortlistRow = {
   id: string;
@@ -45,7 +45,7 @@ async function hydrateShortlists(rows: ShortlistRow[]): Promise<Shortlist[]> {
   for (const item of itemRows ?? []) postIds.push(item.post_id);
   const uniquePostIds = Array.from(new Set(postIds));
   const { data: posts, error: postError } = uniquePostIds.length
-    ? await supabase.from("posts").select("*").in("id", uniquePostIds)
+    ? await supabase.from("posts").select(POST_COLS).in("id", uniquePostIds)
     : { data: [], error: null };
   if (postError) throw new Error(postError.message);
   const postMap = new Map((posts ?? []).map((post) => [post.id, post as unknown as PublicPost]));
