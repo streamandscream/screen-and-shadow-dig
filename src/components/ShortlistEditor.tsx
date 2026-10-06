@@ -42,6 +42,7 @@ export function ShortlistEditor({ form, setForm, posts, save, saving, error }: P
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const publishedPosts = useMemo(() => posts.filter((post) => post.published), [posts]);
   const postMap = useMemo(() => new Map(posts.map((post) => [post.id, post])), [posts]);
   const anchor = form.anchor_post_id ? postMap.get(form.anchor_post_id) ?? null : null;
   const picks = form.items.map((item) => postMap.get(item.post_id)).filter((post): post is PublicPost => Boolean(post));
@@ -104,7 +105,7 @@ export function ShortlistEditor({ form, setForm, posts, save, saving, error }: P
             <Field label="Featured show (optional)">
               <select className={fieldClass} value={form.anchor_post_id} onChange={(event) => setForm({ ...form, anchor_post_id: event.target.value })}>
                 <option value="">Use the shortlist title</option>
-                {posts.map((post) => <option key={post.id} value={post.id}>{post.title}</option>)}
+                {publishedPosts.map((post) => <option key={post.id} value={post.id}>{post.title}</option>)}
               </select>
             </Field>
 
@@ -126,7 +127,7 @@ export function ShortlistEditor({ form, setForm, posts, save, saving, error }: P
                     </div>
                     <select className={`${fieldClass} mt-3`} value={item.post_id} onChange={(event) => setItem(index, { post_id: event.target.value })}>
                       <option value="">Choose a reviewed title</option>
-                      {posts.map((post) => <option key={post.id} value={post.id}>{post.title}</option>)}
+                      {publishedPosts.map((post) => <option key={post.id} value={post.id}>{post.title}</option>)}
                     </select>
                     <textarea className={`${fieldClass} mt-3`} rows={2} placeholder="Why this is one of the five…" value={item.reason} onChange={(event) => setItem(index, { reason: event.target.value })} />
                   </div>

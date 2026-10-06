@@ -21,6 +21,14 @@ export async function saveShortlist(input: Partial<ShortlistRow> & { title: stri
   if (input.published && (input.items.length !== 5 || unique.size !== 5)) throw new Error("Choose five different recommendations before publishing.");
   if (input.items.some((item) => !item.reason.trim())) throw new Error("Add a reason for every recommendation.");
 
+  if (input.published) {
+    const { data: selectedPosts, error: selectedError } = await supabase.from("posts").select("id, published").in("id", input.items.map((item) => item.post_id));
+    if (selectedError) throw new Error(selectedError.message);
+    if ((selectedPosts ?? []).length !== 5 || selectedPosts?.some((post) => !post.published)) {
+      throw new Error("Every recommendation must be a published review.");
+    }
+  }
+
   const { data: userData } = await supabase.auth.getUser();
   const parent = {
     ...(input.id ? { id: input.id } : {}),
@@ -33,7 +41,7 @@ export async function saveShortlist(input: Partial<ShortlistRow> & { title: stri
     cover_alt: input.cover_alt || null,
     meta_description: input.meta_description || null,
     publish_at: input.publish_at || null,
-    published: input.id ? Boolean(input.published) : false,
+    published: false,
     author_id: userData.user?.id ?? null,
   };
   const { data: saved, error } = await supabase.from("shortlists").upsert(parent).select(SHORTLIST_COLS).single();
@@ -49,7 +57,7 @@ export async function saveShortlist(input: Partial<ShortlistRow> & { title: stri
     })));
     if (itemError) throw new Error(itemError.message);
   }
-  if (!input.id && input.published) {
+  if (input.published) {
     const { error: publishError } = await supabase.from("shortlists").update({ published: true }).eq("id", saved.id);
     if (publishError) throw new Error(publishError.message);
   }

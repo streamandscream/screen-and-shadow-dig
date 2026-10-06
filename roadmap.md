@@ -12,3 +12,4 @@
 - [x] Replace post Share buttons with a bottom social icon row.
 - [x] Move The Girlfriend review from The Scream to The Stream.
 - [ ] Get streamandscream.com serving again (403: Hostinger web root empty). Blocked: needs a successful GitHub Actions deploy; no GitHub access from here and Publishing settings are not configured.
+- [x] Add The Shortlist section, Poster Orbit covers, editor workflow, and five-pick publishing rules.

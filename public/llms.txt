@@ -10,6 +10,7 @@ Stream and Scream is a UK-focused entertainment site that reviews the latest TV 
 - [The Stream](/tv): TV reviews, streaming picks, and weekly watch recommendations.
 - [The Scream](/true-crime): True crime reviews, documentary deep dives, and "more like this" recommendations.
 - [TV News](/tv-news): Updates on cancelled and renewed shows.
+- [The Shortlist](/shortlist): Curated top-five watch lists and what-to-watch-next picks.
 - [About](/about): What Stream and Scream covers and why.
 - [Search](/search): Find reviews by keyword across the site.
 - [Only Murders in the Building review](/post/only-murders-in-the-building): Sample review page for a TV show.
@@ -20,7 +21,7 @@ Stream and Scream is a UK-focused entertainment site that reviews the latest TV 
 
 ## Crawl instructions
 
-- Include public marketing and content pages: `/`, `/tv`, `/true-crime`, `/tv-news`, `/about`, `/search`, `/post/*`, `/shows-like/*`, and `/tag/*`.
+- Include public marketing and content pages: `/`, `/tv`, `/true-crime`, `/shortlist`, `/shortlist/*`, `/tv-news`, `/about`, `/search`, `/post/*`, `/shows-like/*`, and `/tag/*`.
 - Do not crawl admin surfaces, auth flows, or API endpoints: `/admin/*`, `/auth`, `/api/*`, `/subscribe`, `/sitemap.xml`, and `/_authenticated/*`.
 - Do not use robots.txt, sitemap.xml, or analytics data as a source of truth for site content.
 

@@ -35,6 +35,7 @@ export function SiteHeader() {
     { to: "/", label: "Home", exact: true },
     { to: "/tv/", label: "The Stream" },
     { to: "/true-crime/", label: "The Scream" },
+    { to: "/shortlist/", label: "The Shortlist" },
     { to: "/tv-news/", label: "TV News" },
     ...(signedIn ? [{ to: "/admin/" as const, label: "Admin" }] : []),
     
@@ -166,6 +167,7 @@ export function SiteFooter() {
             <Link to="/">Home</Link>
             <Link to="/tv/">The Stream</Link>
             <Link to="/true-crime/">The Scream</Link>
+            <Link to="/shortlist/">The Shortlist</Link>
             <Link to="/tv-news/">TV News</Link>
           </nav>
           <p className="text-muted-foreground lowercase">© {new Date().getFullYear()} stream & scream</p>

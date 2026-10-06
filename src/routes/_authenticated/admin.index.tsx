@@ -60,6 +60,9 @@ function Admin() {
             <Link to="/admin/recommendations/" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Recommendations
             </Link>
+            <Link to="/admin/shortlists/" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
+              Shortlists
+            </Link>
             <Link to="/admin/tags/" className="border border-foreground px-4 py-2 font-display uppercase tracking-widest text-sm">
               Tags
             </Link>

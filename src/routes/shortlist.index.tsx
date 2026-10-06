@@ -18,6 +18,13 @@ export const Route = createFileRoute("/shortlist/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://streamandscream.com/shortlist/" }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "The Shortlist",
+      description: "Curated top-five TV and movie picks from Stream & Scream.",
+      url: "https://streamandscream.com/shortlist/",
+    }) }],
   }),
   errorComponent: ({ error }) => <p className="p-10">{error instanceof Error ? error.message : String(error)}</p>,
   notFoundComponent: () => <p className="p-10">Not found</p>,
