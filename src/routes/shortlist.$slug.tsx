@@ -22,7 +22,7 @@ export const Route = createFileRoute("/shortlist/$slug")({
     const image = loaderData.cover_url || loaderData.anchor?.cover_url;
     return {
       meta: [
-        { title: `${loaderData.title} | The Shortlist` },
+        { title: `${loaderData.title} | The Shortlist — Stream & Scream` },
         { name: "description", content: description },
         { property: "og:title", content: loaderData.title },
         { property: "og:description", content: description },
