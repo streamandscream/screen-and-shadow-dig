@@ -242,6 +242,113 @@ export type Database = {
         }
         Relationships: []
       }
+      shortlist_items: {
+        Row: {
+          created_at: string
+          id: string
+          position: number
+          post_id: string
+          reason: string
+          shortlist_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          position: number
+          post_id: string
+          reason: string
+          shortlist_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          position?: number
+          post_id?: string
+          reason?: string
+          shortlist_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shortlist_items_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shortlist_items_shortlist_id_fkey"
+            columns: ["shortlist_id"]
+            isOneToOne: false
+            referencedRelation: "shortlists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shortlists: {
+        Row: {
+          anchor_post_id: string | null
+          author_id: string | null
+          body: string
+          cover_alt: string | null
+          cover_url: string | null
+          created_at: string
+          excerpt: string
+          id: string
+          meta_description: string | null
+          publish_at: string | null
+          published: boolean
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          anchor_post_id?: string | null
+          author_id?: string | null
+          body?: string
+          cover_alt?: string | null
+          cover_url?: string | null
+          created_at?: string
+          excerpt: string
+          id?: string
+          meta_description?: string | null
+          publish_at?: string | null
+          published?: boolean
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          anchor_post_id?: string | null
+          author_id?: string | null
+          body?: string
+          cover_alt?: string | null
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          meta_description?: string | null
+          publish_at?: string | null
+          published?: boolean
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shortlists_anchor_post_id_fkey"
+            columns: ["anchor_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_settings: {
         Row: {
           key: string

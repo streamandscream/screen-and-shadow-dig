@@ -15,12 +15,15 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as ShellRouteImport } from './routes/shell'
+import { Route as ShortlistRouteImport } from './routes/shortlist'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TrueCrimeRouteImport } from './routes/true-crime'
 import { Route as TvRouteImport } from './routes/tv'
 import { Route as TvNewsRouteImport } from './routes/tv-news'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as PostSlugRouteImport } from './routes/post.$slug'
+import { Route as ShortlistIndexRouteImport } from './routes/shortlist.index'
+import { Route as ShortlistSlugRouteImport } from './routes/shortlist.$slug'
 import { Route as ShowsLikeSlugRouteImport } from './routes/shows-like.$slug'
 import { Route as TagTagRouteImport } from './routes/tag.$tag'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -61,6 +64,11 @@ const ShellRoute = ShellRouteImport.update({
   path: '/shell',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShortlistRoute = ShortlistRouteImport.update({
+  id: '/shortlist',
+  path: '/shortlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -90,6 +98,16 @@ const PostSlugRoute = PostSlugRouteImport.update({
   id: '/post/$slug',
   path: '/post/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ShortlistIndexRoute = ShortlistIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShortlistRoute,
+} as any)
+const ShortlistSlugRoute = ShortlistSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ShortlistRoute,
 } as any)
 const ShowsLikeSlugRoute = ShowsLikeSlugRouteImport.update({
   id: '/shows-like/$slug',
@@ -153,14 +171,17 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/shell': typeof ShellRoute
+  '/shortlist': typeof ShortlistRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
+  '/shortlist/$slug': typeof ShortlistSlugRoute
   '/shows-like/$slug': typeof ShowsLikeSlugRoute
   '/tag/$tag': typeof TagTagRoute
+  '/shortlist/': typeof ShortlistIndexRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -181,8 +202,10 @@ export interface FileRoutesByTo {
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
   '/post/$slug': typeof PostSlugRoute
+  '/shortlist/$slug': typeof ShortlistSlugRoute
   '/shows-like/$slug': typeof ShowsLikeSlugRoute
   '/tag/$tag': typeof TagTagRoute
+  '/shortlist': typeof ShortlistIndexRoute
   '/admin/new': typeof AuthenticatedAdminNewRoute
   '/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -200,14 +223,17 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/shell': typeof ShellRoute
+  '/shortlist': typeof ShortlistRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/true-crime': typeof TrueCrimeRoute
   '/tv': typeof TvRoute
   '/tv-news': typeof TvNewsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/post/$slug': typeof PostSlugRoute
+  '/shortlist/$slug': typeof ShortlistSlugRoute
   '/shows-like/$slug': typeof ShowsLikeSlugRoute
   '/tag/$tag': typeof TagTagRoute
+  '/shortlist/': typeof ShortlistIndexRoute
   '/_authenticated/admin/new': typeof AuthenticatedAdminNewRoute
   '/_authenticated/admin/recommendations': typeof AuthenticatedAdminRecommendationsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -225,14 +251,17 @@ export interface FileRouteTypes {
     | '/auth'
     | '/search'
     | '/shell'
+    | '/shortlist'
     | '/sitemap.xml'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
     | '/admin'
     | '/post/$slug'
+    | '/shortlist/$slug'
     | '/shows-like/$slug'
     | '/tag/$tag'
+    | '/shortlist/'
     | '/admin/new'
     | '/admin/recommendations'
     | '/admin/settings'
@@ -253,8 +282,10 @@ export interface FileRouteTypes {
     | '/tv'
     | '/tv-news'
     | '/post/$slug'
+    | '/shortlist/$slug'
     | '/shows-like/$slug'
     | '/tag/$tag'
+    | '/shortlist'
     | '/admin/new'
     | '/admin/recommendations'
     | '/admin/settings'
@@ -271,14 +302,17 @@ export interface FileRouteTypes {
     | '/auth'
     | '/search'
     | '/shell'
+    | '/shortlist'
     | '/sitemap.xml'
     | '/true-crime'
     | '/tv'
     | '/tv-news'
     | '/_authenticated/admin'
     | '/post/$slug'
+    | '/shortlist/$slug'
     | '/shows-like/$slug'
     | '/tag/$tag'
+    | '/shortlist/'
     | '/_authenticated/admin/new'
     | '/_authenticated/admin/recommendations'
     | '/_authenticated/admin/settings'
@@ -296,6 +330,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   SearchRoute: typeof SearchRoute
   ShellRoute: typeof ShellRoute
+  ShortlistRoute: typeof ShortlistRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TrueCrimeRoute: typeof TrueCrimeRoute
   TvRoute: typeof TvRoute
@@ -350,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shortlist': {
+      id: '/shortlist'
+      path: '/shortlist'
+      fullPath: '/shortlist'
+      preLoaderRoute: typeof ShortlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -391,6 +433,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/post/$slug'
       preLoaderRoute: typeof PostSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/shortlist/': {
+      id: '/shortlist/'
+      path: '/'
+      fullPath: '/shortlist/'
+      preLoaderRoute: typeof ShortlistIndexRouteImport
+      parentRoute: typeof ShortlistRoute
+    }
+    '/shortlist/$slug': {
+      id: '/shortlist/$slug'
+      path: '/$slug'
+      fullPath: '/shortlist/$slug'
+      preLoaderRoute: typeof ShortlistSlugRouteImport
+      parentRoute: typeof ShortlistRoute
     }
     '/shows-like/$slug': {
       id: '/shows-like/$slug'
@@ -500,6 +556,20 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ShortlistRouteChildren {
+  ShortlistSlugRoute: typeof ShortlistSlugRoute
+  ShortlistIndexRoute: typeof ShortlistIndexRoute
+}
+
+const ShortlistRouteChildren: ShortlistRouteChildren = {
+  ShortlistSlugRoute: ShortlistSlugRoute,
+  ShortlistIndexRoute: ShortlistIndexRoute,
+}
+
+const ShortlistRouteWithChildren = ShortlistRoute._addFileChildren(
+  ShortlistRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -507,6 +577,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   SearchRoute: SearchRoute,
   ShellRoute: ShellRoute,
+  ShortlistRoute: ShortlistRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TrueCrimeRoute: TrueCrimeRoute,
   TvRoute: TvRoute,
