@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Replace the Dan Markel shortlist cover and add American Murder: Laci Peterson as pick four.
+- [x] Replace the Dan Markel shortlist cover and add American Murder: Laci Peterson as pick four.
 
 - [x] Add an unpublished Stream review for Memory of a Killer (6/10).
 - [x] Make generated internal links match canonical trailing-slash URLs.
