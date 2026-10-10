@@ -19,23 +19,6 @@ export const Route = createFileRoute("/shortlist/$slug")({
     if (!loaderData) return { meta: [{ title: "Shortlist unavailable — Stream & Scream" }, { name: "robots", content: "noindex" }] };
     const url = `${BASE}/shortlist/${params.slug}/`;
     const description = loaderData.meta_description || loaderData.excerpt;
-    const anchorTitle = loaderData.anchor?.title || loaderData.title;
-    const streamers = Array.from(
-      new Set(loaderData.items.map((i) => i.post.streamer).filter((v): v is string => !!v)),
-    );
-    const faq: Array<{ q: string; a: string }> = [
-      {
-        q: `What should I watch after ${anchorTitle}?`,
-        a: `Start with ${loaderData.items.slice(0, 2).map((i) => i.post.title).join(" or ")}. Every pick on this list has a full Stream & Scream review with a verdict and where to watch.`,
-      },
-      {
-        q: `Are there shows like ${anchorTitle}?`,
-        a: `Yes — this Shortlist gathers ${loaderData.items.length} shows like ${anchorTitle}: ${loaderData.items.map((i) => i.post.title).join(", ")}.`,
-      },
-      ...(streamers.length
-        ? [{ q: `Where can I watch shows like ${anchorTitle}?`, a: `The picks are spread across ${streamers.join(", ")}. Each review says where to watch.` }]
-        : []),
-    ];
     const rawImage = loaderData.cover_url || loaderData.anchor?.cover_url;
     const image = rawImage?.startsWith("/") ? `${BASE}${rawImage}` : rawImage;
     return {
@@ -60,7 +43,6 @@ export const Route = createFileRoute("/shortlist/$slug")({
             { "@type": "ListItem", position: 2, name: "The Shortlist", item: `${BASE}/shortlist/` },
             { "@type": "ListItem", position: 3, name: loaderData.title, item: url },
           ] },
-          { "@type": "FAQPage", mainEntity: faq.map(({ q, a }) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
         ],
       }) }],
     };
@@ -74,10 +56,6 @@ function ShortlistDetail() {
   const { slug } = Route.useParams();
   const { data: list } = useSuspenseQuery(detailQuery(slug));
   if (!list) return null;
-  const anchorTitle = list.anchor?.title || list.title;
-  const streamers = Array.from(
-    new Set(list.items.map((i) => i.post.streamer).filter((v): v is string => !!v)),
-  );
   const shareImage = list.cover_url || list.anchor?.cover_url;
   return (
     <div className="min-h-screen flex flex-col">
@@ -104,26 +82,6 @@ function ShortlistDetail() {
               </div>
             </article>
           ))}
-        </section>
-        <section className="mt-12 border-t-2 border-foreground pt-6" aria-label="Quick answers">
-          <h2 className="eyebrow text-accent-red m-0">What should I watch after {anchorTitle}?</h2>
-          <p className="mt-2 leading-relaxed">
-            Start with {list.items.slice(0, 2).map((i) => i.post.title).join(" or ")}. Every pick on this list has a
-            full Stream & Scream review with a verdict and where to watch.
-          </p>
-          <h2 className="eyebrow text-accent-red m-0 mt-6">Are there shows like {anchorTitle}?</h2>
-          <p className="mt-2 leading-relaxed">
-            Yes — this Shortlist gathers {list.items.length} shows like {anchorTitle}:{" "}
-            {list.items.map((i) => i.post.title).join(", ")}.
-          </p>
-          {streamers.length > 0 && (
-            <>
-              <h2 className="eyebrow text-accent-red m-0 mt-6">Where can I watch shows like {anchorTitle}?</h2>
-              <p className="mt-2 leading-relaxed">
-                The picks are spread across {streamers.join(", ")}. Each review says where to watch.
-              </p>
-            </>
-          )}
         </section>
         <div className="mt-8 border-t-2 border-foreground pt-6">
           <Link to="/shortlist/" className="card-eyebrow hover:underline">← Back to The Shortlist</Link>
