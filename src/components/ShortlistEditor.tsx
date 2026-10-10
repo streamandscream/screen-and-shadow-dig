@@ -129,7 +129,7 @@ export function ShortlistEditor({ form, setForm, posts, save, saving, error }: P
                       <option value="">Choose a reviewed title</option>
                       {publishedPosts.map((post) => <option key={post.id} value={post.id}>{post.title}</option>)}
                     </select>
-                    <textarea className={`${fieldClass} mt-3`} rows={2} placeholder="Why this is one of the five…" value={item.reason} onChange={(event) => setItem(index, { reason: event.target.value })} />
+                    <textarea className={`${fieldClass} mt-3`} rows={2} placeholder="Why this is a must-watch pick…" value={item.reason} onChange={(event) => setItem(index, { reason: event.target.value })} />
                   </div>
                 ))}
               </div>
@@ -150,7 +150,7 @@ export function ShortlistEditor({ form, setForm, posts, save, saving, error }: P
               <Field label="Or schedule publication">
                 <input type="datetime-local" className={fieldClass} value={form.publish_at ? form.publish_at.slice(0, 16) : ""} onChange={(event) => setForm({ ...form, publish_at: event.target.value ? new Date(event.target.value).toISOString() : null, published: false })} />
               </Field>
-              <p className="text-sm text-muted-foreground">Publishing requires five different picks and a reason for each.</p>
+              <p className="text-sm text-muted-foreground">Publishing requires three to five different picks and a reason for each.</p>
             </section>
             {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
             <Button type="button" size="lg" disabled={saving} onClick={save}>{saving ? "Saving…" : "Save shortlist"}</Button>

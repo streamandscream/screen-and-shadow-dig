@@ -10,10 +10,10 @@ export const Route = createFileRoute("/shortlist/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(shortlistQuery),
   head: () => ({
     meta: [
-      { title: "The Shortlist — Top 5 TV & Movie Picks | Stream & Scream" },
-      { name: "description", content: "Five sharp picks at a time: what to watch next, seasonal favourites, and the best TV and movies for every mood." },
-      { property: "og:title", content: "The Shortlist — Top 5 TV & Movie Picks" },
-      { property: "og:description", content: "Five sharp picks at a time, curated by Stream & Scream." },
+      { title: "The Shortlist — Top TV & Movie Picks | Stream & Scream" },
+      { name: "description", content: "A handful of sharp picks at a time: what to watch next, seasonal favourites, and the best TV and movies for every mood." },
+      { property: "og:title", content: "The Shortlist — Top TV & Movie Picks" },
+      { property: "og:description", content: "A handful of sharp picks at a time, curated by Stream & Scream." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/shortlist/")({
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       name: "The Shortlist",
-      description: "Curated top-five TV and movie picks from Stream & Scream.",
+      description: "Curated TV and movie picks from Stream & Scream.",
       url: "https://streamandscream.com/shortlist/",
     }) }],
   }),
@@ -38,13 +38,13 @@ function ShortlistIndex() {
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-6 py-12 w-full flex-1">
         <h1 className="font-display text-[40px] border-b-2 border-foreground pb-4">The Shortlist</h1>
-        <p className="mt-4 max-w-2xl text-muted-foreground">Five picks. No filler. What to watch next, seasonal favourites, and the titles worth making time for.</p>
+        <p className="mt-4 max-w-2xl text-muted-foreground">A few picks. No filler. What to watch next, seasonal favourites, and the titles worth making time for.</p>
         <section className="mt-10 flex flex-col gap-12">
           {data.length ? data.map((list) => (
             <article key={list.id} className="border-b border-foreground/20 pb-10">
               <Link to="/shortlist/$slug/" params={{ slug: list.slug }} className="block">
                 <PosterOrbit title={list.title} anchor={list.anchor} picks={list.items.map((item) => item.post)} coverUrl={list.cover_url} coverAlt={list.cover_alt} linked={false} />
-                <span className="card-eyebrow mt-4 block">The Shortlist · Top 5</span>
+                <span className="card-eyebrow mt-4 block">The Shortlist</span>
                 <h2 className="card-title-lg mt-2">{list.title}</h2>
               </Link>
               <p className="card-excerpt-lg mt-3">{list.excerpt}</p>
