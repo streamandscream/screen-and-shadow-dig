@@ -19,7 +19,8 @@ export const Route = createFileRoute("/shortlist/$slug")({
     if (!loaderData) return { meta: [{ title: "Shortlist unavailable — Stream & Scream" }, { name: "robots", content: "noindex" }] };
     const url = `${BASE}/shortlist/${params.slug}/`;
     const description = loaderData.meta_description || loaderData.excerpt;
-    const image = loaderData.cover_url || loaderData.anchor?.cover_url;
+    const rawImage = loaderData.cover_url || loaderData.anchor?.cover_url;
+    const image = rawImage?.startsWith("/") ? `${BASE}${rawImage}` : rawImage;
     return {
       meta: [
         { title: `${loaderData.title} | The Shortlist — Stream & Scream` },
