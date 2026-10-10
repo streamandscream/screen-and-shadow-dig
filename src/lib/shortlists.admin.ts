@@ -19,13 +19,13 @@ export async function getShortlist(id: string): Promise<Shortlist | null> {
 export async function saveShortlist(input: Partial<ShortlistRow> & { title: string; slug: string; excerpt: string; body: string; items: ShortlistDraftItem[] }) {
   const unique = new Set(input.items.map((item) => item.post_id));
   const willPublish = Boolean(input.published || input.publish_at);
-  if (willPublish && (input.items.length !== 5 || unique.size !== 5)) throw new Error("Choose five different recommendations before publishing or scheduling.");
+  if (willPublish && (input.items.length < 3 || input.items.length > 5 || unique.size !== input.items.length)) throw new Error("Choose three to five different recommendations before publishing or scheduling.");
   if (input.items.some((item) => !item.reason.trim())) throw new Error("Add a reason for every recommendation.");
 
   if (willPublish) {
     const { data: selectedPosts, error: selectedError } = await supabase.from("posts").select("id, published").in("id", input.items.map((item) => item.post_id));
     if (selectedError) throw new Error(selectedError.message);
-    if ((selectedPosts ?? []).length !== 5 || selectedPosts?.some((post) => !post.published)) {
+    if ((selectedPosts ?? []).length !== input.items.length || selectedPosts?.some((post) => !post.published)) {
       throw new Error("Every recommendation must be a published review.");
     }
   }

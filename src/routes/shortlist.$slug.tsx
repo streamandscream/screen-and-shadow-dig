@@ -19,7 +19,8 @@ export const Route = createFileRoute("/shortlist/$slug")({
     if (!loaderData) return { meta: [{ title: "Shortlist unavailable — Stream & Scream" }, { name: "robots", content: "noindex" }] };
     const url = `${BASE}/shortlist/${params.slug}/`;
     const description = loaderData.meta_description || loaderData.excerpt;
-    const image = loaderData.cover_url || loaderData.anchor?.cover_url;
+    const rawImage = loaderData.cover_url || loaderData.anchor?.cover_url;
+    const image = rawImage?.startsWith("/") ? `${BASE}${rawImage}` : rawImage;
     return {
       meta: [
         { title: `${loaderData.title} | The Shortlist — Stream & Scream` },
@@ -36,7 +37,7 @@ export const Route = createFileRoute("/shortlist/$slug")({
         "@context": "https://schema.org",
         "@graph": [
           { "@type": "Article", headline: loaderData.title, description, url, image: image || undefined, datePublished: loaderData.published_at, dateModified: loaderData.updated_at, mainEntity: { "@id": `${url}#list` } },
-          { "@type": "ItemList", "@id": `${url}#list`, numberOfItems: 5, itemListElement: loaderData.items.map((item) => ({ "@type": "ListItem", position: item.position, name: item.post.title, url: `${BASE}/post/${item.post.slug}/` })) },
+          { "@type": "ItemList", "@id": `${url}#list`, numberOfItems: loaderData.items.length, itemListElement: loaderData.items.map((item) => ({ "@type": "ListItem", position: item.position, name: item.post.title, url: `${BASE}/post/${item.post.slug}/` })) },
           { "@type": "BreadcrumbList", itemListElement: [
             { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
             { "@type": "ListItem", position: 2, name: "The Shortlist", item: `${BASE}/shortlist/` },
@@ -66,7 +67,7 @@ function ShortlistDetail() {
         <PosterOrbit title={list.title} anchor={list.anchor} picks={list.items.map((item) => item.post)} coverUrl={list.cover_url} coverAlt={list.cover_alt} className="mt-8" />
         <p className="card-credit mt-1">Poster artwork courtesy of TMDB. Used under license.</p>
         {list.body && <div className="mt-8"><PostBody>{list.body}</PostBody></div>}
-        <section className="mt-12" aria-label="Top five recommendations">
+        <section className="mt-12" aria-label="Recommendations">
           {list.items.map((item) => (
             <article key={item.id} className="grid grid-cols-[5.5rem_minmax(0,1fr)] sm:grid-cols-[9rem_minmax(0,1fr)] gap-5 border-t border-foreground/20 py-8">
               <Link to="/post/$slug/" params={{ slug: item.post.slug }} className="block aspect-[2/3] overflow-hidden bg-paper">

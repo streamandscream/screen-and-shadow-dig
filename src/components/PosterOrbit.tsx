@@ -41,7 +41,7 @@ function Poster({ poster, className, linked }: { poster: OrbitPoster; className:
 
 export function PosterOrbit({ title, anchor, picks, coverUrl, coverAlt, className, linked = true }: PosterOrbitProps) {
   if (coverUrl) {
-    return <img src={coverUrl} alt={coverAlt || `${title} cover`} className={cn("aspect-[16/10] w-full object-cover", className)} />;
+    return <img src={coverUrl} alt={coverAlt || `${title} cover`} className={cn("h-auto w-full", className)} />;
   }
 
   return (
