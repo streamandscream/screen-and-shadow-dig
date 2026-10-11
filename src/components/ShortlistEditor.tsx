@@ -127,6 +127,9 @@ export function ShortlistEditor({ form, setForm, posts, save, saving, error }: P
                     </div>
                     <select className={`${fieldClass} mt-3`} value={item.post_id} onChange={(event) => setItem(index, { post_id: event.target.value })}>
                       <option value="">Choose a reviewed title</option>
+                      {postMap.get(item.post_id) && !postMap.get(item.post_id)?.published && (
+                        <option value={item.post_id}>{postMap.get(item.post_id)?.title} (Draft)</option>
+                      )}
                       {publishedPosts.map((post) => <option key={post.id} value={post.id}>{post.title}</option>)}
                     </select>
                     <textarea className={`${fieldClass} mt-3`} rows={2} placeholder="Why this is a must-watch pick…" value={item.reason} onChange={(event) => setItem(index, { reason: event.target.value })} />
