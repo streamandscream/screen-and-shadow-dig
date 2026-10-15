@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Menu, X, Search, ArrowUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const isHome = useRouterState({ select: (s) => s.location.pathname === "/" });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
