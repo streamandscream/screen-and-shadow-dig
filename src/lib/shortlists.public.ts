@@ -83,3 +83,26 @@ export async function getPublishedShortlist(args: { data: { slug: string } }): P
 }
 
 export { SHORTLIST_COLS, hydrateShortlists };
+export type ShortlistLink = { slug: string; title: string; excerpt: string };
+
+/** Published shortlists that feature a post, as the anchor or one of the picks. */
+export async function listShortlistsForPost(args: { data: { postId: string } }): Promise<ShortlistLink[]> {
+  const { postId } = args.data;
+  const { data: itemRows, error: itemError } = await supabase
+    .from("shortlist_items")
+    .select("shortlist_id")
+    .eq("post_id", postId);
+  if (itemError) throw new Error(itemError.message);
+  const pickIds = Array.from(new Set((itemRows ?? []).map((row) => row.shortlist_id)));
+  const filter = pickIds.length
+    ? `anchor_post_id.eq.${postId},id.in.(${pickIds.join(",")})`
+    : `anchor_post_id.eq.${postId}`;
+  const { data, error } = await supabase
+    .from("shortlists")
+    .select("slug, title, excerpt")
+    .eq("published", true)
+    .or(filter)
+    .order("published_at", { ascending: false, nullsFirst: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as ShortlistLink[];
+}
