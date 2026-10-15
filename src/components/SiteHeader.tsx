@@ -138,7 +138,11 @@ export function SiteHeader() {
         <div className="rule" />
         <div className="py-6 text-center">
           <Link to="/" className="inline-block">
-            <h1 className="font-display text-5xl md:text-7xl tracking-tight lowercase m-0">stream & scream</h1>
+            {isHome ? (
+              <h1 className="font-display text-5xl md:text-7xl tracking-tight lowercase m-0">stream & scream</h1>
+            ) : (
+              <span className="block font-display text-5xl md:text-7xl tracking-tight lowercase m-0">stream & scream</span>
+            )}
           </Link>
         </div>
       </div>

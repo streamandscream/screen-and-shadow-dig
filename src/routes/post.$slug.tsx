@@ -4,6 +4,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { PostBody } from "@/components/PostBody";
 import { WhereToWatchLink } from "@/components/PostCard";
 import { ShareButton } from "@/components/ShareButton";
+import { FeaturedShortlists, shortlistsForPostQuery } from "@/components/FeaturedShortlists";
 import { getPostBySlug, getPostsByTitles, buildQuickAnswers } from "@/lib/posts.public";
 
 const postQuery = (slug: string) => queryOptions({
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/post/$slug")({
   loader: async ({ context, params }) => {
     const post = await context.queryClient.ensureQueryData(postQuery(params.slug));
     if (!post) throw notFound();
+    await context.queryClient.ensureQueryData(shortlistsForPostQuery(post.id));
     return post;
   },
   head: ({ params, loaderData }) => {
@@ -291,7 +293,7 @@ function Page() {
             </p>
           </div>
         )}
-        
+        <FeaturedShortlists postId={post.id} className="mt-12" />
 
         <div className="mt-12 border-t-2 border-foreground pt-6">
           <Link to={sectionTo} className="eyebrow text-accent-red hover:underline">

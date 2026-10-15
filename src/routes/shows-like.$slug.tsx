@@ -1,6 +1,7 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
+import { FeaturedShortlists, shortlistsForPostQuery } from "@/components/FeaturedShortlists";
 import {
   getPostBySlug,
   listPublishedPosts,
@@ -45,6 +46,7 @@ export const Route = createFileRoute("/shows-like/$slug")({
   loader: async ({ context, params }) => {
     const data = await context.queryClient.ensureQueryData(similarQuery(params.slug));
     if (!data || data.similar.length < 3) throw notFound();
+    await context.queryClient.ensureQueryData(shortlistsForPostQuery(data.post.id));
     return data as LoaderData;
   },
   head: ({ params, loaderData }) => {
@@ -353,6 +355,7 @@ function Page() {
           )}
         </section>
 
+        <FeaturedShortlists postId={post.id} className="mt-12" />
 
         <div className="mt-12 border-t-2 border-foreground pt-6 flex flex-col gap-2">
           <Link to="/post/$slug/" params={{ slug: post.slug }} className="eyebrow text-accent-red hover:underline">
