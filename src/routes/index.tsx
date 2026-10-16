@@ -1,16 +1,28 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { HorizontalPostCard } from "@/components/PostCard";
-import { listPublishedPosts } from "@/lib/posts.public";
+import { listPublishedPosts, type PublicPost } from "@/lib/posts.public";
+import { listPublishedShortlists, type Shortlist } from "@/lib/shortlists.public";
 
 const homePostsQuery = queryOptions({
   queryKey: ["posts", "home"],
   queryFn: () => listPublishedPosts({ data: { sections: ["tv", "true_crime"], limit: 12 } }),
 });
 
+const homeShortlistsQuery = queryOptions({
+  queryKey: ["shortlists", "published"],
+  queryFn: listPublishedShortlists,
+});
+
+const BASE = "https://streamandscream.com";
+
 export const Route = createFileRoute("/")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(homePostsQuery),
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(homePostsQuery),
+      context.queryClient.ensureQueryData(homeShortlistsQuery),
+    ]),
   head: () => ({
     meta: [
       { title: "Stream & Scream — TV Reviews & True Crime Documentary Picks" },
@@ -32,8 +44,41 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+type FeedItem =
+  | { kind: "post"; date: number; post: PublicPost }
+  | { kind: "shortlist"; date: number; list: Shortlist };
+
+const ts = (a: string | null, b: string) => new Date(a ?? b).getTime();
+
+function ShortlistCard({ list }: { list: Shortlist }) {
+  const raw = list.cover_url ?? list.anchor?.cover_url ?? null;
+  const cover = raw && raw.startsWith("/") ? `${BASE}${raw}` : raw;
+  return (
+    <article className="flex gap-5">
+      {cover && (
+        <Link to="/shortlist/$slug/" params={{ slug: list.slug }} className="shrink-0">
+          <img src={cover} alt={list.cover_alt ?? list.title} loading="lazy" className="w-28 sm:w-36 aspect-square object-cover" />
+        </Link>
+      )}
+      <div className="min-w-0">
+        <span className="card-eyebrow block">The Shortlist</span>
+        <Link to="/shortlist/$slug/" params={{ slug: list.slug }} className="hover:underline">
+          <h2 className="card-title-md mt-1">{list.title}</h2>
+        </Link>
+        {list.excerpt && <p className="mt-2 text-muted-foreground leading-relaxed">{list.excerpt}</p>}
+      </div>
+    </article>
+  );
+}
+
 function Home() {
   const { data: posts } = useSuspenseQuery(homePostsQuery);
+  const { data: lists } = useSuspenseQuery(homeShortlistsQuery);
+
+  const feed: FeedItem[] = [
+    ...posts.map((post) => ({ kind: "post" as const, date: ts(post.published_at, post.created_at), post })),
+    ...lists.map((list) => ({ kind: "shortlist" as const, date: ts(list.published_at, list.created_at), list })),
+  ].sort((a, b) => b.date - a.date);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -54,9 +99,13 @@ function Home() {
           </p>
         </div>
         <div className="flex flex-col gap-10">
-          {posts.map((p) => (
-            <HorizontalPostCard key={p.id} post={p} showWhereToWatch={p.section === "true_crime"} />
-          ))}
+          {feed.map((item) =>
+            item.kind === "post" ? (
+              <HorizontalPostCard key={item.post.id} post={item.post} showWhereToWatch={item.post.section === "true_crime"} />
+            ) : (
+              <ShortlistCard key={item.list.id} list={item.list} />
+            ),
+          )}
         </div>
       </main>
       <SiteFooter />
